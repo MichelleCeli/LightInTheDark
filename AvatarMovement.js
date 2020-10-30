@@ -1,6 +1,3 @@
-import * as PIXI from 'pixi.js';
-import Matter from 'js/matter.min.js';
-
 let app;
         let player;
         var box;
