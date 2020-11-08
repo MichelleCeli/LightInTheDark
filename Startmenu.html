@@ -2,9 +2,119 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <link rel="stylesheet" href="https://use.typekit.net/svb4tcg.css">
+    <title>Startmenu</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        .screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: url("images/Start_Background.png");
+            background-size: cover;
+            border: none;
+            height: 100%;
+        }
+        #container{
+            width: 45%;
+            height: 75%;
+            padding: 10px;
+            box-sizing: border-box;
+            border-radius: 10%;
+            background-image: url("images/MenuVorl.png");
+            background-size: cover;
+            z-index: 2;
+            display: grid;
+            grid-template-rows: [title] 30% [name]15% [password] 15% [logIn] 15% [Sign In] 25%;
+            grid-template-columns: [left] 10% [center] 1fr [right] 10%;
+            grid-auto-flow: column;
+            grid-template-areas:
+            "left title right"
+            "left name right"
+            "left password right"
+            "left logIn right"
+            "left signIn right";
+        }
+        .label{
+            color: #DDDDC3;
+            font-family: p22-muschamp-pro, sans-serif;
+            font-style: normal;
+            font-size: 30px;
+            font-weight: 400;
+        }
+        #title{
+            grid-area: title;
+            justify-self: center;
+            font-size: 65px;
+        }
+        #name{
+            display: flex;
+            grid-area: name;
+            justify-content: space-between;
+        }
+        .input{
+            height: 50%;
+            color: #DDDDC3;
+            box-sizing: border-box;
+            border: 0;
+            border-radius: 10px;
+            background: rgba(67, 41, 24, 0.75);
+        }
+        #password{
+            display: flex;
+            grid-area: password;
+            justify-content: space-between;
+        }
+        .button{
+            background-color: rgb(67, 41, 24);
+            border: none;
+            border-radius: 30px;
+            color: #DDDDC3;
+            text-decoration: none;
+            text-align: center;
+            margin: 4px 2px;
+            cursor: pointer;
+            font-family: p22-muschamp-pro, sans-serif;
+            font-style: normal;
+            font-size: 30px;
+            font-weight: 400;
+        }
+        #logIn{
+            grid-area: logIn;
+            justify-self: end;
+            width: 20%;
+            height: 65%;
+
+        }
+        #signIn{
+            grid-area: signIn;
+            justify-self: center;
+            width: 20%;
+            height: 40%;
+        }
+
+
+
+    </style>
 </head>
 <body>
-
+<div class="screen">
+ <div id="container">
+    <div id="title" class="label">Light in the Dark</div>
+    <div id="name">
+        <div class="label">Name:</div>
+        <input type="text" class="input" size="50">
+    </div>
+    <div id="password">
+        <div class="label">Password:</div>
+        <input type="password" class="input" size="50">
+    </div>
+    <input type="button" id="logIn" class="button" value="Log In">
+     <input type="button" id="signIn" class="button" value="Sign In">
+</div>
+</div>
 </body>
 </html>
