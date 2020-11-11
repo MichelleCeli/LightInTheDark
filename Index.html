@@ -4,34 +4,19 @@
     <meta charset="UTF-8">
     <title>Light in the dark</title>
     <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-          height: 100vh;
-          width: 100vw;
-          padding: 20px;
-          margin: 0;
-        }
-
-        .scene {
-          display: flex;
-          height: 100%;
-          width: 100%;
-          border: 3px solid #000000;
-        }
-
-        canvas {
-          max-width: 100%;
-        }
-</style>
+      body{
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+    </style>
 </head>
 <body>
-    <div class="scene"></div>
 
     <script src="js/pixi.min.js"></script>
     <script src="js/matter.min.js"></script>
+    <script type="text/javascript" src="start.js"></script>
+    <script type="text/javascript" src="HealthAndLight.js"></script>
     <script type="text/javascript" src="AvatarMovement.js"></script>
 </body>
 </html>
