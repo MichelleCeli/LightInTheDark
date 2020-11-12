@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <title>Light in the dark</title>
-    <style>
-      body{
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-      }
-    </style>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+    <div class="scene"></div>
 
+    <div class="bg-level1">
+        <div class="assets-lvl-1" id="bg"><img src="img/assets/background/background.PNG" alt=""></div>
+        <div class="assets-lvl-1" id="tree-bg"><img src="img/assets/background/trees_bg.PNG" alt=""></div>
+        <div class="assets-lvl-1" id="bush"><img src="img/assets/background/bush.PNG" alt=""></div>
+        <div class="assets-lvl-1" id="tree-fg"><img src="img/assets/background/trees_fg.PNG" alt=""></div>
+        <div class="assets-lvl-1" id="fg"><img src="img/assets/background/vordergrund.PNG" alt=""></div>
+    </div>
     <script src="js/pixi.min.js"></script>
     <script src="js/matter.min.js"></script>
     <script type="text/javascript" src="start.js"></script>
