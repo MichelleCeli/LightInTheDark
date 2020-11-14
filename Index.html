@@ -3,11 +3,12 @@
 <head>
     <meta charset="utf-8">
     <title>Light in the dark</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <!--
+        <link rel="stylesheet" href="css/styles.css">
+    -->
 </head>
 <body>
-    <div class="scene"></div>
-
+    <!--
     <div class="bg-level1">
         <div class="assets-lvl-1" id="bg"><img src="img/assets/background/background.PNG" alt=""></div>
         <div class="assets-lvl-1" id="tree-bg"><img src="img/assets/background/trees_bg.PNG" alt=""></div>
@@ -15,10 +16,74 @@
         <div class="assets-lvl-1" id="tree-fg"><img src="img/assets/background/trees_fg.PNG" alt=""></div>
         <div class="assets-lvl-1" id="fg"><img src="img/assets/background/vordergrund.PNG" alt=""></div>
     </div>
+    -->
+
+    <div id="gameDiv"></div>
+
     <script src="js/pixi.min.js"></script>
     <script src="js/matter.min.js"></script>
+
+ <!--
     <script type="text/javascript" src="start.js"></script>
     <script type="text/javascript" src="HealthAndLight.js"></script>
     <script type="text/javascript" src="AvatarMovement.js"></script>
+-->
+    <script>
+        let app;
+        let bgBack;
+        let bgBackTree;
+        let bgMiddleTree;
+        let bgFront;
+        let bgX = 0;
+        let bgSpeed = 1;
+
+
+        window.onload = function () {
+            app = new PIXI.Application({
+                width: 800,
+                height: 600,
+                backgroundColor: 0xAAAAAA
+            });
+
+            document.querySelector("#gameDiv").appendChild(app.view);
+
+            app.loader.baseUrl = "images/assets/background";
+            app.loader
+                .add("bgBack", "background_1960x1080.png")
+                .add("bgBackTree", "trees_bg_1960x1080.png")
+                .add("bgMiddleTree", "trees_fg_1960x1080.png")
+                .add("bgFront", "vordergrund.png");
+            
+            app.loader.onComplete.add(initLevel);
+            app.loader.load();
+
+            
+        }
+
+        function gameLoop(delta) {
+
+        }
+
+        function initLevel() {
+            bgBack = createBg(app.loader.resources["bgBack"].texture);
+            bgBackTree = createBg(app.loader.resources["bgBackTree"].texture);
+            bgMiddleTree = createBg(app.loader.resources["bgMiddleTree"].texture);
+            bgFront = createBg(app.loader.resources["bgFront"].texture);
+            
+
+            app.ticker.add(gameLoop);
+        }
+
+        function createBg(texture) {
+            let tiling = new PIXI.TilingSprite(texture, 800, 600);
+            tiling.position.set(0,0);
+            app.stage.addChild(tiling);
+
+            return tiling;
+        }
+
+    </script>
+
+
 </body>
 </html>
