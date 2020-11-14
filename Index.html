@@ -8,21 +8,10 @@
     -->
 </head>
 <body>
-    <!--
-    <div class="bg-level1">
-        <div class="assets-lvl-1" id="bg"><img src="img/assets/background/background.PNG" alt=""></div>
-        <div class="assets-lvl-1" id="tree-bg"><img src="img/assets/background/trees_bg.PNG" alt=""></div>
-        <div class="assets-lvl-1" id="bush"><img src="img/assets/background/bush.PNG" alt=""></div>
-        <div class="assets-lvl-1" id="tree-fg"><img src="img/assets/background/trees_fg.PNG" alt=""></div>
-        <div class="assets-lvl-1" id="fg"><img src="img/assets/background/vordergrund.PNG" alt=""></div>
-    </div>
-    -->
-
     <div id="gameDiv"></div>
 
     <script src="js/pixi.min.js"></script>
     <script src="js/matter.min.js"></script>
-
  <!--
     <script type="text/javascript" src="start.js"></script>
     <script type="text/javascript" src="HealthAndLight.js"></script>
@@ -40,8 +29,8 @@
 
         window.onload = function () {
             app = new PIXI.Application({
-                width: 800,
-                height: 600,
+                width: 1200,
+                height: 900,
                 backgroundColor: 0xAAAAAA
             });
 
@@ -52,7 +41,7 @@
                 .add("bgBack", "background_1960x1080.png")
                 .add("bgBackTree", "trees_bg_1960x1080.png")
                 .add("bgMiddleTree", "trees_fg_1960x1080.png")
-                .add("bgFront", "vordergrund.png");
+                .add("bgFront", "front_1960x1080.png");
             
             app.loader.onComplete.add(initLevel);
             app.loader.load();
@@ -61,7 +50,7 @@
         }
 
         function gameLoop(delta) {
-
+            updateBg();
         }
 
         function initLevel() {
@@ -70,17 +59,48 @@
             bgMiddleTree = createBg(app.loader.resources["bgMiddleTree"].texture);
             bgFront = createBg(app.loader.resources["bgFront"].texture);
             
+            document.addEventListener("keyup", switchDir);
 
             app.ticker.add(gameLoop);
         }
 
+        // Texturen werden geladen
         function createBg(texture) {
-            let tiling = new PIXI.TilingSprite(texture, 800, 600);
+            let tiling = new PIXI.TilingSprite(texture, 1200, 900);
             tiling.position.set(0,0);
             app.stage.addChild(tiling);
 
             return tiling;
         }
+
+        // Schnelligkeit der Hintergrundbilder
+        function updateBg() {
+            bgX = (bgX + bgSpeed);
+            bgMiddleTree.tilePosition.x = bgX;
+            bgBackTree.tilePosition.x = bgX / 2;
+            bgBack.tilePosition.x = bgX / 4;
+        }
+
+
+        // Schnelligkeit wird verändert, wenn man die Pfeiltasten vor oder zurück drückt.
+        // Spacebar stoppt scrolling
+        function switchDir(e) {
+            switch (e.keyCode) {
+                // linke Pfeiltaste
+                case 37:
+                    bgSpeed = bgSpeed +1;
+                    break;
+                // rechte Pfeiltaste
+                case 39:
+                    bgSpeed = bgSpeed -1;
+                    break;
+                // Spacebar
+                case 32:
+                    bgSpeed = 0;
+                    break;
+            }
+        }
+
 
     </script>
 
