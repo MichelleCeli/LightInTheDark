@@ -39,13 +39,13 @@ lightBar.addChild(outerBar2);
 lightBar.outer = outerBar2; 
 
 //fireflies
-firefly = PIXI.Sprite.from('img/firefly.png');
+firefly = PIXI.Sprite.from('images/firefly.png');
 firefly.anchor.set(0.5);
 firefly.position.set(300,400);
 app.stage.addChild(firefly);
 
 //crystal
-crystal = PIXI.Sprite.from('img/crystal.png');
+crystal = PIXI.Sprite.from('imgages/crystal.png');
 crystal.anchor.set(0.5);
 crystal.position.set(200,450);
 app.stage.addChild(crystal);
