@@ -18,17 +18,17 @@ window.onload = function () {
     World.add(engine.world, [playerBody, groundBody, platformBody]);
 
     //Player sprite
-    player = PIXI.Sprite.from('img/player.png');
+    player = PIXI.Sprite.from('images/player.png');
     player.anchor.set(0.5);
     player.position;
 
     //Ground sprite
-    ground = PIXI.Sprite.from('img/ground.png');
+    ground = PIXI.Sprite.from('images/ground.png');
     ground.anchor.set(0.5);
     ground.position;
 
     //Platform sprite
-    platform = PIXI.Sprite.from('img/platform.png');
+    platform = PIXI.Sprite.from('images/platform.png');
     platform.anchor.set(0.5);
     platform.position;
 
