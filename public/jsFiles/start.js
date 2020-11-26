@@ -29,7 +29,7 @@ var crystalSprite;
 
         resize();
 
-        const loader = PIXI.Loader.shared;
+        /* const loader = PIXI.Loader.shared;
         const resources = PIXI.Loader.shared.resources;
         loader.add("./img/player.png")
                 .add("./img/crystal.png")
@@ -41,4 +41,8 @@ var crystalSprite;
                 playerSprite = new PIXI.Sprite(resources["./img/player.png"].texture);
                 crystalSprite = new PIXI.Sprite(resources["./img/crystal.png"].texture);
                 fireflySprite = new PIXI.Sprite(resources["./img/firefly.png"].texture);
-        }
+        } */
+
+        playerSprite = PIXI.Sprite.from('./img/player.png');
+        crystalSprite = PIXI.Sprite.from('./img/crystal.png');
+        fireflySprite = PIXI.Sprite.from('./img/firefly.png');
