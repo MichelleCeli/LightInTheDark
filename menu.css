@@ -4,23 +4,7 @@ html, body {
     font-size: 100%
 }
 
-@media screen and (max-width: 64em) {
-    body {
-        font-size: 90%;
-    }
-}
 
-@media screen and (max-width: 50em) {
-    body {
-        font-size: 75%;
-    }
-}
-
-@media screen and (max-width: 30em) {
-    body {
-        font-size: 50%;
-    }
-}
 .screen {
     display: flex;
     justify-content: center;
@@ -55,15 +39,37 @@ html, body {
 }
 .label{
     color: #DDDDC3;
+    font-family: catseye, sans-serif;
+    font-weight: 700;
+    font-style: normal;
+    font-size: 2em;
+}
+button{
+    border: 0;
+
+}
+h1{
+    color: #DDDDC3;
+    margin: 0;
+    padding: 0;
     font-family: p22-muschamp-pro, sans-serif;
     font-style: normal;
-    font-size: 30px;
+    font-size: 5em;
+    font-weight: 400;
+}
+h2{
+    color: #DDDDC3;
+    margin: 0;
+    padding: 0;
+    font-family: p22-muschamp-pro, sans-serif;
+    font-style: normal;
+    font-size: 4em;
     font-weight: 400;
 }
 #title{
     grid-area: title;
     justify-self: center;
-    font-size:5em;
+
 }
 #name{
     display: flex;
@@ -78,9 +84,6 @@ html, body {
     border: 0;
     border-radius: 10px;
     background: rgba(67, 41, 24, 0.75);
-  /*  font-family: roc-grotesk, sans-serif;
-    font-weight: 400;
-    font-style: normal;*/
 
 }
 #password{
@@ -91,61 +94,86 @@ html, body {
 
 /*Wenn nicht in ID geändert, zentriert*/
 .button{
-    background-color: rgb(67, 41, 24);
-    width: 70%;
-    height: 70%;
-    border: none;
-    border-radius: 30px;
+    background-color: rgba(67, 41, 24, 0);
+    height: 65px;
+    width: 165px;
     color: #DDDDC3;
     text-decoration: none;
     text-align: center;
-    margin: 4px 2px;
     cursor: pointer;
-    font-family: p22-muschamp-pro, sans-serif;
+    border: 0px;
+ /*   border-color: rgba(255,255,255,1);
+    border-radius: 30px;*/
+
+    font-family: catseye, sans-serif;
+    font-weight: 700;
     font-style: normal;
-    font-size: 30px;
-    font-weight: 400;
+    font-size: 25px;
     justify-self: center;
+    transition: 0.5s;
+}
+.button:hover{
+    color: #01010A;
+    background-image: url("images/button_background.svg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size:/* 175px 90px;*/ cover;
 }
 #logIn{
     grid-area: logIn;
     justify-self: end;
-    width: 20%;
-    height: 65%;
+    /*width: 20%;
+    height: 65%;*/
 }
 #signIn{
     grid-area: signIn;
-    width: 20%;
-    height: 40%;
+    /*width: 20%;
+    height: 40%;*/
 }
-
 #containerMenu{
-    grid-template-rows: [title] 25% [play]15% [profile] 15% [highscore] 15% [options] 15% [LogOut] 15%;
-    grid-template-columns: [left] 35% [center] 1fr [right] 35%;
-    grid-auto-flow: column;
-    grid-template-areas:
-            "title title title"
-            "left play right"
-            "left profile right"
-            "left highscore right"
-            "left options right"
-            "left logOut right";
+    display: block;
+    align-items: center;
+}
+#containerTest{
+    width: 800px;
+    margin: 0 auto;
+    display: block;
+}
+#alignMenu{
+    margin: 0 auto;
+    width: 450px;
+}
+#listMenu{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+
+}
+#listMenu li a{
+    display: inline-block;
+    height: 40px;
+    width: 175px;
+/*    padding: 15px;*/
+    margin: 20px 0px;
 }
 
-#playBut{
-    grid-area: play;
-}
-#profileBut{
-    grid-area: profile;
-}
-#highscoreBut{
-    grid-area: highscore;
-}
-#optionsBut{
-    grid-area: options;
-}
-#logOutBut{
-    grid-area: logOut;
+@media only screen and (max-width: 600px) {
+
 }
 
+@media only screen and (min-width: 600px) {
 
+}
+
+@media only screen and (min-width: 768px) {
+
+}
+
+@media only screen and (min-width: 992px) {
+
+}
+
+@media only screen and (min-width: 1200px) {
+
+}
