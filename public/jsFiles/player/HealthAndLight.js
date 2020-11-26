@@ -30,14 +30,14 @@ var outerBar2;
     circle.alpha = 0.6;
     circle.blendMode = PIXI.BLEND_MODES.SOFT_LIGHT;
     //Player sprite
-    player = PIXI.Sprite.from('images/player.png');
-    player.anchor.set(0.5);
-    player.position;
+    //player = playerSprite;
+    playerSprite.anchor.set(0.5);
+    playerSprite.position;
     
-     player.light = circle;
+     playerSprite.light = circle;
 
-     player.addChild(circle);
-    app.stage.addChild(player);
+     playerSprite.addChild(circle);
+    app.stage.addChild(playerSprite);
 
     healthBar = new PIXI.Container();
 healthBar.position.set(50,30);
@@ -80,13 +80,13 @@ lightBar.addChild(outerBar2);
 lightBar.outer = outerBar2; 
 
 //fireflies
-firefly = PIXI.Sprite.from('images/firefly.png');
+firefly = fireflySprite;
 firefly.anchor.set(0.5);
 firefly.position.set(300,400);
 app.stage.addChild(firefly);
 
 //crystal
-crystal = PIXI.Sprite.from('images/crystal.png');
+crystal = crystalSprite;
 crystal.anchor.set(0.5);
 crystal.position.set(200,450);
 app.stage.addChild(crystal);

@@ -31,7 +31,7 @@ function playerMovement(){
         }
     }
 
-    if (hitTestRectangle(player, firefly) && firefly.visible == true && lightBar.outer.width < 300) {
+    if (hitTestRectangle(playerSprite, firefly) && firefly.visible == true && lightBar.outer.width < 300) {
         if(lightBar.outer.width+20 > 300){
             lightBar.outer.width = 300; 
         }else{
@@ -39,7 +39,7 @@ function playerMovement(){
         }  
         firefly.visible = false;
     }
-    if (hitTestRectangle(player, crystal) && crystal.visible == true && healthBar.outer.width < 300) {
+    if (hitTestRectangle(playerSprite, crystal) && crystal.visible == true && healthBar.outer.width < 300) {
         if(healthBar.outer.width+20 > 300){
             healthBar.outer.width = 300; 
         }else{

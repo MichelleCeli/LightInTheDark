@@ -17,12 +17,12 @@ var World = Matter.World,
     
 
     //Ground sprite
-    ground = PIXI.Sprite.from('images/ground.png');
+    ground = PIXI.Sprite.from('./img/ground.png');
     ground.anchor.set(0.5);
     ground.position;
 
     //Platform sprite
-    platform = PIXI.Sprite.from('images/platform.png');
+    platform = PIXI.Sprite.from('./img/platform.png');
     platform.anchor.set(0.5);
     platform.position;
 

@@ -7,7 +7,7 @@ window.onload = function () {
 
      physicsObjects.push([
         playerBody,
-        player,
+        playerSprite,
     ]);
 
     physicsObjects.push([
