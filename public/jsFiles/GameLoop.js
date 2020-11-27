@@ -22,6 +22,10 @@ window.onload = function () {
 
 
     app.ticker.add(() => {
+        // ÄNDERUNG 27.11 - Alina
+        // Hintergrundbild wird immer wieder neu geladen und Schnelligkeit wird angepasst
+        // updateBg();
+        
         physicsObjects.forEach(element => {
             playerMovement();
             let body = element[0];
@@ -30,6 +34,7 @@ window.onload = function () {
             sprite.y = body.position.y;
             body.angle = 0;
         });
+
         
     });
 
