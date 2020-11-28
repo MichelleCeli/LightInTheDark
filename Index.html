@@ -1,24 +1,26 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>Light in the dark</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://use.typekit.net/svb4tcg.css">
+    <link rel="stylesheet" href="public/menu.css">
+    <title>Startmenu</title>
 </head>
 <body>
-    <div class="scene"></div>
-
-    <div class="bg-level1">
-        <div class="assets-lvl-1" id="bg"><img src="img/assets/background/background.PNG" alt=""></div>
-        <div class="assets-lvl-1" id="tree-bg"><img src="img/assets/background/trees_bg.PNG" alt=""></div>
-        <div class="assets-lvl-1" id="bush"><img src="img/assets/background/bush.PNG" alt=""></div>
-        <div class="assets-lvl-1" id="tree-fg"><img src="img/assets/background/trees_fg.PNG" alt=""></div>
-        <div class="assets-lvl-1" id="fg"><img src="img/assets/background/vordergrund.PNG" alt=""></div>
+<div class="screen">
+ <div id="containerStart" class="container">
+     <div id="title"><h1>Light in the Dark</h1></div>
+    <div id="name">
+        <div class="label">Name:</div>
+        <input type="text" class="input" size="50">
     </div>
-    <script src="js/pixi.min.js"></script>
-    <script src="js/matter.min.js"></script>
-    <script type="text/javascript" src="start.js"></script>
-    <script type="text/javascript" src="HealthAndLight.js"></script>
-    <script type="text/javascript" src="AvatarMovement.js"></script>
+    <div id="password">
+        <div class="label">Password:</div>
+        <input type="password" class="input" size="50">
+    </div>
+    <input type="button" id="logIn" class="button" value="Log In" onclick="window.location ='public/Menu.html'">
+     <input type="button" id="signIn" class="button" value="Sign In" onclick="window.location ='public/Menu.html'">
+</div>
+</div>
 </body>
 </html>
