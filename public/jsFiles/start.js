@@ -11,6 +11,9 @@ var bgMiddleTree;
 var bgFront;
 
 
+var SCREEN_HEIGHT = window.innerHeight;
+var SCREEN_WIDTH = window.innerWidth;
+
         var Engine = Matter.Engine;
         var engine = Engine.create();
         //const app = new PIXI.Application({autoResize: true, resolution: devicePixelRatio, anitalias: true, backgroundColor: 0x1099bb});
@@ -62,7 +65,7 @@ var bgFront;
         fireflySprite = PIXI.Sprite.from('./img/firefly.png');
         
         
-        bgBackSprite = PIXI.Sprite.from('./img/assets/background/background_1960x1080.png');
-        bgBackTreeSprite = PIXI.Sprite.from('./img/assets/background/trees_bg_1960x1080.png');
-        bgMiddleTreeSprite = PIXI.Sprite.from('./img/assets/background/trees_fg_1960x1080.png');
-        bgFrontSprite = PIXI.Sprite.from('./img/assets/background/front_1960x1080.png');
+        bgBackSprite = PIXI.Texture.from('./img/assets/background/background_1960x1080.png');
+        bgBackTreeSprite = PIXI.Texture.from('./img/assets/background/trees_bg_1960x1080.png');
+        bgMiddleTreeSprite = PIXI.Texture.from('./img/assets/background/trees_fg_1960x1080.png');
+        bgFrontSprite = PIXI.Texture.from('./img/assets/background/front_1960x1080.png');
