@@ -14,6 +14,7 @@ var World = Matter.World,
 
     World.add(engine.world, [playerBody, groundBody, platformBody]);
 
+    initLevel();
     
 
     //Ground sprite

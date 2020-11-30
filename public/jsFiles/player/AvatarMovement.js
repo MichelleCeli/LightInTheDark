@@ -18,11 +18,11 @@ function playerMovement(){
 
     if (keys["68"]) {
         Body.translate(playerBody, { x: 1, y: 0 });
-        //playerMoveToRight();
+       playerMoveToRight();
     }
     if (keys["65"]) {
         Body.translate(playerBody, { x: -1, y: 0 });
-        //playerMoveToLeft();
+        playerMoveToLeft();
     }
 
 
@@ -34,7 +34,9 @@ function playerMovement(){
         //healthBar.outer.radius = 10;
         }
     }
-    
+    if(playerBody.velocity.y == 0){
+        playerPause();
+    }
 
     if (hitTestRectangle(playerSprite, firefly) && firefly.visible == true && lightBar.outer.width < 300) {
         if(lightBar.outer.width+20 > 300){
