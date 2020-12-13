@@ -38,6 +38,37 @@ html, body {
             "left logIn right"
             "left signIn right";
 }
+#containerSignIn{
+    grid-template-rows: [title] 30% [email] 12.5% [name] 12.5% [password] 12.5% [repeatPassword] 12.5% [Sign In] 20%;
+    grid-template-columns: [left] 10% [center] 1fr [right] 10%;
+    grid-auto-flow: column;
+    grid-template-areas:
+            "left title right"
+            "left email right"
+            "left name right"
+            "left password right"
+            "left repeatPassword right"
+            "left signIn right";
+
+}
+#email{
+    display: flex;
+    grid-area: email;
+    justify-content: space-between;
+}
+#repeatPassword{
+    display: flex;
+    grid-area: repeatPassword;
+    justify-content: space-between;
+}
+#signInAction{
+    display: inline-block;
+    grid-area: signIn;
+    height: 40px;
+    width: 190px;
+    align-self: center;
+}
+
 #containerMenu{
     margin: 0 auto;
     display: block;
@@ -90,8 +121,8 @@ h2{
     font-weight: 700;
     font-style: normal;
     font-size: 25px;
-
 }
+
 #password{
     display: flex;
     grid-area: password;
@@ -100,7 +131,7 @@ h2{
 
 .button{
     background-color: rgba(67, 41, 24, 0);
-    height: 50px;
+    height: 40px;
     width: 190px;
     color: #DDDDC3;
     text-decoration: none;
@@ -133,7 +164,7 @@ h2{
     display: block;
 
     opacity: 1;
-    background-size: 190px 50px;
+    background-size: 190px 40px;
     position: absolute;
     transform: scale(0);
     transition:all ease-in-out 0.2s;
@@ -142,7 +173,7 @@ h2{
 
 .button:hover::before{
     background-position: center;
-    background-size: 190px 50px;
+    background-size: 190px 40px;
     transition:all ease-in-out 0.4s;
     transform: scale(1);
 
@@ -154,23 +185,42 @@ h2{
     grid-area: logIn;
     justify-self: end;
     height: 40px;
-    width: 175px;
+    width: 190px;
 
 }
 #signIn{
     display: inline-block;
     grid-area: signIn;
     height: 40px;
-    width: 175px;
+    width: 190px;
 
 }
 
 
 #alignMenu{
-    margin: 2% auto 2% auto;
-    width: 450px;
+    display: flex;
+/*    margin: 2% auto 2% auto;
+   width: 450px;*/
+height: 80%;
+    width: 100%;
+
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-content: space-around;
+    align-items: center;
+
 }
-#listMenu{
+a{
+    display: inline-block;
+ /*   height: 40px;
+    width: 175px;*/
+    height: 40px;
+    width: 175px;
+    margin: 0;
+    padding: 0;
+
+}
+/*#listMenu{
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -182,7 +232,7 @@ h2{
     height: 40px;
     width: 175px;
     margin: 20px 0px;
-}
+}*/
 
 @media only screen and (max-width: 600px) {
 
