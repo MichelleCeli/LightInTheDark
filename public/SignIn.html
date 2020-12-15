@@ -8,29 +8,29 @@
 </head>
 <body>
 <div class="screen">
-    <div id="containerSignIn" class="container">
+    <form id="containerSignIn" class="container" action="/register" method="POST">
         <div id="title"><h1>Light in the Dark</h1></div>
 
         <div id="email">
             <div class="label">Email:</div>
-            <input type="text" class="input" size="50">
+            <input type="text" class="input" size="50" name="email">
         </div>
         <div id="name">
             <div class="label">Name:</div>
-            <input type="text" class="input" size="50">
+            <input type="text" class="input" size="50" name="username">
         </div>
         <div id="password">
             <div class="label">Password:</div>
-            <input type="password" class="input" size="50">
+            <input type="password" class="input" size="50" name="password">
         </div>
         <div id="repeatPassword">
             <div class="label">Repeat Password:</div>
-            <input type="password" class="input" size="50">
+            <input type="password" class="input" size="50" name="passwordAgain">
         </div>
 
-        <a id="signInAction" title="Sign in" class="button" value="Sign in" onclick="window.location ='Menu.html'">Sign In</a>
-
-    </div>
+        <!-- <a id="signInAction" title="Sign in" class="button" value="Sign in" onclick="window.location ='Menu.html'">Sign In</a> -->
+        <button type="submit" id="signInAction" title="Sign in" class="button" value="Sign in">Sign In</button>
+    </form>
 </div>
 </body>
 </html>
