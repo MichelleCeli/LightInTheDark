@@ -66,15 +66,15 @@ app.stage.addChild(bgFront); */
             bgBack.tilePosition.x = bgX / 4;
         }
 
-        function playerMoveToLeft(){
+        function backgroundByLeftMove(){
             bgSpeed = 1;
         }
         
-        function playerMoveToRight(){
+        function backgroundByRightMove(){
             bgSpeed =  -1;
         }
         
-        function playerPause() {
+        function backgroundPause() {
             bgSpeed = 0;
         }
 

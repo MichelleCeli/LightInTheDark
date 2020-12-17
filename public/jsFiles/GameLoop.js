@@ -2,6 +2,7 @@
 let pauseBtn = document.getElementById('pause-btn');
 let pauseModal = document.getElementById('pause-modal');
 let resumeGame = document.getElementById('resume-game');
+let restartGame = document.getElementById('restart-game');
 let ticker = PIXI.Ticker.shared;
 
 window.onload = function () {
@@ -24,7 +25,7 @@ window.onload = function () {
         platform,
     ]); 
 
-
+    pauseModal.style.display = 'none';
     clickPause();
 
     ticker.add(() => {
@@ -49,6 +50,7 @@ window.onload = function () {
 function toggleModal() {
     if(pauseModal.style.display === 'none') {
         pauseModal.style.display = 'block';
+        pauseBtn.style.display = 'none';
     } else {
         pauseModal.style.display = 'none';
     }
@@ -64,6 +66,11 @@ function clickPause () {
     resumeGame.addEventListener('click', () => {
             this.toggleModal();
             ticker.start();
+            pauseBtn.style.display = 'block';
+    })
+
+    restartGame.addEventListener('click', () => {
+        location.reload();
     })
 }
 

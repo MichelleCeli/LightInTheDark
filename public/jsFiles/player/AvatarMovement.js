@@ -14,16 +14,16 @@ function playerMovement(){
 
     // Glühwürmchen-Anzeige
     if(lightBar.outer.width > 1){
-        lightBar.outer.width -= 0.05;  
+        lightBar.outer.width -= 0.05;
     }
 
     if (keys["68"]) {
         Body.translate(playerBody, { x: 1, y: 0 });
-       playerMoveToRight();
+       backgroundByRightMove();
     }
     if (keys["65"]) {
         Body.translate(playerBody, { x: -1, y: 0 });
-        playerMoveToLeft();
+        backgroundByLeftMove();
     }
 
 
@@ -36,7 +36,7 @@ function playerMovement(){
         }
     }
     if(playerBody.velocity.y == 0){
-        playerPause();
+        backgroundPause();
     }
 
     if (hitTestRectangle(playerSprite, firefly) && firefly.visible == true && lightBar.outer.width < 300) {
