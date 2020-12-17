@@ -1,4 +1,8 @@
 //let keys = {};
+let pauseBtn = document.getElementById('pause-btn');
+let pauseModal = document.getElementById('pause-modal');
+let resumeGame = document.getElementById('resume-game');
+let ticker = PIXI.Ticker.shared;
 
 window.onload = function () {
 
@@ -20,10 +24,10 @@ window.onload = function () {
         platform,
     ]); 
 
-    
 
+    clickPause();
 
-    app.ticker.add(() => {
+    ticker.add(() => {
         // ÄNDERUNG 27.11 - Alina
         // Hintergrundbild wird immer wieder neu geladen und Schnelligkeit wird angepasst
          updateBg();
@@ -36,12 +40,35 @@ window.onload = function () {
             sprite.y = body.position.y;
             body.angle = 0;
         });
-
-        
     });
 
     Engine.run(engine);
 }
+
+
+function toggleModal() {
+    if(pauseModal.style.display === 'none') {
+        pauseModal.style.display = 'block';
+    } else {
+        pauseModal.style.display = 'none';
+    }
+}
+
+// Pause Method
+function clickPause () {
+    pauseBtn.addEventListener('click', () => {
+        this.toggleModal();
+        console.log('it works, I guess?');
+        ticker.stop();
+    })
+    resumeGame.addEventListener('click', () => {
+            this.toggleModal();
+            ticker.start();
+    })
+}
+
+
+
 
 /* function keysDown(e) {
     keys[e.keyCode] = true;

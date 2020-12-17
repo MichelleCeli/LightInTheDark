@@ -2,12 +2,24 @@
 <html lang="de">
 <head>
     <meta charset="utf-8">
+    <link rel="stylesheet" href="https://use.typekit.net/svb4tcg.css">
     <link rel="stylesheet" href="./menu.css">
     <title>Light in the dark</title>
 </head>
 <body>
-    <div id="gameDiv"></div>
+    <div id="pause-btn">
+        <a href="#"><img src="img\assets\pause-btn.png" alt=""></a>
+    </div>
+    <div id="pause-modal">
+        <h2>Pause</h2>
+        <div id="modal-button">
+            <button id="resume-game" class="button">Weiter</button>
+            <button class="button">Neustart</button>
+            <button class="button">Spiel Beenden</button>
+        </div>
+    </div>
     <canvas id="canvas"></canvas>
+
 
      
     <script type="text/javascript" src="//cdn.jsdelivr.net/npm/pixi.js-legacy@5.2.1/dist/pixi-legacy.min.js"></script>
@@ -18,92 +30,5 @@
     <script type="text/javascript" src="jsFiles/player/HealthAndLight.js"></script>
     <script type="text/javascript" src="jsFiles/player/AvatarMovement.js"></script>
     <script type="text/javascript" src="jsFiles/GameLoop.js"></script>  
-
-<!--
-    <script>
-        let app;
-        let bgBack;
-        let bgBackTree; 
-        let bgMiddleTree;
-        let bgFront;
-        let bgX = 0;
-        let bgSpeed = 1;
-
-
-        window.onload = function () {
-            app = new PIXI.Application({
-                width: 1200,
-                height: 900,
-                backgroundColor: 0xAAAAAA
-            });
-
-            document.querySelector("#gameDiv").appendChild(app.view);
-
-            app.loader.baseUrl = "img/assets/background";
-            app.loader
-                .add("bgBack", "background_1960x1080.png")
-                .add("bgBackTree", "trees_bg_1960x1080.png")
-                .add("bgMiddleTree", "trees_fg_1960x1080.png")
-                .add("bgFront", "front_1960x1080.png");
-            
-            app.loader.onComplete.add(initLevel);
-            app.loader.load();
-
-            
-        }
-
-        function gameLoop(delta) {
-            updateBg();
-        }
-
-        function initLevel() {
-            bgBack = createBg(app.loader.resources["bgBack"].texture);
-            bgBackTree = createBg(app.loader.resources["bgBackTree"].texture);
-            bgMiddleTree = createBg(app.loader.resources["bgMiddleTree"].texture);
-            bgFront = createBg(app.loader.resources["bgFront"].texture);
-            
-            document.addEventListener("keyup", switchDir);
-
-            app.ticker.add(gameLoop);
-        }
-
-        // Texturen werden geladen
-        function createBg(texture) {
-            let tiling = new PIXI.TilingSprite(texture, 1200, 900);
-            tiling.position.set(0,0);
-            app.stage.addChild(tiling);
-
-            return tiling;
-        }
-
-        // Schnelligkeit der Hintergrundbilder
-        function updateBg() {
-            bgX = (bgX + bgSpeed);
-            bgMiddleTree.tilePosition.x = bgX;
-            bgBackTree.tilePosition.x = bgX / 2;
-            bgBack.tilePosition.x = bgX / 4;
-        }
-
-
-        // Schnelligkeit wird verändert, wenn man die Pfeiltasten vor oder zurück drückt.
-        // Spacebar stoppt scrolling
-        function switchDir(e) {
-            switch (e.keyCode) {
-                // linke Pfeiltaste
-                case 37:
-                    bgSpeed = bgSpeed +1;
-                    break;
-                // rechte Pfeiltaste
-                case 39:
-                    bgSpeed = bgSpeed -1;
-                    break;
-                // Spacebar
-                case 32:
-                    bgSpeed = 0;
-                    break;
-            }
-        }
-    </script>
-    -->  
 </body>
 </html>
