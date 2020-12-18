@@ -1,31 +1,31 @@
-const express = require('express');
-const { createDeflateRaw } = require('zlib');
+const express = require("express");
+const bodyParser = require("body-parser");
+const InitMongoServer = require("./helpers/db");
 const app = express();
 const port = 27017;
-var MongoClient = require('mongodb').MongoClient;
+var path = require("path");
+const { response } = require("express");
+const mongoose = require("mongoose");
+const MONGOURI = "mongodb://localhost:27017/";
 
-MongoClient.connect("mongodb://localhost:27017/", {useNewParser: true},
-  function(err, db) {
-if (err) throw err;
-console.log("Database connected!");
-db.close();
-});
-//const mongoose = require('mongoose');
-//mongoose.connect(`mongodb://localhost:27017`, {useNewUrlParser: true});
+//InitMongoServer();
+try {
+  mongoose.connect(MONGOURI, {useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true});
+  console.log("Connected to DB !!");
+} catch (e) {
+  console.log(e);
+  throw e;
+}
 
-/* const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function() {
-  // we're connected!
-}); */
+app.use(express.static("public"));
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true})); 
 
-app.use(express.static('public'));
-
-/* app.get('/', function(req, res) {
-  res.sendFile('public' + '/' + 'Startmenu.html');
-}) */
+var userService = require('./router/userService');
+app.use('/', userService);
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
-})
+});
+

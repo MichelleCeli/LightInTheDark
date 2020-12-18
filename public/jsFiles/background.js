@@ -1,85 +1,35 @@
-    var bgBack;
-    var bgBackTree;
-    var bgMiddleTree;
-    var bgFront;
-    var bgX = 0;
-    var bgSpeed = 0;
+export class Background extends Phaser.Scene{
+    constructor(){
+        super({key: 'Background'});
+    }
 
+    preload(){
+        this.load.image('bgBackSprite', './img/assets/background/background_1960x1080.png');
+        this.load.image('bgBackTreeSprite', './img/assets/background/trees_bg_1960x1080.png');
+        this.load.image('bgMiddleTreeSprite', './img/assets/background/trees_fg_1960x1080.png');
+        this.load.image('bgFrontSprite', './img/assets/background/front_1960x1080.png');
+    }
 
-        // Pfad für die Bilder wird festgelegt
-        /*
-        app.loader.baseUrl = "img/assets/background";
-        app.loader
-            .add("bgBack", "background_1960x1080.png")
-            .add("bgBackTree", "trees_bg_1960x1080.png")
-            .add("bgMiddleTree", "trees_fg_1960x1080.png")
-            .add("bgFront", "front_1960x1080.png");
-*/
+    create(){
+        const width = this.scale.width;
+        const height = this.scale.height;
 
-/* bgBack = bgBackSprite;
-bgBackSprite.position.set(0,0);
-console.log("Bild lädt");
-app.stage.addChild(bgBack);
+        //background
+        this.add.image(width * 0.5, height * 0.5, 'bgBackSprite')
+            .setScrollFactor(0);
 
-bgBackTree = bgBackTreeSprite;
-bgBackTree.position.set(0,0);
-app.stage.addChild(bgBackTree);
+        createAligned(this, 3, 'bgBackTreeSprite', 0.15);
+        createAligned(this, 3, 'bgMiddleTreeSprite', 0.3);
+        createAligned(this, 3, 'bgFrontSprite', 0.5);
+    }
 
+    createAligned(scene, count, texture, scrollFactor){
+        let x = scene.scale.width * 0.5;
+        for (let i = 0; i < count; ++i) {
+            const m = scene.add.image(x, scene.scale.height * 0.5, texture)
+                .setScrollFactor(scrollFactor)
 
-bgMiddleTree = bgMiddleTreeSprite;
-bgMiddleTree.position.set(0,0);
-app.stage.addChild(bgMiddleTree);
-
-bgFront = bgFrontSprite;
-bgFront.position.set(0,0);
-app.stage.addChild(bgFront); */
-
-
-        /* function initLevel() {
-            bgBack = createBg(app.loader.resources["bgBack"].texture);
-            bgBackTree = createBg(app.loader.resources["bgBackTree"].texture);
-            bgMiddleTree = createBg(app.loader.resources["bgMiddleTree"].texture);
-            bgFront = createBg(app.loader.resources["bgFront"].texture);
-        } */
-
-        function initLevel() {
-            bgBack = createBg(bgBackSprite);
-            bgBackTree = createBg(bgBackTreeSprite);
-            bgMiddleTree = createBg(bgMiddleTreeSprite);
-            bgFront = createBg(bgFrontSprite);
-        }
-
-        // Texturen werden geladen
-       function createBg(texture) {
-            let tiling = new PIXI.TilingSprite(texture, SCREEN_WIDTH, SCREEN_HEIGHT);
-            tiling.position.set(0,0);
-            app.stage.addChild(tiling);
-
-            return tiling;
-        }
-
-        // Schnelligkeit der Hintergrundbilder
-        function updateBg() {
-            bgX = (bgX + bgSpeed);
-            bgMiddleTree.tilePosition.x = bgX;
-            bgBackTree.tilePosition.x = bgX / 2;
-            bgBack.tilePosition.x = bgX / 4;
-        }
-
-        function playerMoveToLeft(){
-            bgSpeed = 1;
-        }
-        
-        function playerMoveToRight(){
-            bgSpeed =  -1;
-        }
-        
-        function playerPause() {
-            bgSpeed = 0;
-        }
-
-
-
-        //function initBackground(canvas) {
-        //    canvas.addChild();
-        //}
+            x += m.width
+    }
+}
+}
