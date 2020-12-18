@@ -12,6 +12,7 @@ function keysUp(e) {
 
 function playerMovement(){
 
+    // Glühwürmchen-Anzeige
     if(lightBar.outer.width > 1){
         lightBar.outer.width -= 0.05;  
     }

@@ -139,7 +139,7 @@ h2{
     cursor: pointer;
     border: 0px;
     position: relative;
-
+    margin: 10px 0;
 
     font-family: catseye, sans-serif;
     font-weight: 700;
@@ -233,6 +233,35 @@ a{
     width: 175px;
     margin: 20px 0px;
 }*/
+
+/** 
+Pause Modal
+Alina - 17.12.2020
+**/
+#pause-btn {
+    position: absolute;
+    right: 0;
+    top: 30px;
+}
+
+#pause-modal {
+    display: none;
+    position: absolute;
+    width: 250px;
+    height: 270px;
+    left: 50%;
+    margin-left:-150px;
+    top:20%;
+    background-color: rgba(0,0,0,0.5);
+    text-align: center;
+    padding: 20px 50px 50px 50px;
+    border-radius: 10px;
+}
+
+#modal-button {
+    padding: 15px 0;
+}
+
 
 @media only screen and (max-width: 600px) {
 
