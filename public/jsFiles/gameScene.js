@@ -15,6 +15,8 @@ export default class GameScene extends Phaser.Scene{
         this.load.image('tiles', './img/0x72-industrial-tileset-32px-extruded.png');
         this.load.image('marioTiles', './img/super-mario.png');
 
+        this.load.image('pause-btn', './img/assets/pause-btn.png');
+
         this.cursor = this.input.keyboard.createCursorKeys();
     }
 
@@ -33,6 +35,8 @@ export default class GameScene extends Phaser.Scene{
         createAligned(this, 3, 'bgMiddleTreeSprite', 0.3);
         createAligned(this, 3, 'bgFrontSprite', 0.5);
 
+   
+
         let gameOptions = 60;
 
         //healthbar, lightbar
@@ -45,6 +49,7 @@ export default class GameScene extends Phaser.Scene{
         this.healthMask = this.add.sprite(healthbar.x, healthbar.y, 'healthbar');
         this.healthMask.setScale(0.2);
         this.healthMask.visible = false;
+        
 
         let lightbarContainer = this.add.sprite(150, 100, 'barBg');
         lightbarContainer.setScale(0.2);
@@ -56,6 +61,8 @@ export default class GameScene extends Phaser.Scene{
 
         healthbar.mask = new Phaser.Display.Masks.BitmapMask(this, this.healthMask);
         lightbar.mask = new Phaser.Display.Masks.BitmapMask(this, this.lightMask);
+  
+
 
         /* this.gameTimer = this.time.addEvent({
                 delay: 1000,
@@ -84,52 +91,6 @@ export default class GameScene extends Phaser.Scene{
         platforms.create(750, 220, 'platform');
         platforms.create(100, height, 'platform');
 
-        //test
-        /* var level = [
-            [  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 1, 2, 3],
-            [  0,  1,  2,  3,  0,  0,  0,  1,  2,  3,  0 ],
-            [  0,  5,  6,  7,  0,  0,  0,  5,  6,  7,  0 ],
-            [  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 ],
-            [  0,  0,  0, 14, 13, 14,  0,  0,  0,  0,  0 ],
-            [  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 ],
-            [  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 ],
-            [  0,  0, 14, 14, 14, 14, 14,  0,  0,  0, 15 ],
-            [  0,  0,  0,  0,  0,  0,  0,  0,  0, 15, 15 ],
-            [ 35, 36, 37,  0,  0,  0,  0,  0, 15, 15, 15 ],
-            [ 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39 ],
-            [0],
-            [0],
-            [0],
-            [0],
-            [0],
-            [0],
-            [0],
-            [0],
-            [0],
-            [0],
-            [0],
-            [0],
-            [0],
-            [0],
-            [0],
-            [0],
-            [0],
-            [0],
-            [0],
-            [0],
-            [0],
-            [0],
-            [0],
-            [0],
-            [0],
-            [0, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39, 39]
-          ]
-      
-          // When loading from an array, make sure to specify the tileWidth and tileHeight
-          this.map = this.make.tilemap({ data: level, tileWidth: 16, tileHeight: 16 });
-          this.tiles = this.map.addTilesetImage('marioTiles');
-          this.layer = this.map.createLayer('layer', this.tiles, 0, 0);
-          this.layer.setCollisionByProperty({ collides: true }); */
 
         this.physics.world.setBoundsCollision(true, false, true, true);
         
@@ -175,8 +136,12 @@ this.cover.mask.invertAlpha = true
         
         this.renderTexture = rt */
 
+        //pause Button laden
+        let pauseBtn = this.add.image(width -50, height -800, 'pause-btn' );
+        
         
     }        
+
 
     update(){
         const cam = this.cameras.main;
@@ -198,7 +163,7 @@ this.cover.mask.invertAlpha = true
         }
 
         this.lightMask.x -= 0.2;
-}
+    }
 
 
 
@@ -210,7 +175,39 @@ const y = pointer.y - this.cover.y + this.cover.height * 0.5
 this.renderTexture.clear()
 this.renderTexture.draw(this.light, x, y)
 } */
+
 }
+
+
+// Alina 07.01.2020
+// Versuch den Pause Button einzufügen
+
+/*
+function createPauseScreen() {
+    //transparent rect
+    this.rect = this.add.graphics({ x: 0, y: 0 });
+    this.rect.fillStyle('0x000000', 0.3);
+    this.rect.fillRect(0, 0, this.CONFIG.width, this.CONFIG.height);
+    this.rect.setDepth(this.DEPTH.ui);
+    this.rect.setScrollFactor(0);
+    
+    //Pause Text
+    this.txt_pause = new Text (
+        this, this.CONFIG.centerX, this.CONFIG.centerY -32,
+        'Pause', 'title'
+    );
+    this.txt_pause.setDepth(this.DEPTH.ui);
+    this.txt_pause.setScrollFactor(0);
+
+    // Hiding at start
+    this.togglePauseScreen(false);
+}
+
+function togglePauseScreen(isVisible) {
+    this.rect.setVisible(isVisible);
+    this.txt_pause.setVisible(isVisible);
+}
+*/
 
 const createAligned = (scene, count, texture, scrollFactor) => {
     let x = scene.scale.width*0.5;
@@ -219,5 +216,5 @@ for(let i = 0; i < count; ++i){
                 .setScrollFactor(scrollFactor)
         
         x += m.width
-}
+    }
 }
