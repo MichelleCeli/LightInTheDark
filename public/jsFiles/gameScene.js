@@ -6,8 +6,8 @@ export default class GameScene extends Phaser.Scene{
         this.load.image('bgBackTreeSprite', './img/assets/background/trees_bg_1960x1080.png');
         this.load.image('bgMiddleTreeSprite', './img/assets/background/trees_fg_1960x1080.png');
         this.load.image('bgFrontSprite', './img/assets/background/front_1960x1080.png');
-        this.load.image('platform', './img/platt.png');
-        this.load.image('player', './img/player.png');
+        this.load.image('platform', './img/platform.png');
+        this.load.spritesheet('player', './img/assets/player.png',  { frameWidth: 80, frameHeight: 75 });
         this.load.image('barBg', './img/healthbar.png');
         this.load.image('healthbar', './img/healthbar_red.png');
         this.load.image('lightbar', './img/lightbar_yellow.png');
@@ -104,6 +104,26 @@ export default class GameScene extends Phaser.Scene{
         this.player.setCollideWorldBounds(true);
         this.physics.add.collider(this.player, platforms);
 
+        this.anims.create({
+            key: 'left',
+            frames: this.anims.generateFrameNumbers('player', { start: 0, end: 4 }),
+            frameRate: 8,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'turn',
+            frames: [ { key: 'player', frame: 5 } ],
+            frameRate: 20
+        });
+
+        this.anims.create({
+            key: 'right',
+            frames: this.anims.generateFrameNumbers('player', { start: 6, end: 9 }),
+            frameRate: 8,
+            repeat: -1
+        });
+
         this.spotlight = this.make.graphics();
         this.spotlight.fillStyle(0xfffffff);
         this.spotlight.fillCircle(0, 0, 128);
@@ -122,18 +142,23 @@ export default class GameScene extends Phaser.Scene{
         if(this.cursor.left.isDown){
             cam.scrollX -= speed;
             this.player.setVelocityX(-160);
+            this.player.anims.play('left', true);
 
         }else if(this.cursor.right.isDown){
             cam.scrollX += speed
             this.player.setVelocityX(160);
+            this.player.anims.play('right', true);
+
         }else{
             this.player.setVelocityX(0);
+            this.player.anims.play('turn');
         }
 
         if (this.cursor.up.isDown && this.player.body.touching.down)
         {
                 this.player.setVelocityY(-330);
         }
+
         this.spotlight.setPosition(this.player.x, this.player.y);
         if(this.spotlight.scale > 0.4){
              this.spotlight.scale -= 0.0008;
