@@ -1,15 +1,20 @@
 import GameScene from './gameScene.js';
 
 var config = {
+    type: Phaser.AUTO,
     width: window.innerWidth,
     height: window.innerHeight,
     physics: {
         default: 'arcade',
         arcade: {
+            gravity: { y: 200 },
+
         }
     },
     scene: GameScene
 };
+
+var game = new Phaser.Game(config);
         
             function preload ()
             {
@@ -25,10 +30,9 @@ var config = {
                 this.load.spritesheet('ground', './img/ground.png', {frameWidth: 400, frameHeight: 100});
                 this.load.image('thorns', './img/thorns.png');
                 this.load.image('crystal', './img/crystal_small.png');
-            gravity: { y: 200 }
-    type: Phaser.AUTO,
 
-var game = new Phaser.Game(config);
+
+
 
 
                 //tilemap

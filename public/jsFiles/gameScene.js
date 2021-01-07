@@ -22,6 +22,7 @@ export default class GameScene extends Phaser.Scene{
 
     create ()
     {
+        console.log("hallo");
         const width = this.scale.width;
         const height = this.scale.height;
 
