@@ -1,23 +1,28 @@
 export default class GameScene extends Phaser.Scene{
 
+
+
     preload ()
     {
         this.load.image('bgBackSprite', './img/assets/background/background_1960x1080.png');
         this.load.image('bgBackTreeSprite', './img/assets/background/trees_bg_1960x1080.png');
         this.load.image('bgMiddleTreeSprite', './img/assets/background/trees_fg_1960x1080.png');
         this.load.image('bgFrontSprite', './img/assets/background/front_1960x1080.png');
-        this.load.image('platform', './img/platform.png');
         this.load.spritesheet('player', './img/assets/player.png',  { frameWidth: 80, frameHeight: 75 });
         this.load.image('barBg', './img/healthbar.png');
         this.load.image('healthbar', './img/healthbar_red.png');
         this.load.image('lightbar', './img/lightbar_yellow.png');
 
-        this.load.image('tiles', './img/0x72-industrial-tileset-32px-extruded.png');
-        this.load.image('marioTiles', './img/super-mario.png');
+        // tilemap
+        this.load.image("basement", "./img/assets/maps/basement.png");
+        this.load.tilemapTiledJSON("map", "./img/assets/maps/map.json");
 
         this.load.image('pause-btn', './img/assets/pause-btn.png');
 
         this.cursor = this.input.keyboard.createCursorKeys();
+
+
+
     }
 
     
@@ -54,11 +59,14 @@ export default class GameScene extends Phaser.Scene{
         let healthbar = this.add.sprite(healthbarContainer.x, healthbarContainer.y, 'healthbar');
         healthbar.setScale(0.2);
         healthbar.setScrollFactor(0);
+        healthbar.setDepth(2);
         this.healthMask = this.add.sprite(healthbar.x, healthbar.y, 'healthbar');
         this.healthMask.setScale(0.2);
         this.healthMask.setScrollFactor(0);
+        this.healthMask.setDepth(2);
         this.healthMask.visible = false;
         
+
 
         let lightbarContainer = this.add.sprite(150, 100, 'barBg');
         lightbarContainer.setScale(0.2);
@@ -66,10 +74,13 @@ export default class GameScene extends Phaser.Scene{
         let lightbar = this.add.sprite(lightbarContainer.x, lightbarContainer.y, 'lightbar');
         lightbar.setScale(0.2);
         lightbar.setScrollFactor(0);
+        lightbar.setDepth(2);
         this.lightMask = this.add.sprite(lightbar.x, lightbar.y, 'lightbar');
         this.lightMask.setScale(0.2);
         this.lightMask.setScrollFactor(0);
+        this.lightMask.setDepth(2);
         this.lightMask.visible = false;
+
 
         healthbar.mask = new Phaser.Display.Masks.BitmapMask(this, this.healthMask);
         lightbar.mask = new Phaser.Display.Masks.BitmapMask(this, this.lightMask);
@@ -95,22 +106,14 @@ export default class GameScene extends Phaser.Scene{
                 loop: true
             }); */
 
-        //platforms
-        const platforms = this.physics.add.staticGroup();
-        platforms.create(400, 568, 'platform').setScale(2).refreshBody();
-        platforms.create(600, 400, 'platform');
-        platforms.create(50, 250, 'platform');
-        platforms.create(750, 220, 'platform');
-        platforms.create(100, height, 'platform');
 
 
         this.physics.world.setBoundsCollision(true, false, true, true);
-        
+
 
         this.player = this.physics.add.sprite(200, 450, 'player');
         this.player.setBounce(0.2);
         this.player.setCollideWorldBounds(true);
-        this.physics.add.collider(this.player, platforms);
 
         this.anims.create({
             key: 'left',
@@ -139,8 +142,31 @@ export default class GameScene extends Phaser.Scene{
         const mask = this.spotlight.createGeometryMask();
         mask.setInvertAlpha(true);
         cover.setMask(mask);
+        cover.setDepth(1);
 
         this.cameras.main.setBounds(0,0, width * 3, height);
+
+
+
+
+
+        /* crystals = this.physics.add.staticGroup();
+         crystals.create(400, 520, 'crystal');*/
+
+        // tilemap
+
+        const map = this.make.tilemap({ key: "map" });
+
+        // Parameters are the name you gave the tileset in Tiled and then the key of the tileset image in
+        // Phaser's cache (i.e. the name you used in preload)
+        const tileset = map.addTilesetImage("basement", "basement"); //.png???
+
+        // Parameters: layer name (or index) from Tiled, tileset, x, y
+        const mapLayer = map.createStaticLayer("mapLayer", tileset, 0, height-1000);
+
+        // set collision
+        mapLayer.setCollisionByProperty({collides : true});
+        this.physics.add.collider(this.player, mapLayer);
         
     }        
 
@@ -163,7 +189,7 @@ export default class GameScene extends Phaser.Scene{
             this.player.anims.play('turn');
         }
 
-        if (this.cursor.up.isDown && this.player.body.touching.down)
+        if (this.cursor.up.isDown && this.player.body.onFloor() /*this.player.body.touching.down*/)
         {
                 this.player.setVelocityY(-330);
         }
