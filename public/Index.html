@@ -1,63 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://use.typekit.net/svb4tcg.css">
     <link rel="stylesheet" href="menu.css">
     <title>Startmenu</title>
 </head>
+
 <body>
-<div class="screen">
- <form id="containerStart" class="container" method="POST" action="/login"> 
-     <div id="title"><h1>Light in the Dark</h1></div>
-    <div id="name">
-        <div class="label">Name:</div>
-        <input type="text" class="input" size="50" id="usernameInput" name="username">
-    </div>
-    <div id="password">
-        <div class="label">Password:</div>
-        <input type="password" class="input" size="50" id="passwordInput" name="password">
-    </div>
-    <div id="message"></div>
-     <!-- <a id="logIn" title="Log in" class="button" value="Log in" onclick="window.location ='Menu.html'">Log In</a> -->
-     <button type="submit" id="logIn" title="Log in" class="button" value="Log in">Log In</button>
-     <a id="signIn" title="Sign in" class="button" value="Sign in" onclick="window.location ='SignIn.html'">Sign In</a>
+    <div class="screen">
+        <form id="containerStart" class="container" method="POST" action="/login">
+            <div id="title">
+                <h1>Light in the Dark</h1>
+            </div>
+            <div id="name">
+                <div class="label">Name:</div>
+                <input type="text" class="input" size="50" id="usernameInput" name="username">
+            </div>
+            <div id="password">
+                <div class="label">Password:</div>
+                <input type="password" class="input" size="50" id="passwordInput" name="password">
+            </div>
+            <div id="message" class="label"></div>
+            <!-- <a id="logIn" title="Log in" class="button" value="Log in" onclick="window.location ='Menu.html'">Log In</a> -->
+            <button type="submit" id="logIn" title="Log in" class="button" value="Log in">Log In</button>
+            <a id="signIn" title="Sign in" class="button" value="Sign in" onclick="window.location ='SignIn.html'">Sign
+                In</a>
 
-</form>
-</div>
-<script>
-    /* var xhr = null;
-    if(window.XMLHttpRequest){
-        xhr = new XMLHttpRequest();
-    }
-    var url = ""
-    xhr.open("GET", url, true);
-    xhr.setRequestHeader("Conent-Type", "application/json");
-    xhr.onreadystatechange = functionName;
-    function functionName (){
-        if(this.readyState == 4 && this.status == 200){
-            var message = this.responseText;
-            document.getElementById("message").innerHTML = message;
-        }
-    } */
+        </form>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript">
 
-    $(document).ready(function(){
-        $('#containerStart').submit(function(e){
-            e.preventDefault();
-            $.ajax({
-                url: "http://localhost:27017/login",
-                type: "POST",
-                data: JSON.stringify(data),
-                data: {
-                    'username': $('#usernameInput').val(),
-                    'password': $('#passwordInput').val()
-                },
-                error: function(){
-                    $('#message').html("This user doesn't exist");
-                }
-            })
-        })
-    })
-</script>
+         $(document).ready(function () {
+            $('form').on('submit', function (e) {
+                // keep the form from submitting synchronously
+                e.preventDefault();
+
+                var $form = $(e.currentTarget);
+
+                // submit via ajax
+                $.ajax({
+                    url: $form.attr('action'),
+                    method: $form.attr('method'),
+                    data: $form.serialize(),
+                    error: $('#message').html("Falscher Usernamen und/oder Passwort")
+                    
+                })
+                     .done(function (response) {
+                        console.log('done: ', arguments);
+                        location.href = "Menu.html";
+                    })
+            });
+        }); 
+    </script>
 </body>
+
 </html>

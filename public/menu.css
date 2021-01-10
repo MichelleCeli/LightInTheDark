@@ -28,13 +28,14 @@ html, body {
     display: grid;
 }
 #containerStart{
-    grid-template-rows: [title] 30% [name]15% [password] 15% [logIn] 15% [Sign In] 25%;
+    grid-template-rows: [title] 30% [name]15% [password] 15% [message] 8% [logIn] 15% [Sign In] 25%;
     grid-template-columns: [left] 10% [center] 1fr [right] 10%;
     grid-auto-flow: column;
     grid-template-areas:
             "left title right"
             "left name right"
             "left password right"
+            "left message right"
             "left logIn right"
             "left signIn right";
 }
@@ -130,6 +131,13 @@ h2{
     justify-content: space-between;
 }
 
+#message{
+    display: inline-block;
+    grid-area: message;
+    font-size: 15px;
+    justify-self: end;
+}
+
 .button{
     background-color: rgba(67, 41, 24, 0);
     height: 40px;
@@ -221,6 +229,7 @@ a{
     padding: 0;
 
 }
+
 /*#listMenu{
     list-style-type: none;
     margin: 0;
