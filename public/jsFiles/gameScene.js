@@ -168,7 +168,26 @@ export default class GameScene extends Phaser.Scene{
         mapLayer.setCollisionByProperty({collides : true});
         this.physics.add.collider(this.player, mapLayer);
         
-    }        
+
+
+        //pause Button laden
+        /*
+        let pauseBtn = this.add.image(width - 100, 100, 'pause-btn' );
+        pauseBtn.setInteractive();
+        pauseBtn.setScrollFactor(0);
+        
+        pauseBtn.on('pointerdown', () => {
+            console.log('Works');
+            let rect = this.add.graphics({ x: 0, y: 0 });
+            rect.fillStyle('0x000000', 0.8);
+            rect.fillRect(0, 0, width, height);
+            rect.setScrollFactor(0);
+
+            this.scene.pause();
+        });
+        */
+
+    }
 
 
     update(){
@@ -242,6 +261,4 @@ for(let i = 0; i < count; ++i){
         
         x += m.width
     }
-}
-
 }
