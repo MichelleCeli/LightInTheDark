@@ -1,3 +1,6 @@
+let player;
+let direction = '';
+
 export default class GameScene extends Phaser.Scene{
 
 
@@ -23,11 +26,8 @@ export default class GameScene extends Phaser.Scene{
         this.cursor = this.input.keyboard.createCursorKeys();
     }
 
-    
-
     create ()
     {
-        console.log("hallo");
         const width = this.scale.width;
         const height = this.scale.height;
 
@@ -54,6 +54,7 @@ export default class GameScene extends Phaser.Scene{
         let healthbarContainer = this.add.sprite(150, 50, 'barBg');
         healthbarContainer.setScale(0.2);
         healthbarContainer.setScrollFactor(0);
+        healthbarContainer.setDepth(2);
         let healthbar = this.add.sprite(healthbarContainer.x, healthbarContainer.y, 'healthbar');
         healthbar.setScale(0.2);
         healthbar.setScrollFactor(0);
@@ -69,6 +70,7 @@ export default class GameScene extends Phaser.Scene{
         let lightbarContainer = this.add.sprite(150, 100, 'barBg');
         lightbarContainer.setScale(0.2);
         lightbarContainer.setScrollFactor(0);
+        lightbarContainer.setDepth(2);
         let lightbar = this.add.sprite(lightbarContainer.x, lightbarContainer.y, 'lightbar');
         lightbar.setScale(0.2);
         lightbar.setScrollFactor(0);
@@ -116,19 +118,26 @@ export default class GameScene extends Phaser.Scene{
             frames: this.anims.generateFrameNumbers('player', { start: 0, end: 4 }),
             frameRate: 8,
             repeat: -1
+
         });
 
         this.anims.create({
-            key: 'turn',
+            key: 'turnFromRight',
             frames: [ { key: 'player', frame: 5 } ],
+            frameRate: 20
+        });
+        this.anims.create({
+            key: 'turnFromLeft',
+            frames: [ { key: 'player', frame: 4 } ],
             frameRate: 20
         });
 
         this.anims.create({
             key: 'right',
-            frames: this.anims.generateFrameNumbers('player', { start: 6, end: 9 }),
+            frames: this.anims.generateFrameNumbers('player', { start: 5, end: 9 }),
             frameRate: 8,
-            repeat: -1
+            repeat: -1,
+
         });
 
         this.spotlight = this.make.graphics();
@@ -163,29 +172,34 @@ export default class GameScene extends Phaser.Scene{
 
 
     update(){
-        const cam = this.cameras.main;
-        const speed = 1;
+     /*   this.player.body.setVelocity(0); Fix bugs??? */
+
         if(this.cursor.left.isDown){
-            cam.scrollX -= speed;
-            this.player.setVelocityX(-160);
-            this.player.anims.play('left', true);
+            player.setVelocityX(-160);
+            player.anims.play('left', true);
+            direction = 'left';
 
         }else if(this.cursor.right.isDown){
-            cam.scrollX += speed
-            this.player.setVelocityX(160);
-            this.player.anims.play('right', true);
+            player.setVelocityX(160);
+            player.anims.play('right', true);
+            direction = 'right';
 
         }else{
-            this.player.setVelocityX(0);
-            this.player.anims.play('turn');
+            player.setVelocityX(0);
+
+            if(direction === 'right') {
+                player.anims.play('turnFromRight');
+            } else {
+                player.anims.play('turnFromLeft');
+            }
         }
 
-        if (this.cursor.up.isDown && this.player.body.onFloor() /*this.player.body.touching.down*/)
+        if (this.cursor.up.isDown && player.body.onFloor() /*this.player.body.touching.down*/)
         {
-                this.player.setVelocityY(-330);
+                player.setVelocityY(-330);
         }
 
-        this.spotlight.setPosition(this.player.x, this.player.y);
+        this.spotlight.setPosition(player.x, player.y);
         if(this.spotlight.scale > 0.4){
              this.spotlight.scale -= 0.0008;
         }
