@@ -12,6 +12,7 @@ export default class GameScene extends Phaser.Scene{
         this.load.image('barBg', './img/healthbar.png');
         this.load.image('healthbar', './img/healthbar_red.png');
         this.load.image('lightbar', './img/lightbar_yellow.png');
+        this.load.image('crystal', './img/crystal_small.png');
 
         // tilemap
         this.load.image("basement", "./img/assets/maps/basement.png");
@@ -20,9 +21,6 @@ export default class GameScene extends Phaser.Scene{
         this.load.image('pause-btn', './img/assets/pause-btn.png');
 
         this.cursor = this.input.keyboard.createCursorKeys();
-
-
-
     }
 
     
@@ -86,30 +84,28 @@ export default class GameScene extends Phaser.Scene{
         lightbar.mask = new Phaser.Display.Masks.BitmapMask(this, this.lightMask);
   
 
+        // Kristalle einfügen
 
-        /* this.gameTimer = this.time.addEvent({
-                delay: 1000,
-                callback: function(){
-                    this.timeLeft --;
-     
-                    // dividing enery bar width by the number of seconds gives us the amount
-                    // of pixels we need to move the energy bar each second
-                    let stepWidth = this.healthMask.displayWidth / gameOptions.initialTime;
-     
-                    // moving the mask
-                    this.healthMask.x -= stepWidth;
-                    if(this.timeLeft == 0){
-                        //this.scene.start("PlayGame")
-                    }
-                },
-                callbackScope: this,
-                loop: true
-            }); */
+        let crystal = this.add.sprite(500, 510, 'crystal');
+        crystal.setScrollFactor(1);
+
+        crystal = this.physics.add.group({
+            key: 'crystal',
+            repeat: 3,
+            setXY: { x: 750, y: 0, stepX: Phaser.Math.FloatBetween(300, 800) }
+        });
+        
+        crystal.children.iterate(function (child) {
+        
+            child.setBounceY(Phaser.Math.FloatBetween(0.1, 0.4));
+        
+        });
+        
+
 
 
 
         this.physics.world.setBoundsCollision(true, false, true, true);
-
 
         this.player = this.physics.add.sprite(200, 450, 'player');
         this.player.setBounce(0.2);
@@ -147,12 +143,6 @@ export default class GameScene extends Phaser.Scene{
         this.cameras.main.setBounds(0,0, width * 3, height);
 
 
-
-
-
-        /* crystals = this.physics.add.staticGroup();
-         crystals.create(400, 520, 'crystal');*/
-
         // tilemap
 
         const map = this.make.tilemap({ key: "map" });
@@ -167,25 +157,7 @@ export default class GameScene extends Phaser.Scene{
         // set collision
         mapLayer.setCollisionByProperty({collides : true});
         this.physics.add.collider(this.player, mapLayer);
-        
-
-
-        //pause Button laden
-        /*
-        let pauseBtn = this.add.image(width - 100, 100, 'pause-btn' );
-        pauseBtn.setInteractive();
-        pauseBtn.setScrollFactor(0);
-        
-        pauseBtn.on('pointerdown', () => {
-            console.log('Works');
-            let rect = this.add.graphics({ x: 0, y: 0 });
-            rect.fillStyle('0x000000', 0.8);
-            rect.fillRect(0, 0, width, height);
-            rect.setScrollFactor(0);
-
-            this.scene.pause();
-        });
-        */
+        this.physics.add.collider(crystal, mapLayer);
 
     }
 
@@ -223,35 +195,6 @@ export default class GameScene extends Phaser.Scene{
 }
 
 
-// Alina 07.01.2020
-// Versuch den Pause Button einzufügen
-
-/*
-function createPauseScreen() {
-    //transparent rect
-    this.rect = this.add.graphics({ x: 0, y: 0 });
-    this.rect.fillStyle('0x000000', 0.3);
-    this.rect.fillRect(0, 0, this.CONFIG.width, this.CONFIG.height);
-    this.rect.setDepth(this.DEPTH.ui);
-    this.rect.setScrollFactor(0);
-    
-    //Pause Text
-    this.txt_pause = new Text (
-        this, this.CONFIG.centerX, this.CONFIG.centerY -32,
-        'Pause', 'title'
-    );
-    this.txt_pause.setDepth(this.DEPTH.ui);
-    this.txt_pause.setScrollFactor(0);
-
-    // Hiding at start
-    this.togglePauseScreen(false);
-}
-
-function togglePauseScreen(isVisible) {
-    this.rect.setVisible(isVisible);
-    this.txt_pause.setVisible(isVisible);
-}
-*/
 
 const createAligned = (scene, count, texture, scrollFactor) => {
     let x = scene.scale.width*0.5;
