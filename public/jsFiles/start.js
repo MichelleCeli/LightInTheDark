@@ -8,11 +8,10 @@ var config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 500 },
-
         }
     },
     scene: GameScene,
-  };
+};
   
 var game = new Phaser.Game(config);
 

@@ -3,8 +3,6 @@ let direction = '';
 
 export default class GameScene extends Phaser.Scene{
 
-
-
     preload ()
     {
         this.load.image('bgBackSprite', './img/assets/background/background_1960x1080.png');
@@ -104,14 +102,11 @@ export default class GameScene extends Phaser.Scene{
         });
         
 
-
-
-
         this.physics.world.setBoundsCollision(true, false, true, true);
 
-        this.player = this.physics.add.sprite(200, 450, 'player');
-        this.player.setBounce(0.2);
-        this.player.setCollideWorldBounds(true);
+        player = this.physics.add.sprite(200, 450, 'player');
+        player.setBounce(0.2);
+        player.setCollideWorldBounds(true);
 
         this.anims.create({
             key: 'left',
@@ -155,6 +150,8 @@ export default class GameScene extends Phaser.Scene{
         // tilemap
 
         const map = this.make.tilemap({ key: "map" });
+        
+
 
         // Parameters are the name you gave the tileset in Tiled and then the key of the tileset image in
         // Phaser's cache (i.e. the name you used in preload)
@@ -165,8 +162,12 @@ export default class GameScene extends Phaser.Scene{
 
         // set collision
         mapLayer.setCollisionByProperty({collides : true});
-        this.physics.add.collider(this.player, mapLayer);
+        this.physics.add.collider(player, mapLayer);
         this.physics.add.collider(crystal, mapLayer);
+
+        const camera = this.cameras.main;
+        camera.startFollow(player);
+        camera.setBounds(0, 0, map.widthInPixels, height-1000);
 
     }
 
@@ -186,7 +187,6 @@ export default class GameScene extends Phaser.Scene{
 
         }else{
             player.setVelocityX(0);
-
             if(direction === 'right') {
                 player.anims.play('turnFromRight');
             } else {
