@@ -179,10 +179,13 @@ export default class GameScene extends Phaser.Scene{
             player.setVelocityY(-380);
             healthMask.x -= 99;
         });
-        this.physics.add.collider(crystal, ground);
 
-        // Check overlap between Crystal and Player
+        this.physics.add.collider(crystal, ground);
+        this.physics.add.collider(enemy, ground);
+
+        // Check overlap between Crystal, Enemy and Player
         this.physics.add.overlap(player, crystal, collectCrystal, null, this);
+        this.physics.add.overlap(player, enemy, hitEnemy, null, this);
         
         function collectCrystal (player, crystal) {
             crystal.disableBody(true, true);
