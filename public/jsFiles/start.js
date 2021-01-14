@@ -20,10 +20,12 @@ let pauseModal = document.getElementById("pause-modal");
 let resumeGame = document.getElementById("resume-game");
 let restartGame = document.getElementById("restart-game");
 
+/*
 function clickPause() {
   pauseBtn.addEventListener("click", () => {
     toggleModal();
     //GameScene.paused;
+    //game.pauseGame();
     console.log("it works, I guess?");
   });
 
@@ -52,3 +54,4 @@ function clickPause() {
 //Pause Button
 pauseModal.style.display = "none";
 clickPause();
+*/

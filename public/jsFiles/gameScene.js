@@ -14,6 +14,7 @@ export default class GameScene extends Phaser.Scene{
         this.load.image('healthbar', './img/healthbar_red.png');
         this.load.image('lightbar', './img/lightbar_yellow.png');
         this.load.image('crystal', './img/crystal_small.png');
+        this.load.image('enemy', './img/enemy.png');
 
         // tilemap
         this.load.image("basement", "./img/assets/maps/basement.png");
@@ -36,8 +37,6 @@ export default class GameScene extends Phaser.Scene{
         const bg2 = createAligned(this, 3, 'bgBackTreeSprite', 0.15);
         const bg3 = createAligned(this, 3, 'bgMiddleTreeSprite', 0.3);
         const bg4 = createAligned(this, 3, 'bgFrontSprite', 0.5);
-
-   
 
         let gameOptions = 60;
 
@@ -62,7 +61,6 @@ export default class GameScene extends Phaser.Scene{
         this.healthMask.setScrollFactor(0);
         this.healthMask.setDepth(2);
         this.healthMask.visible = false;
-        
 
 
         let lightbarContainer = this.add.sprite(150, 100, 'barBg');
@@ -86,7 +84,7 @@ export default class GameScene extends Phaser.Scene{
 
         // Kristalle einfügen
 
-        let crystal = this.add.sprite(500, 510, 'crystal');
+        let crystal = this.add.sprite('crystal');
         crystal.setScrollFactor(1);
 
         crystal = this.physics.add.group({
@@ -96,11 +94,28 @@ export default class GameScene extends Phaser.Scene{
         });
         
         crystal.children.iterate(function (child) {
-        
             child.setBounceY(Phaser.Math.FloatBetween(0.1, 0.4));
-        
         });
         
+
+        // Gegner einfügen
+
+        let enemy = this.add.sprite('enemy');
+        enemy.setScrollFactor(1);
+
+        enemy = this.physics.add.group({
+            key: 'enemy',
+            repeat: 5,
+            setXY: { x: 400, y: 0, stepX: Phaser.Math.FloatBetween(300, width) },
+        });
+
+        enemy.children.iterate(function (child) {
+            child.setBounce(0.4);
+            child.setVelocity(Phaser.Math.Between(-10, 10), 0);
+        })
+
+
+//////////////////////////////
 
         this.physics.world.setBoundsCollision(true, false, true, true);
 
@@ -132,7 +147,6 @@ export default class GameScene extends Phaser.Scene{
             frames: this.anims.generateFrameNumbers('player', { start: 5, end: 9 }),
             frameRate: 8,
             repeat: -1,
-
         });
 
         this.spotlight = this.make.graphics();
@@ -164,11 +178,35 @@ export default class GameScene extends Phaser.Scene{
         mapLayer.setCollisionByProperty({collides : true});
         this.physics.add.collider(player, mapLayer);
         this.physics.add.collider(crystal, mapLayer);
+        this.physics.add.collider(enemy, mapLayer);
+        this.physics.add.collider(player, enemy, hitEnemy, null, this);
 
+        // Check overlap between Crystal and Player
+        this.physics.add.overlap(player, crystal, collectCrystal, null, this);
+        
+        function collectCrystal (player, crystal) {
+            crystal.disableBody(true, true);
+        }
+
+        // Enemy Collision
+        function hitEnemy (player, enemy) {
+            this.physics.pause();
+            player.setTint(0xff0000);
+            gameOver = true;
+        }
+
+        // Kamera Einstellungen
         const camera = this.cameras.main;
         camera.startFollow(player);
         camera.setBounds(0, 0, map.widthInPixels, height-1000);
 
+/*
+        function pauseGame (player) {
+            player.disableBody(true);
+            this.physics.pause();
+            gameOver = true;
+        }
+*/
     }
 
 
@@ -196,7 +234,7 @@ export default class GameScene extends Phaser.Scene{
 
         if (this.cursor.up.isDown && player.body.onFloor() /*this.player.body.touching.down*/)
         {
-                player.setVelocityY(-330);
+                player.setVelocityY(-380);
         }
 
         this.spotlight.setPosition(player.x, player.y);
@@ -219,3 +257,42 @@ for(let i = 0; i < count; ++i){
         x += m.width
     }
 }
+
+
+let pauseBtn = document.getElementById("pause-btn");
+let pauseModal = document.getElementById("pause-modal");
+let resumeGame = document.getElementById("resume-game");
+let restartGame = document.getElementById("restart-game");
+
+function clickPause() {
+  pauseBtn.addEventListener("click", () => {
+    toggleModal();
+    player.disableBody(true);
+    console.log("it works, I guess?");
+  });
+
+  function toggleModal() {
+    if (pauseModal.style.display === "none") {
+      pauseModal.style.display = "block";
+      pauseBtn.style.display = "none";
+    } else {
+      pauseModal.style.display = "none";
+    }
+  }
+
+  resumeGame.addEventListener("click", () => {
+    toggleModal();
+    console.log("Ich bin hier....");
+    pauseBtn.style.display = "block";
+    player.disableBody(false);
+  });
+
+  restartGame.addEventListener("click", () => {
+    location.reload();
+  });
+}
+
+
+//Pause Button
+pauseModal.style.display = "none";
+clickPause();
