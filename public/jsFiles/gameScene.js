@@ -1,5 +1,6 @@
 let player;
 let direction = '';
+var spikeGroup;
 
 export default class GameScene extends Phaser.Scene{
 
@@ -56,11 +57,12 @@ export default class GameScene extends Phaser.Scene{
         healthbar.setScale(0.2);
         healthbar.setScrollFactor(0);
         healthbar.setDepth(2);
-        this.healthMask = this.add.sprite(healthbar.x, healthbar.y, 'healthbar');
-        this.healthMask.setScale(0.2);
-        this.healthMask.setScrollFactor(0);
-        this.healthMask.setDepth(2);
-        this.healthMask.visible = false;
+        let healthMask = this.add.sprite(healthbar.x, healthbar.y, 'healthbar');
+        healthMask.setScale(0.2);
+        healthMask.setScrollFactor(0);
+        healthMask.setDepth(2);
+        healthMask.visible = false;
+
 
 
         let lightbarContainer = this.add.sprite(150, 100, 'barBg');
@@ -78,9 +80,9 @@ export default class GameScene extends Phaser.Scene{
         this.lightMask.visible = false;
 
 
-        healthbar.mask = new Phaser.Display.Masks.BitmapMask(this, this.healthMask);
+        healthbar.mask = new Phaser.Display.Masks.BitmapMask(this, healthMask);
         lightbar.mask = new Phaser.Display.Masks.BitmapMask(this, this.lightMask);
-  
+
 
         // Kristalle einfügen
 
@@ -92,11 +94,10 @@ export default class GameScene extends Phaser.Scene{
             repeat: 3,
             setXY: { x: 750, y: 0, stepX: Phaser.Math.FloatBetween(300, 800) }
         });
-        
+
         crystal.children.iterate(function (child) {
             child.setBounceY(Phaser.Math.FloatBetween(0.1, 0.4));
         });
-        
 
         // Gegner einfügen
 
@@ -164,22 +165,21 @@ export default class GameScene extends Phaser.Scene{
         // tilemap
 
         const map = this.make.tilemap({ key: "map" });
-        
-
-
-        // Parameters are the name you gave the tileset in Tiled and then the key of the tileset image in
-        // Phaser's cache (i.e. the name you used in preload)
         const tileset = map.addTilesetImage("basement", "basement"); //.png???
 
         // Parameters: layer name (or index) from Tiled, tileset, x, y
-        const mapLayer = map.createStaticLayer("mapLayer", tileset, 0, height-1000);
+        const ground = map.createLayer("ground", tileset, 0, height-1000);
+        const thorns = map.createLayer("thorns", tileset, 0, height-1000);
 
         // set collision
-        mapLayer.setCollisionByProperty({collides : true});
-        this.physics.add.collider(player, mapLayer);
-        this.physics.add.collider(crystal, mapLayer);
-        this.physics.add.collider(enemy, mapLayer);
-        this.physics.add.collider(player, enemy, hitEnemy, null, this);
+        ground.setCollisionByProperty({collides : true});
+        thorns.setCollisionByProperty({collides : true});
+        this.physics.add.collider(player, ground);
+        this.physics.add.collider(player, thorns, function(player, thorns){
+            player.setVelocityY(-380);
+            healthMask.x -= 99;
+        });
+        this.physics.add.collider(crystal, ground);
 
         // Check overlap between Crystal and Player
         this.physics.add.overlap(player, crystal, collectCrystal, null, this);
@@ -196,6 +196,7 @@ export default class GameScene extends Phaser.Scene{
         }
 
         // Kamera Einstellungen
+        // camera
         const camera = this.cameras.main;
         camera.startFollow(player);
         camera.setBounds(0, 0, map.widthInPixels, height-1000);
@@ -232,7 +233,7 @@ export default class GameScene extends Phaser.Scene{
             }
         }
 
-        if (this.cursor.up.isDown && player.body.onFloor() /*this.player.body.touching.down*/)
+        if (this.cursor.up.isDown && player.body.onFloor())
         {
                 player.setVelocityY(-380);
         }
