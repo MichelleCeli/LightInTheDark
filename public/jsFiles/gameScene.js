@@ -1,6 +1,7 @@
 let player;
 let direction = '';
 var spikeGroup;
+let timer, timerText;
 
 export default class GameScene extends Phaser.Scene{
 
@@ -210,7 +211,15 @@ export default class GameScene extends Phaser.Scene{
             this.physics.pause();
             gameOver = true;
         }
+
+
 */
+        //timer
+        timerText = this.add.text(width / 2, 50, '', { font: '40px catseye' }).setOrigin(0.5);
+        timerText.setDepth(2);
+        timerText.setFill('#88ADEB');
+        timer = this.time.addEvent({ delay: 999999 });
+        
     }
 
 
@@ -246,6 +255,8 @@ export default class GameScene extends Phaser.Scene{
              this.spotlight.scale -= 0.0008;
         }
         this.lightMask.x -= 0.2;
+
+        timerText.setText(formatTime(timer.getElapsedSeconds()));
     }
 
 }
@@ -300,3 +311,14 @@ function clickPause() {
 //Pause Button
 pauseModal.style.display = "none";
 clickPause();
+
+function formatTime(seconds){
+    // Minutes
+    var minutes = Math.floor(seconds/60);
+    // Seconds
+    var partInSeconds = seconds%60;
+    // Adds left zeros to seconds
+    partInSeconds = partInSeconds.toString().padStart(2,'0');
+    // Returns formated time
+    return `${minutes}:${Math.round(partInSeconds)}`;
+}
