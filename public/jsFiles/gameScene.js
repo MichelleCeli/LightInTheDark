@@ -8,16 +8,24 @@ export default class GameScene extends Phaser.Scene{
 
     preload ()
     {
+        //Hintergrund Bilder
         this.load.image('bgBackSprite', './img/assets/background/background_1960x1080.png');
         this.load.image('bgBackTreeSprite', './img/assets/background/trees_bg_1960x1080.png');
         this.load.image('bgMiddleTreeSprite', './img/assets/background/trees_fg_1960x1080.png');
         this.load.image('bgFrontSprite', './img/assets/background/front_1960x1080.png');
+
+        //Player Spritesheet
         this.load.spritesheet('player', './img/assets/player.png',  { frameWidth: 80, frameHeight: 75 });
+
+        //Health and Lightbar
         this.load.image('barBg', './img/healthbar.png');
         this.load.image('healthbar', './img/healthbar_red.png');
         this.load.image('lightbar', './img/lightbar_yellow.png');
+
+        //Collectables
         this.load.image('crystal', './img/crystal_small.png');
         this.load.image('enemy', './img/enemy.png');
+        this.load.spritesheet('firefly', './img/assets/firefly_02.png',  { frameWidth: 35, frameHeight: 35 });
 
         // tilemap
         this.load.image("basement", "./img/assets/maps/basement.png");
@@ -44,7 +52,7 @@ export default class GameScene extends Phaser.Scene{
 
         let gameOptions = 60;
 
-         const cover = this.add.graphics();
+        const cover = this.add.graphics();
         cover.fillStyle(0x000000, 0.8);
         cover.fillRect(0,0, width, height);
         cover.setScrollFactor(0);
@@ -118,6 +126,21 @@ export default class GameScene extends Phaser.Scene{
             child.setVelocity(Phaser.Math.Between(-10, 10), 0);
         })
 
+        // Firefly 
+        let firefly = this.physics.add.sprite(460, 450, 'firefly');
+
+        firefly.setBounce(0.2);
+        firefly.setCollideWorldBounds(true);
+
+        this.anims.create({
+            key: 'fly',
+            frames: this.anims.generateFrameNumbers('firefly', { start: 0, end: 12 }),
+            frameRate: 12,
+            repeat: -1
+        });
+
+        firefly.anims.play('fly');
+        
 
 //////////////////////////////
 
@@ -162,6 +185,7 @@ export default class GameScene extends Phaser.Scene{
 
         this.physics.add.collider(crystal, ground);
         this.physics.add.collider(enemy, ground);
+        this.physics.add.collider(firefly, ground);
 
         // Check overlap between Crystal, Enemy and Player
         this.physics.add.overlap(this.player.sprite, crystal, collectCrystal, null, this);
