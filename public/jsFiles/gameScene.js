@@ -2,7 +2,6 @@ import Player from "./player.js";
 let isPlayerDead;
 let playerHealth;
 let timer, timerText;
-let direction = '';
 
 
 export default class GameScene extends Phaser.Scene{
@@ -165,10 +164,12 @@ export default class GameScene extends Phaser.Scene{
         this.physics.add.collider(enemy, ground);
 
         // Check overlap between Crystal, Enemy and Player
-        this.physics.add.overlap(player, crystal, collectCrystal, null, this);
-        this.physics.add.overlap(player, enemy, hitEnemy, null, this);
+        this.physics.add.overlap(this.player.sprite, crystal, collectCrystal, null, this);
+        this.physics.add.overlap(this.player.sprite, enemy, hitEnemy, null, this);
         
         function collectCrystal (player, crystal) {
+            playerHealth += 50;
+            healthMask.x += 99;
             crystal.disableBody(true, true);
         }
 
@@ -176,7 +177,7 @@ export default class GameScene extends Phaser.Scene{
         function hitEnemy (player, enemy) {
             this.physics.pause();
             player.setTint(0xff0000);
-            gameOver = true;
+            /*gameOver = true;*/
         }
 
         // Kamera Einstellungen
@@ -199,14 +200,17 @@ export default class GameScene extends Phaser.Scene{
         timerText.setDepth(2);
         timerText.setFill('#88ADEB');
         timer = this.time.addEvent({ delay: 999999 });
+        timerText.setScrollFactor(0);
         
     }
 
 
     update(){
         console.log(playerHealth);
-        if(playerHealth <= 0 ){isPlayerDead = true;
-        this.player.destroy();}
+        if(playerHealth <= 0 ){
+            isPlayerDead = true;
+            this.player.destroy();
+        /*this.player.destroy();*/}
         if (isPlayerDead){return}
 
         this.player.update();
@@ -243,7 +247,7 @@ let restartGame = document.getElementById("restart-game");
 function clickPause() {
   pauseBtn.addEventListener("click", () => {
     toggleModal();
-    player.disableBody(true);
+    this.player.disableBody(true);
     console.log("it works, I guess?");
   });
 
@@ -260,7 +264,7 @@ function clickPause() {
     toggleModal();
     console.log("Ich bin hier....");
     pauseBtn.style.display = "block";
-    player.disableBody(false);
+    this.player.disableBody(false);
   });
 
   restartGame.addEventListener("click", () => {
