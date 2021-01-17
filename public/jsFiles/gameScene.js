@@ -1,7 +1,9 @@
-let player;
-let direction = '';
-var spikeGroup;
+import Player from "./player.js";
+let isPlayerDead;
+let playerHealth;
 let timer, timerText;
+let direction = '';
+
 
 export default class GameScene extends Phaser.Scene{
 
@@ -29,6 +31,7 @@ export default class GameScene extends Phaser.Scene{
 
     create ()
     {
+
         const width = this.scale.width;
         const height = this.scale.height;
 
@@ -121,36 +124,13 @@ export default class GameScene extends Phaser.Scene{
 
         this.physics.world.setBoundsCollision(true, false, true, true);
 
-        player = this.physics.add.sprite(200, 450, 'player');
-        player.setBounce(0.2);
-        player.setCollideWorldBounds(true);
 
-        this.anims.create({
-            key: 'left',
-            frames: this.anims.generateFrameNumbers('player', { start: 0, end: 4 }),
-            frameRate: 8,
-            repeat: -1
+        // Player
+        isPlayerDead = false;
+        this.player = new Player(this, 200, 450);
+        playerHealth = 100;
 
-        });
-
-        this.anims.create({
-            key: 'turnFromRight',
-            frames: [ { key: 'player', frame: 5 } ],
-            frameRate: 20
-        });
-        this.anims.create({
-            key: 'turnFromLeft',
-            frames: [ { key: 'player', frame: 4 } ],
-            frameRate: 20
-        });
-
-        this.anims.create({
-            key: 'right',
-            frames: this.anims.generateFrameNumbers('player', { start: 5, end: 9 }),
-            frameRate: 8,
-            repeat: -1,
-        });
-
+        //Spotlight
         this.spotlight = this.make.graphics();
         this.spotlight.fillStyle(0xfffffff);
         this.spotlight.fillCircle(0, 0, 128);
@@ -168,17 +148,17 @@ export default class GameScene extends Phaser.Scene{
         const map = this.make.tilemap({ key: "map" });
         const tileset = map.addTilesetImage("basement", "basement"); //.png???
 
-        // Parameters: layer name (or index) from Tiled, tileset, x, y
         const ground = map.createLayer("ground", tileset, 0, height-1000);
         const thorns = map.createLayer("thorns", tileset, 0, height-1000);
 
         // set collision
         ground.setCollisionByProperty({collides : true});
         thorns.setCollisionByProperty({collides : true});
-        this.physics.add.collider(player, ground);
-        this.physics.add.collider(player, thorns, function(player, thorns){
-            player.setVelocityY(-380);
+        this.physics.add.collider(this.player.sprite, ground);
+        this.physics.add.collider(this.player.sprite, thorns, function(sprite, thorns){
+            sprite.setVelocityY(-380);
             healthMask.x -= 99;
+            playerHealth -= 50;
         });
 
         this.physics.add.collider(crystal, ground);
@@ -202,7 +182,7 @@ export default class GameScene extends Phaser.Scene{
         // Kamera Einstellungen
         // camera
         const camera = this.cameras.main;
-        camera.startFollow(player);
+        camera.startFollow(this.player.sprite);
         camera.setBounds(0, 0, map.widthInPixels, height-1000);
 
 /*
@@ -224,33 +204,14 @@ export default class GameScene extends Phaser.Scene{
 
 
     update(){
-     /*   this.player.body.setVelocity(0); Fix bugs??? */
+        console.log(playerHealth);
+        if(playerHealth <= 0 ){isPlayerDead = true;
+        this.player.destroy();}
+        if (isPlayerDead){return}
 
-        if(this.cursor.left.isDown){
-            player.setVelocityX(-160);
-            player.anims.play('left', true);
-            direction = 'left';
+        this.player.update();
 
-        }else if(this.cursor.right.isDown){
-            player.setVelocityX(160);
-            player.anims.play('right', true);
-            direction = 'right';
-
-        }else{
-            player.setVelocityX(0);
-            if(direction === 'right') {
-                player.anims.play('turnFromRight');
-            } else {
-                player.anims.play('turnFromLeft');
-            }
-        }
-
-        if (this.cursor.up.isDown && player.body.onFloor())
-        {
-                player.setVelocityY(-380);
-        }
-
-        this.spotlight.setPosition(player.x, player.y);
+        this.spotlight.setPosition(this.player.sprite.x, this.player.sprite.y);
         if(this.spotlight.scale > 0.4){
              this.spotlight.scale -= 0.0008;
         }
@@ -268,7 +229,7 @@ const createAligned = (scene, count, texture, scrollFactor) => {
 for(let i = 0; i < count; ++i){
         const m = scene.add.image(x, scene.scale.height *0.5, texture)
                 .setScrollFactor(scrollFactor)
-        
+
         x += m.width
     }
 }
