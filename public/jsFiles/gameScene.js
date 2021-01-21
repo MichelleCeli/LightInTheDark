@@ -128,9 +128,7 @@ export default class GameScene extends Phaser.Scene{
 
         // Firefly 
         let firefly = this.physics.add.sprite(460, 450, 'firefly');
-
-        firefly.setBounce(0.2);
-        firefly.setCollideWorldBounds(true);
+        firefly.setScrollFactor(1);
 
         this.anims.create({
             key: 'fly',
@@ -140,6 +138,17 @@ export default class GameScene extends Phaser.Scene{
         });
 
         firefly.anims.play('fly');
+
+        firefly = this.physics.add.group({
+            key: 'firefly',
+            repeat: 12,
+            setXY: { x: 250, y: 0, stepX: Phaser.Math.FloatBetween(250, width) }
+        });
+
+        firefly.children.iterate(function (child) {
+            child.setBounce(0.4);
+        })
+
         
 
 //////////////////////////////
@@ -190,11 +199,18 @@ export default class GameScene extends Phaser.Scene{
         // Check overlap between Crystal, Enemy and Player
         this.physics.add.overlap(this.player.sprite, crystal, collectCrystal, null, this);
         this.physics.add.overlap(this.player.sprite, enemy, hitEnemy, null, this);
+        this.physics.add.overlap(this.player.sprite, firefly, collectFirefly, null, this);
         
         function collectCrystal (player, crystal) {
             playerHealth += 50;
             healthMask.x += 99;
             crystal.disableBody(true, true);
+        }
+
+        function collectFirefly (player, firefly) {
+            firefly.disableBody(true, true);
+            this.lightMask.x += 50;
+            this.spotlight.scale += 0.25;
         }
 
         // Enemy Collision
