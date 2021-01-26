@@ -128,9 +128,7 @@ export default class GameScene extends Phaser.Scene{
 
         // Firefly 
         let firefly = this.physics.add.sprite(460, 450, 'firefly');
-
-        firefly.setBounce(0.2);
-        firefly.setCollideWorldBounds(true);
+        firefly.setScrollFactor(1);
 
         this.anims.create({
             key: 'fly',
@@ -140,6 +138,17 @@ export default class GameScene extends Phaser.Scene{
         });
 
         firefly.anims.play('fly');
+
+        firefly = this.physics.add.group({
+            key: 'firefly',
+            repeat: 12,
+            setXY: { x: 250, y: 0, stepX: Phaser.Math.FloatBetween(250, width) }
+        });
+
+        firefly.children.iterate(function (child) {
+            child.setBounce(0.4);
+        })
+
         
 
 //////////////////////////////
