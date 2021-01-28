@@ -14,4 +14,4 @@ var config = {
     scene: [ GameScene, PauseScene ]
 };
   
-var game = new Phaser.Game(config);
+ var game = new Phaser.Game(config);

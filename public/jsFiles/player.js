@@ -99,6 +99,7 @@ export default class Player {
             }
         }
 
+        return direction;
     }
     destroy() {
         this.sprite.destroy();

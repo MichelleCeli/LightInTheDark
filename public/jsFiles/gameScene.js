@@ -13,6 +13,18 @@ let gameoverModal = document.getElementById("gameover-modal");
 let resumeGame = document.getElementById("resume-game");
 let restartGame = document.getElementById("restart-game");
 let switchScene;
+let arrow;
+var velArX;
+var velArY;
+let leftButtonPressed = false;
+let arrowRot;
+let shooting = false;
+let arrowOldX;
+let arrowOldY;
+var justCreated;
+let direction;
+let ground;
+var enemy;
 
 
 export default class GameScene extends Phaser.Scene{
@@ -49,10 +61,13 @@ export default class GameScene extends Phaser.Scene{
         this.load.image('pause-btn', './img/assets/pause-btn.png');
 
         this.cursor = this.input.keyboard.createCursorKeys();
+
+        // weapon
+        this.load.image("arrow", "./img/arrow.png");
+
     }
 
-    create ()
-    {
+    create (){
 
         const width = this.scale.width;
         const height = this.scale.height;
@@ -144,6 +159,10 @@ export default class GameScene extends Phaser.Scene{
         })
         
 
+       /* console.log(enemy.getChildren());*/
+
+
+
         // Firefly 
         //let firefly = this.add.sprite('firefly');
 
@@ -194,7 +213,7 @@ export default class GameScene extends Phaser.Scene{
         const map = this.make.tilemap({ key: "map" });
         const tileset = map.addTilesetImage("basement", "basement"); //.png???
 
-        const ground = map.createLayer("ground", tileset, 0, height-1000);
+        ground = map.createLayer("ground", tileset, 0, height-1000);
         const thorns = map.createLayer("thorns", tileset, 0, height-1000);
         const movementEnemies = map.createLayer("movementEnemies", tileset, 0, height-1000);
 
@@ -260,6 +279,7 @@ export default class GameScene extends Phaser.Scene{
             }
         }
 
+
         // Enemy Collision
 /*         function hitEnemy (player, enemy) {
             player.setTint(0xff0000);
@@ -280,7 +300,8 @@ export default class GameScene extends Phaser.Scene{
         timerText.setFill('#88ADEB');
         timer = this.time.addEvent({ delay: 999999 });
         timerText.setScrollFactor(0);
-        
+
+
     }
 
     //
@@ -288,7 +309,55 @@ export default class GameScene extends Phaser.Scene{
     //
 
     update(){
-        console.log(playerHealth);
+
+        direction = this.player.update();
+
+        // checking if arrow is still shooting & calculates new angle for sprite
+        if (shooting && !justCreated && arrow.body.moves){
+
+            arrowRot = Math.atan2((arrow.y - arrowOldY), (arrow.x - arrowOldX))*(180/Math.PI);
+
+            arrow.angle = arrowRot;
+
+            arrowOldX = arrow.x;
+            arrowOldY = arrow.y;
+
+            if(arrow.y > 1000){
+                shooting = false;
+            }
+
+        }
+
+        // arrow has to be updated first before new angle can be calculated
+        justCreated = false;
+        // checks if left Button is clicked and no other arrow is still shooting
+        if (this.input.activePointer.leftButtonDown() && !shooting) {
+            leftButtonPressed = true;
+        }
+
+        // only shoots arrow after left Button is also released
+            if(this.input.activePointer.leftButtonReleased() && leftButtonPressed ) {
+
+                // calculates the angle of the shot with the position of the input in wordcoordinates and position of the player
+                arrowRot = Math.atan2((this.input.activePointer.worldY - this.player.sprite.y), (this.input.activePointer.worldX - this.player.sprite.x)) * (180 / Math.PI);
+
+                // checks if player is looking in the right direction for the shot
+              if((direction === 'right' && (arrowRot >= -90 && arrowRot <= 90)) || direction === 'left' && (arrowRot <= -90 || arrowRot >= 90 )){
+
+                arrow = createArrow(this, arrowRot, ground, enemy);
+
+                arrowOldX = arrow.x;
+                arrowOldY = arrow.y;
+
+                justCreated = true;
+            }
+                leftButtonPressed = false;
+            }
+
+
+
+
+      /*  console.log(playerHealth);*/
         if(playerHealth <= 0 ){
             isPlayerDead = true;
             this.player.destroy();
@@ -296,7 +365,7 @@ export default class GameScene extends Phaser.Scene{
         }
         if (isPlayerDead){return}
 
-        this.player.update();
+
 
         this.spotlight.setPosition(this.player.sprite.x, this.player.sprite.y);
         if(this.spotlight.scale > 0.4){
@@ -315,7 +384,44 @@ export default class GameScene extends Phaser.Scene{
 }
 
 
-/* Ende der Game Scene */
+function createArrow(scene, arrowRot, ground, enemy){
+    shooting = true;
+
+    arrow = scene.physics.add
+        .sprite(scene.player.sprite.x, scene.player.sprite.y, "arrow")
+        .setAngle(arrowRot);
+
+    // calculates and sets Velocity of the arrow (gravity is working automatically through Arcade.Physics)
+    velArX = (scene.input.activePointer.worldX - arrow.x);
+    velArY = (scene.input.activePointer.worldY - arrow.y);
+    arrow.setVelocityX(velArX);
+    arrow.setVelocityY(velArY);
+
+    // collider with the ground and the enemies
+    scene.physics.add.collider(arrow, ground, function(arrow){
+        arrow.body.moves = false;
+        shooting = false;
+        let timedEvent = scene.time.delayedCall(8000, onEvent, [arrow], this);
+    });
+
+    scene.physics.add.overlap(arrow, enemy, killEnemy, null, this);
+
+    return arrow;
+}
+
+// happens when arrow colides with enemy
+function killEnemy(arrow, enemy) {
+    shooting = false;
+    arrow.disableBody(true, true);
+    enemy.disableBody(true, true);
+
+}
+
+// after some time, the arrow gets disabled
+function onEvent (arrow)
+{
+    arrow.disableBody(true, true);
+}
 
 
 const createAligned = (scene, count, texture, scrollFactor) => {
@@ -353,6 +459,7 @@ function clickPause() {
   }
  */
   resumeGame.addEventListener("click", () => {
+      this.setActive(true);
     toggleModal();
     console.log("Ich bin hier....");
     pauseBtn.style.display = "block";
