@@ -2,14 +2,12 @@ import Player from "./player.js";
 let isPlayerDead;
 let playerHealth;
 let timer, timerText;
-let enemyCollide;
 let enemy;
 let lightbar;
 
 // Pause Button Variablen
 let pauseBtn = document.getElementById("pause-btn");
 let pauseModal = document.getElementById("pause-modal");
-let gameoverModal = document.getElementById("gameover-modal");
 let resumeGame = document.getElementById("resume-game");
 let restartGame = document.getElementById("restart-game");
 let switchScene;
@@ -24,7 +22,6 @@ let arrowOldY;
 var justCreated;
 let direction;
 let ground;
-var enemy;
 
 
 export default class GameScene extends Phaser.Scene{
@@ -450,14 +447,6 @@ function clickPause() {
     }
   }
 
-/*   function toggleGameModal() {
-      if (gameoverModal.style.display === 'none') {
-          gameoverModal.style.display = "block";
-      } else {
-          gameoverModal.style.display = "none";
-      }
-  }
- */
   resumeGame.addEventListener("click", () => {
       this.setActive(true);
     toggleModal();
