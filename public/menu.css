@@ -310,7 +310,8 @@ Alina - 17.12.2020
     top: 30px;
 }
 
-#pause-modal {
+#pause-modal,
+#gameover-modal {
     display: none;
     position: absolute;
     width: 250px;
@@ -322,6 +323,10 @@ Alina - 17.12.2020
     text-align: center;
     padding: 20px 50px 50px 50px;
     border-radius: 10px;
+}
+
+#gameover-modal {
+    height: 200px;
 }
 
 #modal-button {

@@ -2,9 +2,24 @@ import Player from "./player.js";
 let isPlayerDead;
 let playerHealth;
 let timer, timerText;
+let enemyCollide;
+let enemy;
+let lightbar;
+
+// Pause Button Variablen
+let pauseBtn = document.getElementById("pause-btn");
+let pauseModal = document.getElementById("pause-modal");
+let gameoverModal = document.getElementById("gameover-modal");
+let resumeGame = document.getElementById("resume-game");
+let restartGame = document.getElementById("restart-game");
+let switchScene;
 
 
 export default class GameScene extends Phaser.Scene{
+
+    constructor() {
+        super({key: 'GameScene'});
+    }
 
     preload ()
     {
@@ -42,6 +57,8 @@ export default class GameScene extends Phaser.Scene{
         const width = this.scale.width;
         const height = this.scale.height;
 
+        switchScene = this;
+
         //background
         const bg1 = this.add.image(width*0.5, height*0.5, 'bgBackSprite')
                 .setScrollFactor(0);
@@ -75,12 +92,11 @@ export default class GameScene extends Phaser.Scene{
         healthMask.visible = false;
 
 
-
         let lightbarContainer = this.add.sprite(150, 100, 'barBg');
         lightbarContainer.setScale(0.2);
         lightbarContainer.setScrollFactor(0);
         lightbarContainer.setDepth(2);
-        let lightbar = this.add.sprite(lightbarContainer.x, lightbarContainer.y, 'lightbar');
+        lightbar = this.add.sprite(lightbarContainer.x, lightbarContainer.y, 'lightbar');
         lightbar.setScale(0.2);
         lightbar.setScrollFactor(0);
         lightbar.setDepth(2);
@@ -112,23 +128,24 @@ export default class GameScene extends Phaser.Scene{
 
         // Gegner einfügen
 
-        let enemy = this.add.sprite('enemy');
+        enemy = this.add.sprite('enemy');
         enemy.setScrollFactor(1);
 
         enemy = this.physics.add.group({
             key: 'enemy',
             repeat: 5,
-            setXY: { x: 400, y: 0, stepX: Phaser.Math.FloatBetween(300, width) },
+            setXY: { x: 600, y: 300, stepX: Phaser.Math.FloatBetween(300, width) },
         });
 
         enemy.children.iterate(function (child) {
-            child.setBounce(0.4);
-            child.setVelocity(Phaser.Math.Between(-10, 10), 0);
+            child.setBounce(0.2);
+            child.setVelocityX(-150, 150);
+            child.setGravityY(130);
         })
+        
 
         // Firefly 
-        let firefly = this.physics.add.sprite(460, 450, 'firefly');
-        firefly.setScrollFactor(1);
+        //let firefly = this.add.sprite('firefly');
 
         this.anims.create({
             key: 'fly',
@@ -137,20 +154,18 @@ export default class GameScene extends Phaser.Scene{
             repeat: -1
         });
 
-        firefly.anims.play('fly');
-
-        firefly = this.physics.add.group({
+        let firefly = this.physics.add.group({
             key: 'firefly',
-            repeat: 12,
-            setXY: { x: 250, y: 0, stepX: Phaser.Math.FloatBetween(250, width) }
+            repeat: 20,
+            setXY: { x: 250, y: 0, stepX: Phaser.Math.FloatBetween(10, 1500) }
         });
 
         firefly.children.iterate(function (child) {
-            child.setBounce(0.4);
-        })
+            child.setBounce(0.1);
+            child.anims.play('fly', true);
+        });
 
         
-
 //////////////////////////////
 
         this.physics.world.setBoundsCollision(true, false, true, true);
@@ -181,10 +196,14 @@ export default class GameScene extends Phaser.Scene{
 
         const ground = map.createLayer("ground", tileset, 0, height-1000);
         const thorns = map.createLayer("thorns", tileset, 0, height-1000);
+        const movementEnemies = map.createLayer("movementEnemies", tileset, 0, height-1000);
+
 
         // set collision
         ground.setCollisionByProperty({collides : true});
         thorns.setCollisionByProperty({collides : true});
+        movementEnemies.setCollisionByProperty({collides : true});
+
         this.physics.add.collider(this.player.sprite, ground);
         this.physics.add.collider(this.player.sprite, thorns, function(sprite, thorns){
             sprite.setVelocityY(-380);
@@ -193,32 +212,61 @@ export default class GameScene extends Phaser.Scene{
         });
 
         this.physics.add.collider(crystal, ground);
-        this.physics.add.collider(enemy, ground);
         this.physics.add.collider(firefly, ground);
+        this.physics.add.collider(enemy, ground);
+        this.physics.add.collider(enemy, movementEnemies, function(){
+            
+/*             if(enemy in richtung -X dann) {
+                bla bla
+            }
+
+            if (enemy in richtung X dann) {
+
+            } */
+            enemy.setVelocityX(100);
+        });
+
+        this.physics.add.collider(this.player.sprite, enemy, function(sprite) {
+            playerHealth -= 10;
+            healthMask.x -= 10;
+            sprite.setVelocityX(-200);
+            sprite.setVelocityY(-200);
+            sprite.setTint(0xff0000);
+        })
+        
 
         // Check overlap between Crystal, Enemy and Player
         this.physics.add.overlap(this.player.sprite, crystal, collectCrystal, null, this);
-        this.physics.add.overlap(this.player.sprite, enemy, hitEnemy, null, this);
+/*         this.physics.add.overlap(this.player.sprite, enemy, hitEnemy, null, this); */
         this.physics.add.overlap(this.player.sprite, firefly, collectFirefly, null, this);
         
         function collectCrystal (player, crystal) {
-            playerHealth += 50;
-            healthMask.x += 99;
-            crystal.disableBody(true, true);
+            if(playerHealth < 100) {
+                playerHealth += 50;
+                healthMask.x += 99;
+                crystal.disableBody(true, true);
+            } else {
+                crystal.disableBody(true, true);
+            }
         }
 
         function collectFirefly (player, firefly) {
-            firefly.disableBody(true, true);
-            this.lightMask.x += 50;
-            this.spotlight.scale += 0.25;
+            if (this.spotlight.scale >= 1) {
+                firefly.disableBody(true, true);
+            } else {
+                firefly.disableBody(true, true);
+                this.lightMask.x += 50;
+                this.spotlight.scale += 0.25;
+            }
         }
 
         // Enemy Collision
-        function hitEnemy (player, enemy) {
-            this.physics.pause();
+/*         function hitEnemy (player, enemy) {
             player.setTint(0xff0000);
-            /*gameOver = true;*/
-        }
+            playerHealth -= 50;
+            healthMask.x -= 99;
+            player.setVelocityX(-100);
+        } */
 
         // Kamera Einstellungen
         // camera
@@ -226,15 +274,6 @@ export default class GameScene extends Phaser.Scene{
         camera.startFollow(this.player.sprite);
         camera.setBounds(0, 0, map.widthInPixels, height-1000);
 
-/*
-        function pauseGame (player) {
-            player.disableBody(true);
-            this.physics.pause();
-            gameOver = true;
-        }
-
-
-*/
         //timer
         timerText = this.add.text(width / 2, 50, '', { font: '40px catseye' }).setOrigin(0.5);
         timerText.setDepth(2);
@@ -244,13 +283,17 @@ export default class GameScene extends Phaser.Scene{
         
     }
 
+    //
+    // Update Methode
+    //
 
     update(){
         console.log(playerHealth);
         if(playerHealth <= 0 ){
             isPlayerDead = true;
             this.player.destroy();
-        /*this.player.destroy();*/}
+            timerText.setText('- : -');
+        }
         if (isPlayerDead){return}
 
         this.player.update();
@@ -259,18 +302,25 @@ export default class GameScene extends Phaser.Scene{
         if(this.spotlight.scale > 0.4){
              this.spotlight.scale -= 0.0008;
         }
-        this.lightMask.x -= 0.2;
+        
+        if(this.lightMask.x <= -37) {
+            this.lightMask.x <= -37;
+        } else {
+            this.lightMask.x -= 0.2;
+        }
 
         timerText.setText(formatTime(timer.getElapsedSeconds()));
-    }
 
+    }
 }
 
+
+/* Ende der Game Scene */
 
 
 const createAligned = (scene, count, texture, scrollFactor) => {
     let x = scene.scale.width*0.5;
-for(let i = 0; i < count; ++i){
+    for(let i = 0; i < count; ++i){
         const m = scene.add.image(x, scene.scale.height *0.5, texture)
                 .setScrollFactor(scrollFactor)
 
@@ -278,17 +328,11 @@ for(let i = 0; i < count; ++i){
     }
 }
 
-
-let pauseBtn = document.getElementById("pause-btn");
-let pauseModal = document.getElementById("pause-modal");
-let resumeGame = document.getElementById("resume-game");
-let restartGame = document.getElementById("restart-game");
-
 function clickPause() {
   pauseBtn.addEventListener("click", () => {
     toggleModal();
-    this.player.disableBody(true);
     console.log("it works, I guess?");
+    switchScene.scene.pause();
   });
 
   function toggleModal() {
@@ -300,11 +344,19 @@ function clickPause() {
     }
   }
 
+/*   function toggleGameModal() {
+      if (gameoverModal.style.display === 'none') {
+          gameoverModal.style.display = "block";
+      } else {
+          gameoverModal.style.display = "none";
+      }
+  }
+ */
   resumeGame.addEventListener("click", () => {
     toggleModal();
     console.log("Ich bin hier....");
     pauseBtn.style.display = "block";
-    this.player.disableBody(false);
+    switchScene.scene.resume('GameScene');
   });
 
   restartGame.addEventListener("click", () => {
@@ -328,3 +380,5 @@ function formatTime(seconds){
     // Returns formated time
     return `${minutes}:${partInSeconds}`;
 }
+
+
