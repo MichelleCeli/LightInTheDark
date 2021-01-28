@@ -322,8 +322,9 @@ function formatTime(seconds){
     var minutes = Math.floor(seconds/60);
     // Seconds
     var partInSeconds = seconds%60;
+    partInSeconds = Math.round(partInSeconds);
     // Adds left zeros to seconds
     partInSeconds = partInSeconds.toString().padStart(2,'0');
     // Returns formated time
-    return `${minutes}:${Math.round(partInSeconds)}`;
+    return `${minutes}:${partInSeconds}`;
 }

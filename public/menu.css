@@ -40,15 +40,19 @@ html, body {
             "left signIn right";
 }
 #containerSignIn{
-    grid-template-rows: [title] 30% [email] 12.5% [name] 12.5% [password] 12.5% [repeatPassword] 12.5% [Sign In] 20%;
+    grid-template-rows: [title] 30% [email] 10% [messageMail] 5% [name] 10% [messageUser] 5% [password] 10% [messagePassword] 5% [repeatPassword] 10% [messagePasswordRepeat] 5% [signIn] 10%;
     grid-template-columns: [left] 10% [center] 1fr [right] 10%;
     grid-auto-flow: column;
     grid-template-areas:
             "left title right"
             "left email right"
+            "left messageMail right"
             "left name right"
+            "left messageUser right"
             "left password right"
+            "left messagePassword right"
             "left repeatPassword right"
+            "left messagePasswordRepeat right"
             "left signIn right";
 
 }
@@ -56,11 +60,37 @@ html, body {
     display: flex;
     grid-area: email;
     justify-content: space-between;
+    align-items: flex-end;
+}
+#messageMail{
+    display: inline;
+    grid-area: messageMail;
+    font-size: 10px;
+    justify-self: end;
+}
+#messageUser{
+    display: inline-block;
+    grid-area: messageUser;
+    font-size: 10px;
+    justify-self: end;
+}
+#messagePassword{
+    display: inline-block;
+    grid-area: messagePassword;
+    font-size: 10px;
+    justify-self: end;
+}
+#messagePasswordRepeat{
+    display: inline-block;
+    grid-area: messagePasswordRepeat;
+    font-size: 10px;
+    justify-self: end;
 }
 #repeatPassword{
     display: flex;
     grid-area: repeatPassword;
     justify-content: space-between;
+    align-items: flex-end;
 }
 #signInAction{
     display: inline-block;
@@ -111,8 +141,27 @@ h2{
     grid-area: name;
     justify-content: space-between;
 }
+#name2{
+    display: flex;
+    grid-area: name;
+    justify-content: space-between;
+    align-items: flex-end;
+}
 .input{
     height: 50%;
+    width: 50%;
+    color: #DDDDC3;
+    box-sizing: border-box;
+    border: 0;
+    border-radius: 10px;
+    background: rgba(67, 41, 24, 0.75);
+    font-family: catseye, sans-serif;
+    font-weight: 700;
+    font-style: normal;
+    font-size: 25px;
+}
+.input2{
+    height: 85%;
     width: 50%;
     color: #DDDDC3;
     box-sizing: border-box;
@@ -129,6 +178,13 @@ h2{
     display: flex;
     grid-area: password;
     justify-content: space-between;
+}
+
+#password2{
+    display: flex;
+    grid-area: password;
+    justify-content: space-between;
+    align-items: flex-end;
 }
 
 #message{

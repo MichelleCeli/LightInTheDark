@@ -15,7 +15,7 @@
                 <h1>Light in the Dark</h1>
             </div>
             <div id="name">
-                <div class="label">Name:</div>
+                <div class="label">Username:</div>
                 <input type="text" class="input" size="50" id="usernameInput" name="username">
             </div>
             <div id="password">
@@ -44,13 +44,18 @@
                 $.ajax({
                     url: $form.attr('action'),
                     method: $form.attr('method'),
-                    data: $form.serialize(),
-                    error: $('#message').html("Falscher Usernamen und/oder Passwort")
-                    
+                    data: $form.serialize()
+                    //dataType: 'json'
                 })
-                     .done(function (response) {
-                        console.log('done: ', arguments);
-                        location.href = "Menu.html";
+                    .done(function (response) {
+                        if(response.type === 'error'){
+                            $('#message').html(response.res);
+                        }else if(response.type === 'success'){
+                            location.href = "Menu.html";
+                        }
+                    }) 
+                    .fail(function (response){
+                        console.log('fail: ', arguments);
                     })
             });
         }); 

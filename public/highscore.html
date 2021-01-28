@@ -10,13 +10,44 @@
 <div class="screen">
     <div class="container">
         <h1>Highscore</h1>
+        <h2>Level 1</h2>
         <div id="highscore">
             <table class="scoretable">
+                <tr>
+                    <th>Rank</th>
+                    <th>Score</th>
+                    <th>Name</th>
+                </tr>
+                <tbody id="tableBody"></tbody>
             </table>
         </div>
     </div>
 </div>
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    let level = 1;
+    let rank = 1;
+    $(document).ready(function(){
+        $.ajax({
+            url: '/getScore',
+            method: 'GET',
+            data: {level}
+        })
+        .done(function(res){
+            var event_data = '';
+            $.each(res, function(index, value){
+                /*console.log(value);*/
+                event_data += '<tr>';
+                    event_data += '<td>'+rank+'</td>';
+                event_data += '<td>'+value.highscore+'</td>';
+                event_data += '<td>'+value.username+'</td>';
+                event_data += '</tr>';
+                rank++;
+            });
+            $("#tableBody").append(event_data);
+        })
+    });
+</script>
 
 </body>
 </html>

@@ -13,24 +13,73 @@
 
         <div id="email">
             <div class="label">Email:</div>
-            <input type="text" class="input" size="50" name="email">
+            <input type="email" class="input2" size="50" name="email">
         </div>
-        <div id="name">
-            <div class="label">Name:</div>
-            <input type="text" class="input" size="50" name="username">
+        <div id="messageMail" class="label"></div>
+        <div id="name2">
+            <div class="label">Username:</div>
+            <input type="text" class="input2" size="50" name="username">
         </div>
-        <div id="password">
+        <div id="messageUser" class="label"></div>
+        <div id="password2">
             <div class="label">Password:</div>
-            <input type="password" class="input" size="50" name="password">
+            <input type="password" class="input2" size="50" name="password">
         </div>
+        <div id="messagePassword" class="label"></div>
         <div id="repeatPassword">
             <div class="label">Repeat Password:</div>
-            <input type="password" class="input" size="50" name="passwordAgain">
+            <input type="password" class="input2" size="50" name="passwordAgain">
         </div>
-
+        <div id="messagePasswordRepeat" class="label"></div>
         <!-- <a id="signInAction" title="Sign in" class="button" value="Sign in" onclick="window.location ='Menu.html'">Sign In</a> -->
         <button type="submit" id="signInAction" title="Sign in" class="button" value="Sign in">Sign In</button>
     </form>
 </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript">
+
+         $(document).ready(function () {
+            $('form').on('submit', function (e) {
+                // keep the form from submitting synchronously
+                e.preventDefault();
+
+                var $form = $(e.currentTarget);
+
+                // submit via ajax
+                $.ajax({
+                    url: $form.attr('action'),
+                    method: $form.attr('method'),
+                    data: $form.serialize(),
+                    dataType: 'json'
+                })
+                    .done(function (response) {
+                        $('#messageMail').html('');
+                        $('#messageUser').html('');
+                        $('#messagePassword').html('');
+                        $('#messagePasswordRepeat').html('');
+                        if(response.type === 'error'){
+                            if(response.div === 'messageMail'){
+                                $('#messageMail').html(response.res);
+                            }
+                            else if(response.div === 'messageUser'){
+                                $('#messageUser').html(response.res);
+                            }
+                            else if(response.div === 'messagePassword'){
+                                $('#messagePassword').html(response.res);
+                            }
+                            else if(response.div === 'messagePasswordRepeat'){
+                                $('#messagePasswordRepeat').html(response.res);
+                            }
+                        }else if(response.type === 'success'){
+                            location.href = "Menu.html";
+                        }
+                    }) 
+                    .fail(function (response){
+                        console.log('fail: ', arguments);
+                    })
+            });
+        }); 
+    </script>
 </body>
 </html>

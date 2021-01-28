@@ -12,22 +12,40 @@
     <div id="containerMenu" class="container">
         <h2 style="text-align: center">Light in the Dark</h2>
        <div id="alignMenu">
-
-    <!--    <ul id="listMenu">
-            <li><a title="Play Game" class="button" value="Play Game" onclick="window.location ='Game.html'">Play Game</a></li>
-            <li><a title="Play Game" type="button" class="button" value="Profile" id="profileBut">Profile</a></li>
-            <li><a title="Play Game" type="button" class="button" value="Options" id="optionsBut">Options</a></li>
-            <li><a title="Play Game" type="button" class="button" value="Highscore" id="highscoreBut">Highscore</a></li>
-            <li><a title="Play Game" type="button" class="button" value="Log Out" id="logOutBut" onclick="window.location ='../Index.html'">Log Out</a></li>
-        </ul>-->
            <a title="Play Game" class="button" value="Play Game" onclick="window.location ='Game.html'">Play Game</a>
            <a title="Play Game" type="button" class="button" value="Profile" id="profileBut">Profile</a>
            <a title="Play Game" type="button" class="button" value="Options" id="optionsBut">Options</a>
-           <a title="Play Game" type="button" class="button" value="Highscore" id="highscoreBut">Highscore</a>
-           <a title="Play Game" type="button" class="button" value="Log Out" id="logOutBut" onclick="window.location ='../Index.html'">Log Out</a>
-
+           <a title="Play Game" type="button" class="button" value="Highscore" id="highscoreBut" onclick="window.location ='../highscore.html'">Highscore</a>
+           <!-- <a title="Play Game" type="button" class="button" value="Log Out" id="logOutBut" onclick="window.location ='../Index.html'">Log Out</a> -->
+           <button title="Play Game" type="button" class="button" value="Log Out" id="logOutBut">Log Out</button>
        </div></div>
 </div>
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    /* $(document).ajaxStart(function(){
+        $.ajax({
+            url: '/auth',
+            dataType: 'json'
+        })
+        .done(function(res){
+            if(res === "not authenticated"){
+                location.href = "Index.html";
+            }
+        })
+    }); */
+    
+    $('#logOutBut').on('click', function () {
+        $.ajax({
+            url: '/logout',
+            dataType : 'json'
+        })
+        .done(function(res){
+            console.log(res);
+            if(res === "logout"){
+                location.href = "Index.html";
+            }
+        })
+    });
+</script>
 </body>
 </html>

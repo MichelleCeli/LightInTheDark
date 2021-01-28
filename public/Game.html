@@ -22,6 +22,18 @@
 
     <script type="text/javascript" src="jsFiles/libaries/phaser.min.js"></script>
     <script type="module" src="jsFiles/start.js"></script>
-    
+    <script>
+        $(document).ajaxStart(function(){
+        $.ajax({
+            url: '/auth',
+            dataType: 'json'
+        })
+        .done(function(res){
+            if(res === "not authenticated"){
+                location.href = "Index.html";
+            }
+        })
+    });
+    </script>
 </body> 
 </html>

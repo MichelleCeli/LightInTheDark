@@ -1,10 +1,12 @@
 const mongoose = require("mongoose");
 
 const ScoreSchema = mongoose.Schema({
-    _id: Number,
-    userID: Number,
+    username: String,
+    level: Number,
     timescore: Number,
     highscore: Number
-});
+},
+{collection: 'scores'}
+);
 
-module.exports = mongoose.Model("score", ScoreSchema);
+module.exports = mongoose.model("score", ScoreSchema);
