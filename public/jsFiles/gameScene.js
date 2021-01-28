@@ -448,7 +448,6 @@ function clickPause() {
   }
 
   resumeGame.addEventListener("click", () => {
-      this.setActive(true);
     toggleModal();
     console.log("Ich bin hier....");
     pauseBtn.style.display = "block";
