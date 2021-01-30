@@ -11,6 +11,12 @@ let pauseModal = document.getElementById("pause-modal");
 let resumeGame = document.getElementById("resume-game");
 let restartGame = document.getElementById("restart-game");
 let switchScene;
+
+// Gameover Modal
+
+let gameoverModal = document.getElementById("gameover-modal");
+
+// Arrow Variablen
 let arrow;
 var velArX;
 var velArY;
@@ -352,16 +358,20 @@ export default class GameScene extends Phaser.Scene{
             }
 
 
-
-
       /*  console.log(playerHealth);*/
-        if(playerHealth <= 0 ){
+/*         if(playerHealth <= 0 ){
             isPlayerDead = true;
             this.player.destroy();
             timerText.setText('- : -');
         }
-        if (isPlayerDead){return}
+        if (isPlayerDead){return} */
 
+
+        if(playerHealth <= 0) {
+            gameoverModal.style.display = "block";
+            console.log("ich werde ausgeführt")
+            switchScene.scene.pause();
+        } 
 
 
         this.spotlight.setPosition(this.player.sprite.x, this.player.sprite.y);
@@ -434,7 +444,6 @@ const createAligned = (scene, count, texture, scrollFactor) => {
 function clickPause() {
   pauseBtn.addEventListener("click", () => {
     toggleModal();
-    console.log("it works, I guess?");
     switchScene.scene.pause();
   });
 
@@ -449,7 +458,6 @@ function clickPause() {
 
   resumeGame.addEventListener("click", () => {
     toggleModal();
-    console.log("Ich bin hier....");
     pauseBtn.style.display = "block";
     switchScene.scene.resume('GameScene');
   });
@@ -460,9 +468,18 @@ function clickPause() {
 }
 
 
+function gameOver() {
+    if(playerHealth <= 0) {
+        gameoverModal.style.display = "block";
+        console.log("ich werde ausgeführt")
+        switchScene.scene.pause();
+    }
+}
+
 //Pause Button
 pauseModal.style.display = "none";
 clickPause();
+
 
 function formatTime(seconds){
     // Minutes

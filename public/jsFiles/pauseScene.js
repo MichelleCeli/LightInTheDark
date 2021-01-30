@@ -9,7 +9,7 @@ export default class PauseScene extends Phaser.Scene{
     }
 
     create() {
-        this.textA = this.add.text(10, 10, 'Funktionert, ich werde geladen', { font: '32px Arial', fill: '#FFFFFF' });
+        this.textA = this.add.text(10, 10, 'Game Over', { font: '32px Arial', fill: '#FFFFFF' });
     }
 
     update() {
