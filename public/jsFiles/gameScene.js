@@ -181,8 +181,8 @@ export default class GameScene extends Phaser.Scene{
 
         enemy = this.physics.add.group({
             key: 'enemy',
-            repeat: 5,
-            setXY: { x: 600, y: 300, stepX: Phaser.Math.FloatBetween(300, width) },
+            repeat: 12,
+            setXY: { x: 600, y: 300, stepX: Phaser.Math.FloatBetween(300, 400) },
         });
 
         enemy.children.iterate(function (child) {
