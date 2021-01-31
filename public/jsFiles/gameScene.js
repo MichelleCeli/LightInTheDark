@@ -1,4 +1,6 @@
 import Player from "./player.js";
+import PauseScene from "./pauseScene.js";
+
 let isPlayerDead;
 let playerHealth;
 let timer, timerText;
@@ -13,7 +15,6 @@ let restartGame = document.getElementById("restart-game");
 let switchScene;
 
 // Gameover Modal
-
 let gameoverModal = document.getElementById("gameover-modal");
 
 // Arrow Variablen
@@ -67,6 +68,9 @@ export default class GameScene extends Phaser.Scene{
 
         // weapon
         this.load.image("arrow", "./img/arrow.png");
+
+        // door
+        this.load.image("door", "./img/assets/door.png");
 
     }
 
@@ -187,6 +191,11 @@ export default class GameScene extends Phaser.Scene{
             child.anims.play('fly', true);
         });
 
+
+        // Door for Game End
+
+        let door = this.physics.add.staticSprite(3900, 415, 'door');
+        door.setScrollFactor(1);
         
 //////////////////////////////
 
@@ -262,6 +271,7 @@ export default class GameScene extends Phaser.Scene{
 /*         this.physics.add.overlap(this.player.sprite, enemy, hitEnemy, null, this); */
         this.physics.add.overlap(this.player.sprite, firefly, collectFirefly, null, this);
         
+        
         function collectCrystal (player, crystal) {
             if(playerHealth < 100) {
                 playerHealth += 50;
@@ -282,6 +292,13 @@ export default class GameScene extends Phaser.Scene{
             }
         }
 
+
+        // Check overlap between Player and door
+        this.physics.add.overlap(this.player.sprite, door, endLevel, null, this);
+        function endLevel(player, door) {
+            console.log("hallo ich bin da, hier soll die neue Scene geladen werden")
+            switchScene.scene.start(PauseScene);
+        }
 
         // Enemy Collision
 /*         function hitEnemy (player, enemy) {
@@ -365,7 +382,6 @@ export default class GameScene extends Phaser.Scene{
             timerText.setText('- : -');
         }
         if (isPlayerDead){return} */
-
 
         if(playerHealth <= 0) {
             gameoverModal.style.display = "block";
