@@ -8,9 +8,9 @@ export default class SecondLevel extends Phaser.Scene{
 
     preload () {
         //Hintergrund Bilder
-        this.load.image('bgBackSprite', './img/assets/background/background_1960x1080.png');
-        this.load.image('bgBackTreeSprite', './img/assets/background/trees_bg_1960x1080.png');
-        this.load.image('bgMiddleTreeSprite', './img/assets/background/trees_fg_1960x1080.png');
+        this.load.image('bgBackSpriteGreen', './img/assets/background/background_green_1960x1080.png');
+        this.load.image('bgBackTreeSpriteGreen', './img/assets/background/trees_bg_green_1960x1080.png');
+        this.load.image('bgMiddleTreeSpriteGreen', './img/assets/background/trees_fg_green_1960x1080.png');
         this.load.image('bgFrontSprite', './img/assets/background/front_1960x1080.png');
 
 
@@ -26,11 +26,11 @@ export default class SecondLevel extends Phaser.Scene{
         const height = this.scale.height;
         
         //background
-        const bg1 = this.add.image(width*0.5, height*0.5, 'bgBackSprite')
+        const bg1 = this.add.image(width*0.5, height*0.5, 'bgBackSpriteGreen')
         .setScrollFactor(0);
 
-        const bg2 = createAligned(this, 3, 'bgBackTreeSprite', 0.15);
-        const bg3 = createAligned(this, 3, 'bgMiddleTreeSprite', 0.3);
+        const bg2 = createAligned(this, 3, 'bgBackTreeSpriteGreen', 0.15);
+        const bg3 = createAligned(this, 3, 'bgMiddleTreeSpriteGreen', 0.3);
         const bg4 = createAligned(this, 3, 'bgFrontSprite', 0.5);
 
         let gameOptions = 60;
