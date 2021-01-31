@@ -1,5 +1,5 @@
 import Player from "./player.js";
-import PauseScene from "./pauseScene.js";
+import SecondLevel from "./secondLevel.js";
 
 let isPlayerDead;
 let playerHealth;
@@ -297,7 +297,8 @@ export default class GameScene extends Phaser.Scene{
         this.physics.add.overlap(this.player.sprite, door, endLevel, null, this);
         function endLevel(player, door) {
             console.log("hallo ich bin da, hier soll die neue Scene geladen werden")
-            switchScene.scene.start(PauseScene);
+            switchScene.scene.start("SecondLevel");
+            
         }
 
         // Enemy Collision
