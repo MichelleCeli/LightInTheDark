@@ -29,6 +29,20 @@ var justCreated;
 let direction;
 let ground;
 
+let switchedScene;
+
+// Sonntag: 11 Uhr soonnenblumen/kürbiskerne
+// TODO: no shooting while jumping //Finished
+// TODO: World Bounds
+// TODO: enemy runs against arrow: enemy shouldn't die -> velocity arrow //Finished
+// TODO: Arrow auslegen?
+// TODO: Resume shoots arrow ???
+// TODO: Monster collides with invisible layer
+
+// TODO: weiteres Monster
+// TODO: Menu responsive
+
+
 
 export default class GameScene extends Phaser.Scene{
 
@@ -72,6 +86,8 @@ export default class GameScene extends Phaser.Scene{
 
     create (){
 
+        switchedScene = false;
+
         const width = this.scale.width;
         const height = this.scale.height;
 
@@ -87,6 +103,20 @@ export default class GameScene extends Phaser.Scene{
 
         let gameOptions = 60;
 
+        // tilemap
+
+        const map = this.make.tilemap({ key: "map" });
+        const tileset = map.addTilesetImage("basement", "basement"); //.png???
+
+        ground = map.createLayer("ground", tileset, 0, height-1000);
+        const thorns = map.createLayer("thorns", tileset, 0, height-1000);
+        const movementEnemies = map.createLayer("movementEnemies", tileset, 0, height-1000);
+
+     //   this.physics.world.setBounds(0, height, map.width, 2000, false, false, false, false);
+        this.physics.world.setBoundsCollision(true, false, true, true);
+
+
+        // cover
         const cover = this.add.graphics();
         cover.fillStyle(0x000000, 0.8);
         cover.fillRect(0,0, width, height);
@@ -146,6 +176,7 @@ export default class GameScene extends Phaser.Scene{
 
         // Gegner einfügen
 
+
         enemy = this.add.sprite('enemy');
         enemy.setScrollFactor(1);
 
@@ -190,7 +221,7 @@ export default class GameScene extends Phaser.Scene{
         
 //////////////////////////////
 
-        this.physics.world.setBoundsCollision(true, false, true, true);
+
 
 
         // Player
@@ -211,14 +242,6 @@ export default class GameScene extends Phaser.Scene{
         this.cameras.main.setBounds(0,0, width * 3, height);
 
 
-        // tilemap
-
-        const map = this.make.tilemap({ key: "map" });
-        const tileset = map.addTilesetImage("basement", "basement"); //.png???
-
-        ground = map.createLayer("ground", tileset, 0, height-1000);
-        const thorns = map.createLayer("thorns", tileset, 0, height-1000);
-        const movementEnemies = map.createLayer("movementEnemies", tileset, 0, height-1000);
 
 
         // set collision
@@ -307,11 +330,16 @@ export default class GameScene extends Phaser.Scene{
 
     }
 
+
+
     //
     // Update Methode
     //
 
     update(){
+
+        console.log("X:  " + this.player.sprite.x + "   Y: " + this.player.sprite.y);
+        console.log("update: " + switchedScene);
 
         direction = this.player.update();
 
@@ -334,12 +362,14 @@ export default class GameScene extends Phaser.Scene{
         // arrow has to be updated first before new angle can be calculated
         justCreated = false;
         // checks if left Button is clicked and no other arrow is still shooting
-        if (this.input.activePointer.leftButtonDown() && !shooting) {
+        if (this.input.activePointer.leftButtonDown() && !shooting && this.player.sprite.body.blocked.down && !switchedScene) {
             leftButtonPressed = true;
-        }
+        }/*else{
+            switchedScene = false;
+        }*/
 
         // only shoots arrow after left Button is also released
-            if(this.input.activePointer.leftButtonReleased() && leftButtonPressed ) {
+            if(this.input.activePointer.leftButtonReleased() && leftButtonPressed && !switchedScene) {
 
                 // calculates the angle of the shot with the position of the input in wordcoordinates and position of the player
                 arrowRot = Math.atan2((this.input.activePointer.worldY - this.player.sprite.y), (this.input.activePointer.worldX - this.player.sprite.x)) * (180 / Math.PI);
@@ -355,6 +385,8 @@ export default class GameScene extends Phaser.Scene{
                 justCreated = true;
             }
                 leftButtonPressed = false;
+            }else{
+                switchedScene = false;
             }
 
 
@@ -418,10 +450,11 @@ function createArrow(scene, arrowRot, ground, enemy){
 
 // happens when arrow colides with enemy
 function killEnemy(arrow, enemy) {
-    shooting = false;
-    arrow.disableBody(true, true);
-    enemy.disableBody(true, true);
-
+    if(arrow.body.moves) {
+        shooting = false;
+        arrow.disableBody(true, true);
+        enemy.disableBody(true, true);
+    }
 }
 
 // after some time, the arrow gets disabled
@@ -456,10 +489,14 @@ function clickPause() {
     }
   }
 
+  //resume
   resumeGame.addEventListener("click", () => {
     toggleModal();
     pauseBtn.style.display = "block";
     switchScene.scene.resume('GameScene');
+    // switchScene.input.activePointer.leftButtonDown(false);
+      switchedScene = true;
+      console.log("resumeEventListener: " + switchedScene);
   });
 
   restartGame.addEventListener("click", () => {
