@@ -13,7 +13,7 @@ let pauseModal = document.getElementById("pause-modal");
 let resumeGame = document.getElementById("resume-game");
 let saveGame = document.getElementById("save-game");
 let restartGame = document.getElementById("restart-game");
-let switchScene;
+let counterAfterSwitchScene;
 
 // Gameover Modal
 let gameoverModal = document.getElementById("gameover-modal");
@@ -29,19 +29,20 @@ let arrowOldX;
 let arrowOldY;
 var justCreated;
 let direction;
+
+let map;
 let ground;
 
-let switchedScene;
+let switchScene;
 
 // Sonntag: 11 Uhr soonnenblumen/kürbiskerne
-// TODO: no shooting while jumping //Finished
-// TODO: World Bounds
-// TODO: enemy runs against arrow: enemy shouldn't die -> velocity arrow //Finished
-// TODO: Arrow auslegen?
-// TODO: Resume shoots arrow ???
-// TODO: Monster collides with invisible layer
 
-// TODO: weiteres Monster
+// TODO: Tilemap
+// TODO: Layer enemymovement
+// TODO: World Bounds
+// TODO: Arrow auslegen?
+
+// TODO: weiteres Monster???
 // TODO: Menu responsive
 
 
@@ -91,12 +92,13 @@ export default class GameScene extends Phaser.Scene{
 
     create (){
 
-        switchedScene = false;
+      //  switchedScene = false;
 
+        switchScene = this;
         const width = this.scale.width;
         const height = this.scale.height;
 
-        switchScene = this;
+        counterAfterSwitchScene = 0;
 
         //background
         const bg1 = this.add.image(width*0.5, height*0.5, 'bgBackSprite')
@@ -110,7 +112,7 @@ export default class GameScene extends Phaser.Scene{
 
         // tilemap
 
-        const map = this.make.tilemap({ key: "map" });
+        map = this.make.tilemap({ key: "map" });
         const tileset = map.addTilesetImage("basement", "basement"); //.png???
 
         ground = map.createLayer("ground", tileset, 0, height-1000);
@@ -173,11 +175,9 @@ export default class GameScene extends Phaser.Scene{
             child.setBounceY(Phaser.Math.FloatBetween(0.1, 0.4));
         });
 
-        // Gegner einfügen
 
-
-        enemy = this.add.sprite('enemy');
-        enemy.setScrollFactor(1);
+        // Enemies
+      //  enemy = this.add.sprite('enemy');
 
         enemy = this.physics.add.group({
             key: 'enemy',
@@ -186,14 +186,11 @@ export default class GameScene extends Phaser.Scene{
         });
 
         enemy.children.iterate(function (child) {
-            child.setBounce(0.2);
-            child.setVelocityX(-150, 150);
+            child.setBounce(0); //0.2
+            child.body.setVelocityX(-150);
             child.setGravityY(130);
+            child.setScrollFactor(1);
         })
-        
-
-       /* console.log(enemy.getChildren());*/
-
 
 
         // Firefly 
@@ -264,15 +261,19 @@ export default class GameScene extends Phaser.Scene{
         this.physics.add.collider(firefly, ground);
         this.physics.add.collider(enemy, ground);
         this.physics.add.collider(enemy, movementEnemies, function(){
-            
-/*             if(enemy in richtung -X dann) {
-                bla bla
-            }
+            enemy.getChildren().forEach(function (child){
 
-            if (enemy in richtung X dann) {
+                if (child.body.blocked.left){
+                    child.setVelocity(100, 0);
+                    console.log("left");
+                }
 
-            } */
-            enemy.setVelocityX(100);
+                if (child.body.blocked.right){
+                    child.setVelocity(-100, 0);
+                    console.log("right");
+                }
+
+            });
         });
 
         this.physics.add.collider(this.player.sprite, enemy, function(sprite) {
@@ -349,9 +350,15 @@ export default class GameScene extends Phaser.Scene{
     //
 
     update(){
+       // console.log(this.player.sprite.body.velocityX);
 
-        console.log("X:  " + this.player.sprite.x + "   Y: " + this.player.sprite.y);
-        console.log("update: " + switchedScene);
+
+
+        if(counterAfterSwitchScene > 0){
+            counterAfterSwitchScene -= 1;
+            leftButtonPressed = false;
+        }
+
 
         direction = this.player.update();
 
@@ -374,14 +381,12 @@ export default class GameScene extends Phaser.Scene{
         // arrow has to be updated first before new angle can be calculated
         justCreated = false;
         // checks if left Button is clicked and no other arrow is still shooting
-        if (this.input.activePointer.leftButtonDown() && !shooting && this.player.sprite.body.blocked.down && !switchedScene) {
+        if (this.input.activePointer.leftButtonDown() && !shooting && this.player.sprite.body.blocked.down && (counterAfterSwitchScene == 0)) {
             leftButtonPressed = true;
-        }/*else{
-            switchedScene = false;
-        }*/
+        }
 
         // only shoots arrow after left Button is also released
-            if(this.input.activePointer.leftButtonReleased() && leftButtonPressed && !switchedScene) {
+            if(this.input.activePointer.leftButtonReleased() && leftButtonPressed && (counterAfterSwitchScene == 0)) {
 
                 // calculates the angle of the shot with the position of the input in wordcoordinates and position of the player
                 arrowRot = Math.atan2((this.input.activePointer.worldY - this.player.sprite.y), (this.input.activePointer.worldX - this.player.sprite.x)) * (180 / Math.PI);
@@ -397,12 +402,11 @@ export default class GameScene extends Phaser.Scene{
                 justCreated = true;
             }
                 leftButtonPressed = false;
-            }else{
-                switchedScene = false;
             }
 
 
-        console.log(playerHealth);
+
+      /*  console.log(playerHealth);*/
 /*         if(playerHealth <= 0 ){
             isPlayerDead = true;
             this.player.destroy();
@@ -414,6 +418,7 @@ export default class GameScene extends Phaser.Scene{
             gameoverModal.style.display = "block";
             pauseBtn.style.display = "none";
             console.log("ich werde ausgeführt")
+            this.player.sprite.setTint(0xff0000);
             switchScene.scene.pause();
         } 
 
@@ -524,9 +529,7 @@ function clickPause() {
     toggleModal();
     pauseBtn.style.display = "block";
     switchScene.scene.resume('GameScene');
-    // switchScene.input.activePointer.leftButtonDown(false);
-      switchedScene = true;
-      console.log("resumeEventListener: " + switchedScene);
+    counterAfterSwitchScene = 40;
   });
 
   restartGame.addEventListener("click", () => {

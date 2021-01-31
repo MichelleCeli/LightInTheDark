@@ -64,7 +64,10 @@ export default class Player {
 
         if (keys.left.isDown || keys.a.isDown) {
             sprite.setVelocityX(-160);
+          //  sprite.body.setVelocityX(-160);
             direction = "left";
+           // console.log(sprite.body.velocity.x);
+           // console.log("new " + sprite.body.newVelocity);
 
             if(!inAir)
             {sprite.anims.play('left', true);}
