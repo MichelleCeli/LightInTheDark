@@ -178,7 +178,7 @@ export default class GameScene extends Phaser.Scene{
         let firefly = this.physics.add.group({
             key: 'firefly',
             repeat: 20,
-            setXY: { x: 250, y: 0, stepX: Phaser.Math.FloatBetween(10, 1500) }
+            setXY: { x: 250, y: 0, stepX: Phaser.Math.FloatBetween(300, 500) }
         });
 
         firefly.children.iterate(function (child) {
