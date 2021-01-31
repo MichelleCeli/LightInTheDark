@@ -1,4 +1,6 @@
 import Player from "./player.js";
+import SecondLevel from "./secondLevel.js";
+
 let isPlayerDead;
 let playerHealth;
 let timer, timerText;
@@ -9,11 +11,11 @@ let lightbar;
 let pauseBtn = document.getElementById("pause-btn");
 let pauseModal = document.getElementById("pause-modal");
 let resumeGame = document.getElementById("resume-game");
+let saveGame = document.getElementById("save-game");
 let restartGame = document.getElementById("restart-game");
 let switchScene;
 
 // Gameover Modal
-
 let gameoverModal = document.getElementById("gameover-modal");
 
 // Arrow Variablen
@@ -82,6 +84,9 @@ export default class GameScene extends Phaser.Scene{
         // weapon
         this.load.image("arrow", "./img/arrow.png");
 
+        // door
+        this.load.image("door", "./img/assets/door.png");
+
     }
 
     create (){
@@ -126,30 +131,24 @@ export default class GameScene extends Phaser.Scene{
         this.timeLeft = gameOptions.initialTime;
 
         let healthbarContainer = this.add.sprite(150, 50, 'barBg');
-        healthbarContainer.setScale(0.2);
         healthbarContainer.setScrollFactor(0);
         healthbarContainer.setDepth(2);
         let healthbar = this.add.sprite(healthbarContainer.x, healthbarContainer.y, 'healthbar');
-        healthbar.setScale(0.2);
         healthbar.setScrollFactor(0);
         healthbar.setDepth(2);
         let healthMask = this.add.sprite(healthbar.x, healthbar.y, 'healthbar');
-        healthMask.setScale(0.2);
         healthMask.setScrollFactor(0);
         healthMask.setDepth(2);
         healthMask.visible = false;
 
 
         let lightbarContainer = this.add.sprite(150, 100, 'barBg');
-        lightbarContainer.setScale(0.2);
         lightbarContainer.setScrollFactor(0);
         lightbarContainer.setDepth(2);
         lightbar = this.add.sprite(lightbarContainer.x, lightbarContainer.y, 'lightbar');
-        lightbar.setScale(0.2);
         lightbar.setScrollFactor(0);
         lightbar.setDepth(2);
         this.lightMask = this.add.sprite(lightbar.x, lightbar.y, 'lightbar');
-        this.lightMask.setScale(0.2);
         this.lightMask.setScrollFactor(0);
         this.lightMask.setDepth(2);
         this.lightMask.visible = false;
@@ -210,7 +209,7 @@ export default class GameScene extends Phaser.Scene{
         let firefly = this.physics.add.group({
             key: 'firefly',
             repeat: 20,
-            setXY: { x: 250, y: 0, stepX: Phaser.Math.FloatBetween(10, 1500) }
+            setXY: { x: 250, y: 0, stepX: Phaser.Math.FloatBetween(300, 500) }
         });
 
         firefly.children.iterate(function (child) {
@@ -218,6 +217,11 @@ export default class GameScene extends Phaser.Scene{
             child.anims.play('fly', true);
         });
 
+
+        // Door for Game End
+
+        let door = this.physics.add.staticSprite(3900, 415, 'door');
+        door.setScrollFactor(1);
         
 //////////////////////////////
 
@@ -272,11 +276,10 @@ export default class GameScene extends Phaser.Scene{
         });
 
         this.physics.add.collider(this.player.sprite, enemy, function(sprite) {
-            playerHealth -= 10;
-            healthMask.x -= 10;
+            playerHealth -= 50;
+            healthMask.x -= 99;
             sprite.setVelocityX(-200);
             sprite.setVelocityY(-200);
-            sprite.setTint(0xff0000);
         })
         
 
@@ -285,26 +288,35 @@ export default class GameScene extends Phaser.Scene{
 /*         this.physics.add.overlap(this.player.sprite, enemy, hitEnemy, null, this); */
         this.physics.add.overlap(this.player.sprite, firefly, collectFirefly, null, this);
         
+        
         function collectCrystal (player, crystal) {
-            if(playerHealth < 100) {
-                playerHealth += 50;
-                healthMask.x += 99;
+            if(playerHealth >= 100) {
                 crystal.disableBody(true, true);
             } else {
+                playerHealth += 50;
+                healthMask.x += 99;
                 crystal.disableBody(true, true);
             }
         }
 
         function collectFirefly (player, firefly) {
-            if (this.spotlight.scale >= 1) {
+            if (this.spotlight.scale >= 1 || this.lightMask.x + 45 >= 150) {
                 firefly.disableBody(true, true);
+                this.lightMask.x = 150;
+                this.spotlight.scale = 1;
             } else {
                 firefly.disableBody(true, true);
-                this.lightMask.x += 50;
-                this.spotlight.scale += 0.25;
+                this.lightMask.x += 40;
+                this.spotlight.scale += 0.20;
             }
         }
 
+
+        // Check overlap between Player and door
+        this.physics.add.overlap(this.player.sprite, door, endLevel, null, this);
+        function endLevel(player, door) {
+            switchScene.scene.start("SecondLevel");
+        }
 
         // Enemy Collision
 /*         function hitEnemy (player, enemy) {
@@ -390,7 +402,7 @@ export default class GameScene extends Phaser.Scene{
             }
 
 
-      /*  console.log(playerHealth);*/
+        console.log(playerHealth);
 /*         if(playerHealth <= 0 ){
             isPlayerDead = true;
             this.player.destroy();
@@ -398,9 +410,9 @@ export default class GameScene extends Phaser.Scene{
         }
         if (isPlayerDead){return} */
 
-
         if(playerHealth <= 0) {
             gameoverModal.style.display = "block";
+            pauseBtn.style.display = "none";
             console.log("ich werde ausgeführt")
             switchScene.scene.pause();
         } 
@@ -408,16 +420,19 @@ export default class GameScene extends Phaser.Scene{
 
         this.spotlight.setPosition(this.player.sprite.x, this.player.sprite.y);
         if(this.spotlight.scale > 0.4){
-             this.spotlight.scale -= 0.0008;
+             this.spotlight.scale -= 0.0009;
         }
-        
-        if(this.lightMask.x <= -37) {
-            this.lightMask.x <= -37;
+        if(this.spotlight.scale >= 0.4) {
+            this.lightMask.x <= -41;
+        }
+        if(this.lightMask.x <= -41) {
+            this.lightMask.x <= -41;
         } else {
-            this.lightMask.x -= 0.2;
+            this.lightMask.x -= 0.29;
         }
 
         timerText.setText(formatTime(timer.getElapsedSeconds()));
+        //console.log(timerText);
 
     }
 }
@@ -489,6 +504,21 @@ function clickPause() {
     }
   }
 
+  saveGame.addEventListener("click", () => {
+      let score = Math.round(timer.getElapsedSeconds());
+      let position = [switchScene.player.sprite.x, switchScene.player.sprite.y];
+      let level = 1;
+      console.log("save click");
+     $.ajax({
+        url: '/saveGame',
+        method: 'POST',
+        data: {level, score, position}
+    })  
+    .done(function(res){
+        console.log("saved game");
+    })
+  });
+
   //resume
   resumeGame.addEventListener("click", () => {
     toggleModal();
@@ -505,13 +535,6 @@ function clickPause() {
 }
 
 
-function gameOver() {
-    if(playerHealth <= 0) {
-        gameoverModal.style.display = "block";
-        console.log("ich werde ausgeführt")
-        switchScene.scene.pause();
-    }
-}
 
 //Pause Button
 pauseModal.style.display = "none";
@@ -530,4 +553,16 @@ function formatTime(seconds){
     return `${minutes}:${partInSeconds}`;
 }
 
+function setTimer(score){
+    timerText.setText(formatTime(score));
+}
 
+function loadGame(){
+    $.ajax({
+        url: '/loadGame',
+        method: 'GET'
+    })  
+    .done(function(res){
+        console.log("load game");
+    })
+}

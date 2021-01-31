@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://use.typekit.net/svb4tcg.css">
+    <link rel="stylesheet" href="menu.css">
+    <link rel="shortcut icon" href=".\img\assets\favicon.ico">
+    <title>Profile - Light in the dark</title>
+</head>
+<body>
+<div class="screen">
+    <div class="container">
+        <h1>Profile</h1>
+        <label id="username"></label>
+        <label id="level"></label>
+        <label id="highscore"></label>
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $.ajax({
+            url: '/getProfileData',
+            method: 'GET'
+        })
+        .done(function(res){
+            $('#username').html(res.user.username);
+            $('#level').html("Level "+res.scores[0].level);
+            $('#highscore').html(res.scores[0].highscore);
+        })
+    });
+</script>
+
+</body>
+</html>

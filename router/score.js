@@ -7,10 +7,10 @@ const User = db.User;
 module.exports = router;
 
 router.post("/saveScore", async function(req, res){
-    let userID = req.session.user._id;
+    let username = req.session.user.username;
     let level = req.body.level;
     let time = req.body.time;
-    Score.findOne({userID: userID, level: level})
+    Score.findOne({username: username, level: level})
     .then(score =>{
         if(score){
             score.timescore = time;
@@ -20,7 +20,7 @@ router.post("/saveScore", async function(req, res){
             score.save();
         }else{
             const newScore = new Score({
-                userID: userID,
+                username: username,
                 level: level,
                 timescore: time,
                 highscore: time
@@ -34,8 +34,5 @@ router.post("/saveScore", async function(req, res){
 router.get("/getScore", async function(req, res){
     let level = req.query.level;
     const scores = await Score.find({level, highscore: { $gte: 1 }}, 'username highscore -_id').sort({ highscore: 1}).limit(10);
-    const users = await User.find({}, 'username email -_id');
-    console.log(scores);
-    //const names = await User.find({_id: scores.userID});
     res.json(scores)
 })

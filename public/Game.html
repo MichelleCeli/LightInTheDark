@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <link rel="stylesheet" href="https://use.typekit.net/svb4tcg.css">
     <link rel="stylesheet" href="./menu.css">
+    <link rel="shortcut icon" href=".\img\assets\favicon.ico">
     <title>Light in the dark</title>
 </head>
 <body>
@@ -14,9 +15,10 @@
     <div id="pause-modal">
         <h2>Pause</h2>
         <div id="modal-button">
-            <button id="resume-game" class="button">Weiter</button>
-            <button id="restart-game" class="button">Neustart</button>
-            <button onclick="window.location ='Menu.html'" id="exit-game" class="button">Spiel Beenden</button>
+            <button id="resume-game" class="button">Resume</button>
+            <button id="restart-game" class="button">Restart</button>
+            <button id="save-game" class="button">Save Game</button>
+            <button onclick="window.location.assign('/menu')" id="exit-game" class="button">Exit Game</button>
         </div>
     </div>
 
@@ -30,22 +32,8 @@
     </div>
     
 
-
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script type="text/javascript" src="jsFiles/libaries/phaser.min.js"></script>
     <script type="module" src="jsFiles/start.js"></script>
- <!--   <script>
-        $(document).ajaxStart(function(){
-        $.ajax({
-            url: '/auth',
-            dataType: 'json'
-        })
-        .done(function(res){
-            if(res === "not authenticated"){
-                location.href = "Index.html";
-            }
-        })
-    });
-    </script>-->
 </body> 
 </html>

@@ -1,5 +1,5 @@
 import GameScene from "./gameScene.js";
-import PauseScene from "./pauseScene.js";
+import SecondLevel from "./secondLevel.js";
 
 var config = {
     type: Phaser.AUTO,
@@ -11,7 +11,7 @@ var config = {
             gravity: { y: 500 },
         }
     },
-    scene: [ GameScene, PauseScene ]
+    scene: [ GameScene, SecondLevel ]
 };
   
  var game = new Phaser.Game(config);

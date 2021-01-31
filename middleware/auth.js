@@ -1,10 +1,9 @@
-const session = require("express-session");
-
-/* const authMiddleware = function(req, res, next){
-    if(!req.session.user){
+const authMiddleware = (req, res, next) => {
+    const user = req.session.user;
+    if(!user){
         return res.redirect("/login");
     }
     return next();
 }
 
-module.exports = authMiddleware(); */
+module.exports = {authMiddleware};

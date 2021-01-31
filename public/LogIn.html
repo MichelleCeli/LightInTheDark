@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://use.typekit.net/svb4tcg.css">
     <link rel="stylesheet" href="menu.css">
-    <title>Startmenu</title>
+    <link rel="shortcut icon" href=".\img\assets\favicon.ico">
+    <title>Login - Light in the dark</title>
 </head>
 
 <body>
@@ -25,7 +26,7 @@
             <div id="message" class="label"></div>
             <!-- <a id="logIn" title="Log in" class="button" value="Log in" onclick="window.location ='Menu.html'">Log In</a> -->
             <button type="submit" id="logIn" title="Log in" class="button" value="Log in">Log In</button>
-            <a id="signIn" title="Sign in" class="button" value="Sign in" onclick="window.location ='SignIn.html'">Sign
+            <a id="signIn" title="Sign in" class="button" value="Sign in" onclick="window.location.assign('/register')">Sign
                 In</a>
 
         </form>
@@ -51,7 +52,7 @@
                         if(response.type === 'error'){
                             $('#message').html(response.res);
                         }else if(response.type === 'success'){
-                            location.href = "Menu.html";
+                            location.assign('/menu');
                         }
                     }) 
                     .fail(function (response){

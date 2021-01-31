@@ -333,6 +333,27 @@ Alina - 17.12.2020
     padding: 15px 0;
 }
 
+/** Highscore **/
+
+#score-container {
+    display: block;
+}
+
+#score-container h2 {
+    padding: 10px 40px;
+    font-size: 45px;
+}
+
+#highscore {
+    color: #DDDDC3;
+    font-family: p22-muschamp-pro, sans-serif;
+    font-size: 35px;
+}
+
+#highscore th {
+    padding: 0 40px;
+}
+
 
 @media only screen and (max-width: 600px) {
 
