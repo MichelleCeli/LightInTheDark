@@ -34,14 +34,18 @@ app.use(express.static("public"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true})); 
 
+/* var auth = require('./middleware/auth');
+app.use('/', auth); */
+
 var userService = require('./router/userService');
 app.use('/', userService);
 
 var score = require('./router/score');
 app.use('/', score);
 
-/* var auth = require('./router/auth');
-app.use('/', auth); */
+var gameService = require('./router/gameService');
+app.use('/', gameService);
+
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)

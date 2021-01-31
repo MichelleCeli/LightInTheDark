@@ -72,7 +72,7 @@
                                 $('#messagePasswordRepeat').html(response.res);
                             }
                         }else if(response.type === 'success'){
-                            location.href = "Menu.html";
+                            location.assign('/menu');
                         }
                     }) 
                     .fail(function (response){

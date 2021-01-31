@@ -11,6 +11,7 @@ let lightbar;
 let pauseBtn = document.getElementById("pause-btn");
 let pauseModal = document.getElementById("pause-modal");
 let resumeGame = document.getElementById("resume-game");
+let saveGame = document.getElementById("save-game");
 let restartGame = document.getElementById("restart-game");
 let switchScene;
 
@@ -100,30 +101,24 @@ export default class GameScene extends Phaser.Scene{
         this.timeLeft = gameOptions.initialTime;
 
         let healthbarContainer = this.add.sprite(150, 50, 'barBg');
-        healthbarContainer.setScale(0.2);
         healthbarContainer.setScrollFactor(0);
         healthbarContainer.setDepth(2);
         let healthbar = this.add.sprite(healthbarContainer.x, healthbarContainer.y, 'healthbar');
-        healthbar.setScale(0.2);
         healthbar.setScrollFactor(0);
         healthbar.setDepth(2);
         let healthMask = this.add.sprite(healthbar.x, healthbar.y, 'healthbar');
-        healthMask.setScale(0.2);
         healthMask.setScrollFactor(0);
         healthMask.setDepth(2);
         healthMask.visible = false;
 
 
         let lightbarContainer = this.add.sprite(150, 100, 'barBg');
-        lightbarContainer.setScale(0.2);
         lightbarContainer.setScrollFactor(0);
         lightbarContainer.setDepth(2);
         lightbar = this.add.sprite(lightbarContainer.x, lightbarContainer.y, 'lightbar');
-        lightbar.setScale(0.2);
         lightbar.setScrollFactor(0);
         lightbar.setDepth(2);
         this.lightMask = this.add.sprite(lightbar.x, lightbar.y, 'lightbar');
-        this.lightMask.setScale(0.2);
         this.lightMask.setScrollFactor(0);
         this.lightMask.setDepth(2);
         this.lightMask.visible = false;
@@ -403,6 +398,7 @@ export default class GameScene extends Phaser.Scene{
         }
 
         timerText.setText(formatTime(timer.getElapsedSeconds()));
+        //console.log(timerText);
 
     }
 }
@@ -473,6 +469,21 @@ function clickPause() {
     }
   }
 
+  saveGame.addEventListener("click", () => {
+      let score = Math.round(timer.getElapsedSeconds());
+      let position = [switchScene.player.sprite.x, switchScene.player.sprite.y];
+      let level = 1;
+      console.log("save click");
+     $.ajax({
+        url: '/saveGame',
+        method: 'POST',
+        data: {level, score, position}
+    })  
+    .done(function(res){
+        console.log("saved game");
+    })
+  });
+
   resumeGame.addEventListener("click", () => {
     toggleModal();
     pauseBtn.style.display = "block";
@@ -510,4 +521,16 @@ function formatTime(seconds){
     return `${minutes}:${partInSeconds}`;
 }
 
+function setTimer(score){
+    timerText.setText(formatTime(score));
+}
 
+function loadGame(){
+    $.ajax({
+        url: '/loadGame',
+        method: 'GET'
+    })  
+    .done(function(res){
+        console.log("load game");
+    })
+}

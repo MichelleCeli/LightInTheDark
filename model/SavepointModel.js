@@ -8,7 +8,7 @@ const SavepointSchema = mongoose.Schema({
     lifepoints: Number,
     lightpoints: Number
 },
-{collection: 'savepints'}
+{collection: 'savepoints'}
 );
 
-module.exports = mongoose.Model("savepoint", SavepointSchema);
+module.exports = mongoose.model("savepoint", SavepointSchema);

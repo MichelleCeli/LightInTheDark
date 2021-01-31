@@ -6,9 +6,17 @@ var router = express.Router();
 const config = require("../helpers/config");
 var path = require("path");
 const ScoreModel = require("../model/ScoreModel");
-//var authMiddleware = require("../middleware/auth");
+const {authMiddleware} = require("../middleware/auth");
 
 module.exports = router;
+
+router.get('/', async function(req, res){
+    res.redirect('/login');
+}) 
+
+router.get('/login', async function(req, res){
+    res.sendFile(path.join(__dirname, '../public', 'LogIn.html'));
+}) 
 
 router.post("/login", async function(req, res){
     let {username, password} = req.body;
@@ -31,6 +39,10 @@ router.post("/login", async function(req, res){
         }
     })
  })
+
+router.get('/register', async function(req, res){
+    res.sendFile(path.join(__dirname, '../public', 'SignIn.html'));
+}) 
 
 router.post("/register", async function(req, res){
     //try {
@@ -60,14 +72,14 @@ router.post("/register", async function(req, res){
             password: hashedPassword
         })
 
-        await user.save()
+        await user.save();
         req.session.user = user;
 
         const score = new ScoreModel({
             username: user.username,
             level: 1,
-            timescore: 65,
-            highscore: 65
+            timescore: 0,
+            highscore: 0
         })
 
         await score.save();
@@ -80,29 +92,26 @@ router.post("/register", async function(req, res){
 
 })
 
-router.post('/save', async function(req, res){
-
-})
-
 router.get('/logout', async function(req, res){
     if(req.session.user) {
         req.session.destroy();
-        console.log("logout");
         res.json("logout");
-    } else {
-        res.redirect('/');
-    }        
+    }      
 }); 
 
-const authMiddleware = function(req, res, next){
-    if(!req.session.user){
-        return res.redirect("/login");
-    }
-    return next();
-}
-
-/* router.get('/menu', authMiddleware, async function(req, res){
-    console.log("go to menu");
+router.get('/menu', authMiddleware, (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'Menu.html'));
-}) */
+}) 
  
+
+router.get('/profile', authMiddleware, (req, res) => {
+    res.sendFile(path.join(__dirname, '../public', 'Profile.html'));
+}) 
+
+router.get('/getProfileData', async (req, res) => {
+    const userID = req.session.user._id;
+    const user = await User.findById(userID, 'username -_id');
+    const scores = await ScoreModel.find(user, 'level timescore highscore -_id');
+    console.log({user, scores});
+    res.json({user, scores});
+})
