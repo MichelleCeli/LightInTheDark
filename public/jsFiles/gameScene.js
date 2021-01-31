@@ -262,17 +262,24 @@ export default class GameScene extends Phaser.Scene{
 
             });
         });
-
-        this.physics.add.collider(this.player.sprite, enemy, function(sprite, enemy) {
-            sprite.immune = true;
+        this.physics.add.collider(this.player.sprite, enemy, function(sprite) {
             sprite.setVelocityX(-500);
             //sprite.setVelocityY(-500);
-            playerHealth -= 50;
-            healthMask.x -= 99;
-            /* this.time.delayedCall(1000, function() {
-                sprite.immune = false;
-            }, this); */
+            sprite.setTint(0xff0000);
+            if(!sprite.immune){
+                playerHealth -= 50;
+                healthMask.x -= 99;
+            }
+            sprite.immune = true;
+            immune(sprite);
         })
+
+        
+        const immune = (sprite) => this.time.delayedCall(1000, function() {
+                console.log("collide");
+                sprite.setTint(0xffffff);
+               sprite.immune = false;
+           }, this);
         
 
         // Check overlap between Crystal, Enemy and Player
