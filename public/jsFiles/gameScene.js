@@ -34,18 +34,10 @@ let map;
 let ground;
 
 let switchScene;
-
-// Sonntag: 11 Uhr soonnenblumen/kürbiskerne
-
-// TODO: Tilemap
-// TODO: Layer enemymovement
-// TODO: World Bounds
-// TODO: Arrow auslegen?
-
-// TODO: weiteres Monster???
-// TODO: Menu responsive
-
-
+let score = 0;
+let gameLoaded = false;
+let newPlayerPosX;
+let newPlayerPosY;
 
 export default class GameScene extends Phaser.Scene{
 
@@ -186,7 +178,7 @@ export default class GameScene extends Phaser.Scene{
         });
 
         enemy.children.iterate(function (child) {
-            child.setBounce(0); //0.2
+            child.setBounce(0.2); //0.2
             child.body.setVelocityX(-150);
             child.setGravityY(130);
             child.setScrollFactor(1);
@@ -219,11 +211,6 @@ export default class GameScene extends Phaser.Scene{
 
         let door = this.physics.add.staticSprite(3900, 415, 'door');
         door.setScrollFactor(1);
-        
-//////////////////////////////
-
-
-
 
         // Player
         isPlayerDead = false;
@@ -276,11 +263,15 @@ export default class GameScene extends Phaser.Scene{
             });
         });
 
-        this.physics.add.collider(this.player.sprite, enemy, function(sprite) {
+        this.physics.add.collider(this.player.sprite, enemy, function(sprite, enemy) {
+            sprite.immune = true;
+            sprite.setVelocityX(-500);
+            //sprite.setVelocityY(-500);
             playerHealth -= 50;
             healthMask.x -= 99;
-            sprite.setVelocityX(-200);
-            sprite.setVelocityY(-200);
+            /* this.time.delayedCall(1000, function() {
+                sprite.immune = false;
+            }, this); */
         })
         
 
@@ -350,7 +341,11 @@ export default class GameScene extends Phaser.Scene{
     //
 
     update(){
-       // console.log(this.player.sprite.body.velocityX);
+         if(gameLoaded){
+            this.player.sprite.x = newPlayerPosX;
+            this.player.sprite.y = newPlayerPosY;
+            gameLoaded = false;
+        }  
 
 
 
@@ -436,7 +431,7 @@ export default class GameScene extends Phaser.Scene{
             this.lightMask.x -= 0.29;
         }
 
-        timerText.setText(formatTime(timer.getElapsedSeconds()));
+        timerText.setText(formatTime(score + timer.getElapsedSeconds()));
         //console.log(timerText);
 
     }
@@ -513,15 +508,15 @@ function clickPause() {
       let score = Math.round(timer.getElapsedSeconds());
       let position = [switchScene.player.sprite.x, switchScene.player.sprite.y];
       let level = 1;
-      console.log("save click");
-     $.ajax({
+      console.log(playerHealth);
+     /* $.ajax({
         url: '/saveGame',
         method: 'POST',
         data: {level, score, position}
     })  
     .done(function(res){
         console.log("saved game");
-    })
+    }) */
   });
 
   //resume
@@ -529,7 +524,9 @@ function clickPause() {
     toggleModal();
     pauseBtn.style.display = "block";
     switchScene.scene.resume('GameScene');
-    counterAfterSwitchScene = 40;
+    setTimer(20);
+    gameLoaded = true;
+    updatePlayerPos(250, 450);
   });
 
   restartGame.addEventListener("click", () => {
@@ -556,8 +553,13 @@ function formatTime(seconds){
     return `${minutes}:${partInSeconds}`;
 }
 
-function setTimer(score){
-    timerText.setText(formatTime(score));
+function setTimer(timescore){
+    score = timescore;
+}
+
+function updatePlayerPos(x, y){
+    newPlayerPosX = x;
+    newPlayerPosY = y;
 }
 
 function loadGame(){

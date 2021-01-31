@@ -42,14 +42,15 @@ export default class Player {
             .setCollideWorldBounds(true);
 
         // Keys
-        const {LEFT, RIGHT, UP, W, A, D} = Phaser.Input.Keyboard.KeyCodes;
+        const {LEFT, RIGHT, UP, W, A, D, SPACE} = Phaser.Input.Keyboard.KeyCodes;
         this.keys = scene.input.keyboard.addKeys({
             left: LEFT,
             right: RIGHT,
             up: UP,
             w: W,
             a: A,
-            d: D
+            d: D,
+            space: SPACE
         });
     }
     freeze() {
@@ -89,7 +90,7 @@ export default class Player {
         }
 
 
-        if (onGround && (keys.up.isDown || keys.w.isDown)) {
+        if (onGround && (keys.up.isDown || keys.w.isDown || keys.space.isDown)) {
             sprite.setVelocityY(-380);
             inAir = true;
         }
