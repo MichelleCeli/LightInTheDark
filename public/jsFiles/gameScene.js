@@ -253,11 +253,10 @@ export default class GameScene extends Phaser.Scene{
         });
 
         this.physics.add.collider(this.player.sprite, enemy, function(sprite) {
-            playerHealth -= 10;
-            healthMask.x -= 10;
+            playerHealth -= 50;
+            healthMask.x -= 99;
             sprite.setVelocityX(-200);
             sprite.setVelocityY(-200);
-            sprite.setTint(0xff0000);
         })
         
 
@@ -268,22 +267,24 @@ export default class GameScene extends Phaser.Scene{
         
         
         function collectCrystal (player, crystal) {
-            if(playerHealth < 100) {
-                playerHealth += 50;
-                healthMask.x += 99;
+            if(playerHealth >= 100) {
                 crystal.disableBody(true, true);
             } else {
+                playerHealth += 50;
+                healthMask.x += 99;
                 crystal.disableBody(true, true);
             }
         }
 
         function collectFirefly (player, firefly) {
-            if (this.spotlight.scale >= 1) {
+            if (this.spotlight.scale >= 1 || this.lightMask.x + 45 >= 150) {
                 firefly.disableBody(true, true);
+                this.lightMask.x = 150;
+                this.spotlight.scale = 1;
             } else {
                 firefly.disableBody(true, true);
-                this.lightMask.x += 50;
-                this.spotlight.scale += 0.25;
+                this.lightMask.x += 40;
+                this.spotlight.scale += 0.20;
             }
         }
 
@@ -291,9 +292,7 @@ export default class GameScene extends Phaser.Scene{
         // Check overlap between Player and door
         this.physics.add.overlap(this.player.sprite, door, endLevel, null, this);
         function endLevel(player, door) {
-            console.log("hallo ich bin da, hier soll die neue Scene geladen werden")
             switchScene.scene.start("SecondLevel");
-            
         }
 
         // Enemy Collision
@@ -371,7 +370,7 @@ export default class GameScene extends Phaser.Scene{
             }
 
 
-      /*  console.log(playerHealth);*/
+        console.log(playerHealth);
 /*         if(playerHealth <= 0 ){
             isPlayerDead = true;
             this.player.destroy();
@@ -381,6 +380,7 @@ export default class GameScene extends Phaser.Scene{
 
         if(playerHealth <= 0) {
             gameoverModal.style.display = "block";
+            pauseBtn.style.display = "none";
             console.log("ich werde ausgeführt")
             switchScene.scene.pause();
         } 
@@ -388,13 +388,15 @@ export default class GameScene extends Phaser.Scene{
 
         this.spotlight.setPosition(this.player.sprite.x, this.player.sprite.y);
         if(this.spotlight.scale > 0.4){
-             this.spotlight.scale -= 0.0008;
+             this.spotlight.scale -= 0.0009;
         }
-        
-        if(this.lightMask.x <= -37) {
-            this.lightMask.x <= -37;
+        if(this.spotlight.scale >= 0.4) {
+            this.lightMask.x <= -41;
+        }
+        if(this.lightMask.x <= -41) {
+            this.lightMask.x <= -41;
         } else {
-            this.lightMask.x -= 0.2;
+            this.lightMask.x -= 0.29;
         }
 
         timerText.setText(formatTime(timer.getElapsedSeconds()));
@@ -496,13 +498,6 @@ function clickPause() {
 }
 
 
-function gameOver() {
-    if(playerHealth <= 0) {
-        gameoverModal.style.display = "block";
-        console.log("ich werde ausgeführt")
-        switchScene.scene.pause();
-    }
-}
 
 //Pause Button
 pauseModal.style.display = "none";
