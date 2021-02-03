@@ -1,4 +1,11 @@
+import Player from "./player.js";
+
 let lightbar;
+let map;
+let ground;
+let isPlayerDead;
+let playerHealth;
+let direction;
 
 export default class SecondLevel extends Phaser.Scene{
 
@@ -13,6 +20,9 @@ export default class SecondLevel extends Phaser.Scene{
         this.load.image('bgMiddleTreeSpriteGreen', './img/assets/background/trees_fg_green_1960x1080.png');
         this.load.image('bgFrontSprite', './img/assets/background/front_1960x1080.png');
 
+        // tilemap
+        this.load.image("basement", "./img/assets/maps/basement.png");
+        this.load.tilemapTiledJSON("map", "./img/assets/maps/mapLevel2.json");
 
         //Health and Lightbar
         this.load.image('barBg', './img/healthbar.png');
@@ -34,6 +44,17 @@ export default class SecondLevel extends Phaser.Scene{
         const bg4 = createAligned(this, 3, 'bgFrontSprite', 0.5);
 
         let gameOptions = 60;
+
+        // tilemap
+        map = this.make.tilemap({ key: "map" });
+        const tileset = map.addTilesetImage("basement", "basement"); //.png???
+
+        ground = map.createLayer("ground", tileset, 0, 0);
+        const thorns = map.createLayer("thorns", tileset, 0, 0);
+        const movementEnemies = map.createLayer("movementEnemies", tileset, 0, 0);
+
+        this.physics.world.setBounds(0, 0, map.width*10, height);
+        this.physics.world.setBoundsCollision(true, true, false, false);
 
         const cover = this.add.graphics();
         cover.fillStyle(0x000000, 0.8);
@@ -77,16 +98,39 @@ export default class SecondLevel extends Phaser.Scene{
         lightbar.mask = new Phaser.Display.Masks.BitmapMask(this, this.lightMask);
 
 
+        // Player
+        isPlayerDead = false;
+        this.player = new Player(this, 200, 500);
+        playerHealth = 100;
+
+        // set collision
+        ground.setCollisionByProperty({collides : true});
+        thorns.setCollisionByProperty({collides : true});
+        movementEnemies.setCollisionByProperty({collides : true});
+
+        this.physics.add.collider(this.player.sprite, ground);
+        this.physics.add.collider(this.player.sprite, thorns, function(sprite, thorns){
+            sprite.setVelocityY(-380);
+            healthMask.x -= 99;
+            playerHealth -= 50;
+        });
+
+
+
+        // camera
+        const camera = this.cameras.main;
+        camera.startFollow(this.player.sprite);
+        camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels );
 
 
 
 
-
-
-        this.textA = this.add.text(10, 10, 'Game Over', { font: '32px Arial', fill: '#FFFFFF' });
+     //   this.textA = this.add.text(10, 10, 'Game Over', { font: '32px Arial', fill: '#FFFFFF' });
     }
 
     update() {
+
+        direction = this.player.update();
 
     }
 

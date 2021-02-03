@@ -83,8 +83,8 @@ export default class GameScene extends Phaser.Scene{
 
         // tilemap
         this.load.image("basement", "./img/assets/maps/basement.png");
-     //   this.load.tilemapTiledJSON("map", "./img/assets/maps/map.json");
-        this.load.tilemapTiledJSON("map", "./img/assets/maps/mapLevel2.json");
+        this.load.tilemapTiledJSON("map", "./img/assets/maps/map.json");
+    // Level 2    this.load.tilemapTiledJSON("map", "./img/assets/maps/mapLevel2.json");
 
         this.load.image('pause-btn', './img/assets/pause-btn.png');
 
@@ -230,16 +230,16 @@ export default class GameScene extends Phaser.Scene{
 
         // Door for Game End
 
-     //   let door = this.physics.add.staticSprite(3900, 415, 'door');
-        let door = this.physics.add.staticSprite(5900, 100, 'door');
+        let door = this.physics.add.staticSprite(3900, 415, 'door');
+      //  let door = this.physics.add.staticSprite(5900, 600, 'door');
         door.setScrollFactor(1);
 
         // Player
         isPlayerDead = false;
-      //  this.player = new Player(this, 200, 450);
+        this.player = new Player(this, 200, 700);
 
         //Testing Map 2
-        this.player = new Player(this, 200, 300);
+       // this.player = new Player(this, 200, 300);
         playerHealth = 100;
 
         //Spotlight
@@ -252,7 +252,7 @@ export default class GameScene extends Phaser.Scene{
         cover.setMask(mask);
         cover.setDepth(1);
 
-        
+
 
 
 
@@ -373,11 +373,11 @@ export default class GameScene extends Phaser.Scene{
     //
 
     update(){
-         if(gameLoaded){
+        if(gameLoaded){
             this.player.sprite.x = newPlayerPosX;
             this.player.sprite.y = newPlayerPosY;
             gameLoaded = false;
-        }  
+        }
 
 
 
