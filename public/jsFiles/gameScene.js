@@ -39,6 +39,16 @@ let gameLoaded = false;
 let newPlayerPosX;
 let newPlayerPosY;
 
+
+// TODO: Tilemap 2
+// TODO: World Bounds
+// TODO: Arrow auslegen?
+
+// TODO: weiteres Monster???
+// TODO: Menu responsive
+
+
+
 export default class GameScene extends Phaser.Scene{
 
     constructor() {
