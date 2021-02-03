@@ -44,6 +44,9 @@ let newPlayerPosY;
 // TODO: Tilemap 2
 // TODO: World Bounds
 // TODO: Arrow auslegen?
+// TODO: Monster auslegen
+// TODO: Starbildschirm überarbeiten
+// TODO: Player AI Datei Schatten auswechseln
 
 // TODO: weiteres Monster???
 // TODO: Menu responsive
@@ -228,7 +231,8 @@ export default class GameScene extends Phaser.Scene{
 
         // Door for Game End
 
-        let door = this.physics.add.staticSprite(3900, 415, 'door');
+     //   let door = this.physics.add.staticSprite(3900, 415, 'door');
+        let door = this.physics.add.staticSprite(5900, 100, 'door');
         door.setScrollFactor(1);
 
         // Player
@@ -351,7 +355,7 @@ export default class GameScene extends Phaser.Scene{
         // camera
         const camera = this.cameras.main;
         camera.startFollow(this.player.sprite);
-        camera.setBounds(0, 0, map.widthInPixels, height-1000);
+        camera.setBounds(0, 0, map.widthInPixels, height-1000 );
 
         //timer
         timerText = this.add.text(width / 2, 50, '', { font: '40px catseye' }).setOrigin(0.5);
