@@ -113,9 +113,8 @@ export default class GameScene extends Phaser.Scene{
         const thorns = map.createLayer("thorns", tileset, 0, height-1000);
         const movementEnemies = map.createLayer("movementEnemies", tileset, 0, height-1000);
 
-     //   this.physics.world.setBounds(0, height, map.width, 2000, false, false, false, false);
-        this.physics.world.setBoundsCollision(true, false, false, true);
-
+        this.physics.world.setBounds(0, 0, map.width*10, height);
+        this.physics.world.setBoundsCollision(true, true, false, false);
 
         // cover
         const cover = this.add.graphics();
