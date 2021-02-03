@@ -114,7 +114,7 @@ export default class GameScene extends Phaser.Scene{
         const movementEnemies = map.createLayer("movementEnemies", tileset, 0, height-1000);
 
      //   this.physics.world.setBounds(0, height, map.width, 2000, false, false, false, false);
-        this.physics.world.setBoundsCollision(true, false, true, true);
+        this.physics.world.setBoundsCollision(true, false, false, true);
 
 
         // cover
@@ -174,7 +174,7 @@ export default class GameScene extends Phaser.Scene{
         this.anims.create({
             key:'enemy-blink',
             frames: this.anims.generateFrameNumbers('enemy', {start: 0, end: 4}),
-            frameRate:4,
+            frameRate:6,
             repeat: -1,
         })  
 
