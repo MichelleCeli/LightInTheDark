@@ -1,3 +1,4 @@
+/* import { start } from "repl"; */
 import Player from "./player.js";
 import SecondLevel from "./secondLevel.js";
 
@@ -63,7 +64,8 @@ export default class GameScene extends Phaser.Scene{
 
         //Collectables
         this.load.image('crystal', './img/crystal_small.png');
-        this.load.image('enemy', './img/enemy.png');
+        /* this.load.image('enemy', './img/enemy.png'); */
+        this.load.spritesheet('enemy', './img/assets/enemy_sprite.png', { frameWidth: 53, frameHeight: 36 });
         this.load.spritesheet('firefly', './img/assets/firefly_02.png',  { frameWidth: 35, frameHeight: 35 });
 
         // tilemap
@@ -169,7 +171,12 @@ export default class GameScene extends Phaser.Scene{
 
 
         // Enemies
-      //  enemy = this.add.sprite('enemy');
+        this.anims.create({
+            key:'enemy-blink',
+            frames: this.anims.generateFrameNumbers('enemy', {start: 0, end: 4}),
+            frameRate:4,
+            repeat: -1,
+        })  
 
         enemy = this.physics.add.group({
             key: 'enemy',
@@ -182,7 +189,8 @@ export default class GameScene extends Phaser.Scene{
             child.body.setVelocityX(-150);
             child.setGravityY(130);
             child.setScrollFactor(1);
-        })
+            child.anims.play('enemy-blink', true);
+        });
 
 
         // Firefly 
