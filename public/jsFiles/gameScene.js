@@ -138,7 +138,7 @@ export default class GameScene extends Phaser.Scene{
 
         // cover
         const cover = this.add.graphics();
-        cover.fillStyle(0x000000, 0.8);
+        cover.fillStyle(0x000000, 0.85);
         cover.fillRect(0,0, width, height);
         cover.setScrollFactor(0);
 
@@ -290,14 +290,14 @@ export default class GameScene extends Phaser.Scene{
         }
 
         function collectFirefly (player, firefly) {
-            if (this.spotlight.scale >= 1 || this.lightMask.x + 45 >= 150) {
+            if (this.spotlight.scale + 0.4 >= 1 || this.lightMask.x + 45 >= 150) {
                 firefly.disableBody(true, true);
                 this.lightMask.x = 150;
                 this.spotlight.scale = 1;
             } else {
                 firefly.disableBody(true, true);
-                this.lightMask.x += 40;
-                this.spotlight.scale += 0.20;
+                this.lightMask.x += 55;
+                this.spotlight.scale += 0.4;
             }
         }
 
@@ -413,7 +413,7 @@ export default class GameScene extends Phaser.Scene{
 
         this.spotlight.setPosition(this.player.sprite.x, this.player.sprite.y);
         if(this.spotlight.scale > 0.4){
-             this.spotlight.scale -= 0.0009;
+             this.spotlight.scale -= 0.0004;
         }
         if(this.spotlight.scale >= 0.4) {
             this.lightMask.x <= -41;
@@ -421,7 +421,7 @@ export default class GameScene extends Phaser.Scene{
         if(this.lightMask.x <= -41) {
             this.lightMask.x <= -41;
         } else {
-            this.lightMask.x -= 0.29;
+            this.lightMask.x -= 0.10;
         }
 
         timerText.setText(formatTime(score + timer.getElapsedSeconds()));
