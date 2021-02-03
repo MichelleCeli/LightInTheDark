@@ -1,5 +1,4 @@
 let direction = "right";
-let inAir = false;
 
 export default class Player {
 

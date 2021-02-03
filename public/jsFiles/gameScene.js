@@ -1,5 +1,6 @@
 /* import { start } from "repl"; */
 import Player from "./player.js";
+import Enemy from "./enemy.js";
 import SecondLevel from "./secondLevel.js";
 
 let isPlayerDead;
@@ -46,15 +47,17 @@ let newPlayerPosY;
 let newHealth;
 
 
-// TODO: Tilemap 2
-// TODO: World Bounds
+// TODO: MovementEnemies
+// TODO: World Bounds                              FINISHED
 // TODO: Arrow auslegen?
-// TODO: Monster auslegen
+// TODO: Monster auslegen                          FINISHED
 // TODO: Starbildschirm überarbeiten
 // TODO: Player AI Datei Schatten auswechseln
+// TODO: Dokumentation
+// TODO: Menu responsive
 
 // TODO: weiteres Monster???
-// TODO: Menu responsive
+
 
 
 
@@ -104,8 +107,6 @@ export default class GameScene extends Phaser.Scene{
     }
 
     create (){
-
-      //  switchedScene = false;
 
         switchScene = this;
         const width = this.scale.width;
@@ -187,29 +188,7 @@ export default class GameScene extends Phaser.Scene{
             child.setBounceY(Phaser.Math.FloatBetween(0.1, 0.4));
         });
 
-
-        // Enemies
-        this.anims.create({
-            key:'enemy-blink',
-            frames: this.anims.generateFrameNumbers('enemy', {start: 0, end: 4}),
-            frameRate:6,
-            repeat: -1,
-        })  
-
-        enemy = this.physics.add.group({
-            key: 'enemy',
-            repeat: 12,
-            setXY: { x: 600, y: 300, stepX: Phaser.Math.FloatBetween(300, 400) },
-        });
-
-        enemy.children.iterate(function (child) {
-            child.setBounce(0.2); //0.2
-            child.body.setVelocityX(-150);
-            child.setGravityY(130);
-            child.setScrollFactor(1);
-            child.anims.play('enemy-blink', true);
-        });
-
+        enemy = new Enemy(this, ground);
 
         // Firefly 
         //let firefly = this.add.sprite('firefly');
@@ -258,7 +237,6 @@ export default class GameScene extends Phaser.Scene{
         cover.setDepth(1);
 
 
-
         // set collision
         ground.setCollisionByProperty({collides : true});
         thorns.setCollisionByProperty({collides : true});
@@ -273,23 +251,12 @@ export default class GameScene extends Phaser.Scene{
 
         this.physics.add.collider(crystal, ground);
         this.physics.add.collider(firefly, ground);
-        this.physics.add.collider(enemy, ground);
-        this.physics.add.collider(enemy, movementEnemies, function(){
-            enemy.getChildren().forEach(function (child){
-
-                if (child.body.blocked.left){
-                    child.setVelocity(100, 0);
-                }
-
-                if (child.body.blocked.right){
-                    child.setVelocity(-100, 0);
-                }
-
-            });
+        this.physics.add.collider(enemy.group, ground);
+        this.physics.add.collider(enemy.group, movementEnemies, function(){
+          enemy.checkDirection();
         });
-        this.physics.add.collider(this.player.sprite, enemy, function(sprite) {
-            sprite.setVelocityX(-500);
-            //sprite.setVelocityY(-500);
+
+        this.physics.add.collider(this.player.sprite, enemy.group, function(sprite) {
             sprite.setTint(0xff0000);
             if(!sprite.immune){
                 playerHealth -= 50;
@@ -309,7 +276,6 @@ export default class GameScene extends Phaser.Scene{
 
         // Check overlap between Crystal, Enemy and Player
         this.physics.add.overlap(this.player.sprite, crystal, collectCrystal, null, this);
-/*         this.physics.add.overlap(this.player.sprite, enemy, hitEnemy, null, this); */
         this.physics.add.overlap(this.player.sprite, firefly, collectFirefly, null, this);
         
         
@@ -343,13 +309,6 @@ export default class GameScene extends Phaser.Scene{
             switchScene.scene.start("SecondLevel");
         }
 
-        // Enemy Collision
-/*         function hitEnemy (player, enemy) {
-            player.setTint(0xff0000);
-            playerHealth -= 50;
-            healthMask.x -= 99;
-            player.setVelocityX(-100);
-        } */
 
         // Kamera Einstellungen
         // camera
@@ -374,6 +333,7 @@ export default class GameScene extends Phaser.Scene{
     //
 
     update(){
+
         if(gameLoaded){
             this.player.sprite.x = newPlayerPosX;
             this.player.sprite.y = newPlayerPosY;
@@ -423,7 +383,7 @@ export default class GameScene extends Phaser.Scene{
                 // checks if player is looking in the right direction for the shot
               if((direction === 'right' && (arrowRot >= -90 && arrowRot <= 90)) || direction === 'left' && (arrowRot <= -90 || arrowRot >= 90 )){
 
-                arrow = createArrow(this, arrowRot, ground, enemy);
+                arrow = createArrow(this, arrowRot, ground , enemy);
 
                 arrowOldX = arrow.x;
                 arrowOldY = arrow.y;
@@ -491,12 +451,12 @@ function createArrow(scene, arrowRot, ground, enemy){
         let timedEvent = scene.time.delayedCall(8000, onEvent, [arrow], this);
     });
 
-    scene.physics.add.overlap(arrow, enemy, killEnemy, null, this);
+    scene.physics.add.overlap(arrow, enemy.group, killEnemy, null, this);
 
     return arrow;
 }
 
-// happens when arrow colides with enemy
+// happens when arrow collides with enemy
 function killEnemy(arrow, enemy) {
     if(arrow.body.moves) {
         shooting = false;
