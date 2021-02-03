@@ -1,7 +1,7 @@
 import Player from "./player.js";
 
 let lightbar;
-let map;
+let map2;
 let ground;
 let isPlayerDead;
 let playerHealth;
@@ -22,7 +22,7 @@ export default class SecondLevel extends Phaser.Scene{
 
         // tilemap
         this.load.image("basement", "./img/assets/maps/basement.png");
-        this.load.tilemapTiledJSON("map", "./img/assets/maps/mapLevel2.json");
+        this.load.tilemapTiledJSON("map2", "./img/assets/maps/mapLevel2.json");
 
         //Health and Lightbar
         this.load.image('barBg', './img/healthbar.png');
@@ -46,14 +46,14 @@ export default class SecondLevel extends Phaser.Scene{
         let gameOptions = 60;
 
         // tilemap
-        map = this.make.tilemap({ key: "map" });
-        const tileset = map.addTilesetImage("basement", "basement"); //.png???
+        map2 = this.make.tilemap({ key: "map2" });
+        const tileset = map2.addTilesetImage("basement", "basement"); //.png???
 
-        ground = map.createLayer("ground", tileset, 0, 0);
-        const thorns = map.createLayer("thorns", tileset, 0, 0);
-        const movementEnemies = map.createLayer("movementEnemies", tileset, 0, 0);
+        ground = map2.createLayer("ground", tileset, 0, 0);
+        const thorns = map2.createLayer("thorns", tileset, 0, 0);
+        const movementEnemies = map2.createLayer("movementEnemies", tileset, 0, 0);
 
-        this.physics.world.setBounds(0, 0, map.width*10, height);
+        this.physics.world.setBounds(0, 0, map2.width*10, height);
         this.physics.world.setBoundsCollision(true, true, false, false);
 
         const cover = this.add.graphics();
@@ -120,7 +120,7 @@ export default class SecondLevel extends Phaser.Scene{
         // camera
         const camera = this.cameras.main;
         camera.startFollow(this.player.sprite);
-        camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels );
+        camera.setBounds(0, 0, map2.widthInPixels, map2.heightInPixels );
 
 
 
