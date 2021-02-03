@@ -108,10 +108,29 @@ router.get('/profile', authMiddleware, (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'Profile.html'));
 }) 
 
+router.get('/changePassword', authMiddleware, (req, res) => {
+    res.sendFile(path.join(__dirname, '../public', 'changePassword.html'));
+}) 
+
+router.post('/changePassword', (req, res) => {
+    let userID = req.session.user._id;
+    let newPassword = req.body.password;
+    let repeatNewPassword = req.body.passwordRepeat;
+    if(newPassword !== repeatNewPassword){
+        return res.json('error');
+    }
+    User.findById(userID)
+    .then(user =>{
+        var hashedPassword = bcrypt.hashSync(newPassword, 5);
+        user.password = hashedPassword;
+        user.save();
+    })
+    res.json('success');
+})
+
 router.get('/getProfileData', async (req, res) => {
     const userID = req.session.user._id;
     const user = await User.findById(userID, 'username -_id');
     const scores = await ScoreModel.find(user, 'level timescore highscore -_id');
-    console.log({user, scores});
     res.json({user, scores});
 })
