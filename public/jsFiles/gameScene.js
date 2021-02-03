@@ -80,7 +80,8 @@ export default class GameScene extends Phaser.Scene{
 
         // tilemap
         this.load.image("basement", "./img/assets/maps/basement.png");
-        this.load.tilemapTiledJSON("map", "./img/assets/maps/map.json");
+     //   this.load.tilemapTiledJSON("map", "./img/assets/maps/map.json");
+        this.load.tilemapTiledJSON("map", "./img/assets/maps/mapLevel2.json");
 
         this.load.image('pause-btn', './img/assets/pause-btn.png');
 
@@ -232,7 +233,10 @@ export default class GameScene extends Phaser.Scene{
 
         // Player
         isPlayerDead = false;
-        this.player = new Player(this, 200, 450);
+      //  this.player = new Player(this, 200, 450);
+
+        //Testing Map 2
+        this.player = new Player(this, 200, 300);
         playerHealth = 100;
 
         //Spotlight

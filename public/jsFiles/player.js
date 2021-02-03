@@ -60,24 +60,20 @@ export default class Player {
     update() {
         const {keys, sprite} = this;
         const onGround = sprite.body.blocked.down;
-        if (onGround){ inAir = false;} // Boolean for stopping and setting direction of Animation while player jumps or falls
-        if (!onGround) {inAir = true;}
 
         if (keys.left.isDown || keys.a.isDown) {
             sprite.setVelocityX(-160);
-          //  sprite.body.setVelocityX(-160);
             direction = "left";
            // console.log(sprite.body.velocity.x);
-           // console.log("new " + sprite.body.newVelocity);
 
-            if(!inAir)
+            if(onGround)
             {sprite.anims.play('left', true);}
 
         } else if (keys.right.isDown || keys.d.isDown) {
             sprite.setVelocityX(160);
             direction = "right";
 
-            if (!inAir)
+            if (onGround)
             {sprite.anims.play('right', true);}
 
         } else {
@@ -92,10 +88,9 @@ export default class Player {
 
         if (onGround && (keys.up.isDown || keys.w.isDown || keys.space.isDown)) {
             sprite.setVelocityY(-380);
-            inAir = true;
         }
 
-        if (inAir){
+            if(!onGround){
             if (direction === 'right'){
                 sprite.anims.play('turnFromRight');
             } else {
