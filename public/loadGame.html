@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://use.typekit.net/svb4tcg.css">
+    <link rel="stylesheet" href="menu.css">
+    <link rel="shortcut icon" href=".\img\assets\favicon.ico">
+    <title>Load Game - Light in the dark</title>
+</head>
+
+<body>
+    <div class="screen">
+        <div class="container">
+            <h1>Load Game</h1>
+            <div id="savedGames">
+
+            </div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript">
+
+         $(document).ready(function () {
+                // submit via ajax
+                $.ajax({
+                    url: '/titleSavepoint',
+                    method: 'GET'
+                })
+                    .done(function (response) {
+                        for(i = 0; i < response.length; i++){
+                            let button = document.createElement("BUTTON");
+                            button.className = 'button';
+                            button.textContent = response[i].title;
+                            button.value = response[i].title;
+                            button.onclick = function(){ redirectLoad(button); }
+                            $("#savedGames").append(button);
+                        }
+                        
+                    })
+                    .fail(function (response){
+                        console.log('fail: ', arguments);
+                    })
+        }); 
+
+        function redirectLoad(clicked){
+            let saveTitle = clicked.value;
+            console.log(saveTitle);
+             $.ajax({
+                    url: '/loadThisSavepoint',
+                    method: 'GET',
+                    data: {saveTitle}
+                }) 
+                .done(function(res){
+                    if(res === 'success'){
+                        console.log("load Game");
+                        location.assign('/game');
+                    }
+                })
+                .fail(function (response){
+                        console.log('fail: ', arguments);
+                })
+        }
+    </script>
+</body>
+
+</html>

@@ -10,7 +10,7 @@ router.post("/saveScore", async function(req, res){
     let username = req.session.user.username;
     let level = req.body.level;
     let time = req.body.time;
-    Score.findOne({username: username, level: level})
+    Score.findOne({username, level})
     .then(score =>{
         if(score){
             score.timescore = time;
@@ -33,6 +33,6 @@ router.post("/saveScore", async function(req, res){
 
 router.get("/getScore", async function(req, res){
     let level = req.query.level;
-    const scores = await Score.find({level, highscore: { $gte: 1 }}, 'username highscore -_id').sort({ highscore: 1}).limit(10);
+    const scores = await Score.find({level, highscore: { $gte: 1 }}, 'username highscore -_id').sort({ highscore: 1}).limit(3);
     res.json(scores)
 })
