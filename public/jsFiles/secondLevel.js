@@ -53,6 +53,30 @@ export default class SecondLevel extends Phaser.Scene{
         const thorns = map2.createLayer("thorns", tileset, 0, 0);
         const movementEnemies = map2.createLayer("movementEnemies", tileset, 0, 0);
 
+        ground.setCollisionByProperty({collides : true});
+        thorns.setCollisionByProperty({collides : true});
+        movementEnemies.setCollisionByProperty({collides : true});
+
+        //For Tests
+        const debugGraphics = this.add.graphics().setAlpha(0.75);
+        ground.renderDebug(debugGraphics, {
+            tileColor: null, // Color of non-colliding tiles
+            collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
+            faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
+        });
+
+        thorns.renderDebug(debugGraphics, {
+            tileColor: null, // Color of non-colliding tiles
+            collidingTileColor: new Phaser.Display.Color(120, 23, 100, 255), // Color of colliding tiles
+            faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
+        });
+
+        movementEnemies.renderDebug(debugGraphics, {
+            tileColor: null, // Color of non-colliding tiles
+            collidingTileColor: new Phaser.Display.Color(38, 180, 70, 255), // Color of colliding tiles
+            faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
+        });
+
         this.physics.world.setBounds(0, 0, map2.width*10, height);
         this.physics.world.setBoundsCollision(true, true, false, false);
 
