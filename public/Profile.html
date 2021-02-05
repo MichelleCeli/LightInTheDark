@@ -10,14 +10,14 @@
 <body>
 <div class="screen">
     <div class="container" id="profile-container">
-        <h1><span class="back-btn"><a onclick="window.location.assign('/menu')" title="Zurück"><img src="./img/back_button.png" alt="Zurück Button"></a></span>Profile</h1>
-        <div>
+        <span class="back-btn"><a onclick="window.location.assign('/menu')" title="Zurück"><img src="./img/back_button.png" alt="Zurück Button"></a></span><h1>Profile</h1>
+        <div id="profile-table">
             <label id="username">Username:</label>
             <label id="level">Level:</label>
             <label id="highscore">Highscore:</label>
             <label id="lastScore">Last Score:</label>
             <label id="timesPlayed">Played Games:</label>
-            <div>
+            <div id="change-pw">
                 <a title="Change Password" class="button" value="Change Password" onclick="window.location.assign('/changePassword')">Change Password</a>
             </div>
         </div>

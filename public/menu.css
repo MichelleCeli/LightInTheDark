@@ -124,7 +124,7 @@ h1{
     font-size: 5em;
     font-weight: 400;
     text-align: center;
-    display: inline-block;
+    display: block;
 }
 h2{
     color: #DDDDC3;
@@ -254,6 +254,7 @@ h2{
 .back-btn a {
     display: inline-block;
     margin-left: 40px;
+    width: auto;
     position: relative;
     top: -10px;
     cursor: pointer;
@@ -294,8 +295,37 @@ h2{
 
 } */
 
+#profile-table {
+    margin-top: 20px;
+}
+
+#profile-table label {
+    display: block;
+    font-family: catseye, sans-serif;
+    font-size: 22px;
+    color: #fff;
+    padding: 10px 0;
+    margin-left: 40px;
+}
+
+#change-pw {
+    display: grid;
+    padding-top: 4em;
+}
 
 
+#saveNewPassword {
+    width: 222px;
+}
+#changePasswordDiv,
+#changePasswordRepeat {
+    padding: 15px 40px;
+}
+
+#changePasswordDiv .label,
+#changePasswordRepeat .label {
+    font-size: 25px;
+}
 
 
 #logIn{
