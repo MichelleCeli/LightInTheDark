@@ -47,7 +47,6 @@ let newPlayerPosY;
 let newHealth;
 
 //TODO: Licht anpassen
-// TODO: Maps überarbeiten
 // TODO: MovementEnemies
 
 // TODO: Dokumentation                             GELSESEN -> Texte hinzufügen
@@ -250,10 +249,10 @@ export default class GameScene extends Phaser.Scene{
 
         // Player
         isPlayerDead = false;
-        this.player = new Player(this, 200, 700);
+      //  this.player = new Player(this, 200, 700);
 
         //Testing Map 2
-       // this.player = new Player(this, 200, 300);
+        this.player = new Player(this, 3500, 300);
         playerHealth = 100;
 
 
