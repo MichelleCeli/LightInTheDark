@@ -21,11 +21,11 @@ const UserSchema = mongoose.Schema({
     required: true,
     minLength: 5
   },
+  timesPlayed: Number,
   createdAt: {
     type: Date,
     default: Date.now()
-  },
-  admin: Boolean
+  }
 },
 {collection: 'users'}
 );

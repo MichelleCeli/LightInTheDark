@@ -1,8 +1,7 @@
 const express = require("express");
 var router = express.Router();
 const Score = require("../model/ScoreModel");
-const db = require("../helpers/db");
-const User = db.User;
+const {authMiddleware} = require("../middleware/auth");
 
 module.exports = router;
 
@@ -14,7 +13,7 @@ router.post("/saveScore", async function(req, res){
     .then(score =>{
         if(score){
             score.timescore = time;
-            if(score.highscore >= time){
+            if(score.highscore >= time || score.highscore == 0){
                 score.highscore = time;
             }
             score.save();
@@ -36,3 +35,4 @@ router.get("/getScore", async function(req, res){
     const scores = await Score.find({level, highscore: { $gte: 1 }}, 'username highscore -_id').sort({ highscore: 1}).limit(3);
     res.json(scores)
 })
+

@@ -1,9 +1,7 @@
 const bcrypt = require("bcrypt");
-const db = require("../helpers/db");
-const User = db.User;
+const User = require("../model/UserModel");
 const express = require("express");
 var router = express.Router();
-const config = require("../helpers/config");
 var path = require("path");
 const ScoreModel = require("../model/ScoreModel");
 const {authMiddleware} = require("../middleware/auth");
@@ -45,7 +43,7 @@ router.get('/register', async function(req, res){
 }) 
 
 router.post("/register", async function(req, res){
-    //try {
+    try {
         let {username, email, password, passwordAgain } = req.body;
         if(await User.findOne({email})){
             return res.json({type: 'error', div: 'messageMail', res: "This email already exists"});
@@ -62,6 +60,9 @@ router.post("/register", async function(req, res){
         if(!password){
             return res.json({type: 'error', div: 'messagePassword', res: 'Enter a password'});
         }
+        if(password.length < 5){
+            return res.json({type: 'error', div: 'messagePassword', res: 'Password min 5 characters'});
+        }
         if(password !== passwordAgain){
             return res.json({type: 'error', div: 'messagePasswordRepeat', res: 'Passwords not the same'});
         }
@@ -69,7 +70,8 @@ router.post("/register", async function(req, res){
         const user = new User({
             username: username,
             email: email,
-            password: hashedPassword
+            password: hashedPassword,
+            timesPlayed: 0
         })
 
         await user.save();
@@ -86,9 +88,9 @@ router.post("/register", async function(req, res){
 
         return res.json({type: 'success'});
         
-    //} catch (error) {
-    //    return res.status(500).send({ message: 'Fehler' });
-   // }
+    } catch (error) {
+        return res.status(500).send({ message: 'Fehler' });
+    }
 
 })
 
@@ -119,6 +121,9 @@ router.post('/changePassword', (req, res) => {
     if(newPassword !== repeatNewPassword){
         return res.json('error');
     }
+    if(newPassword.length < 5){
+        return res.json('too short');
+    }
     User.findById(userID)
     .then(user =>{
         var hashedPassword = bcrypt.hashSync(newPassword, 5);
@@ -130,7 +135,8 @@ router.post('/changePassword', (req, res) => {
 
 router.get('/getProfileData', async (req, res) => {
     const userID = req.session.user._id;
-    const user = await User.findById(userID, 'username -_id');
-    const scores = await ScoreModel.find(user, 'level timescore highscore -_id');
+    const username = req.session.user.username;
+    const user = await User.findById(userID, 'username timesPlayed -_id');
+    const scores = await ScoreModel.find({username}, 'level timescore highscore -_id');
     res.json({user, scores});
 })

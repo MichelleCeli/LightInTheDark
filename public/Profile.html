@@ -10,10 +10,12 @@
 <body>
 <div class="screen">
     <div class="container" id="profile-container">
-        <span class="back-btn"><a href="Menu.html" title="Zurück"><img src="./img/back_button.png" alt="Zurück Button"></a></span> <h1>Profile</h1>
-        <label id="username"></label>
+        <span class="back-btn"><a onclick="window.location.assign('/menu')" title="Zurück"><img src="./img/back_button.png" alt="Zurück Button"></a></span> <h1>Profile</h1>
+        <label id="username">Username:</label>
         <label id="level"></label>
         <label id="highscore"></label>
+        <label id="lastScore"></label>
+        <label id="timesPlayed"></label>
         <a title="Change Password" class="button" value="Change Password" onclick="window.location.assign('/changePassword')">Change Password</a>
     </div>
 </div>
@@ -25,9 +27,12 @@
             method: 'GET'
         })
         .done(function(res){
+            console.log(res);
             $('#username').html(res.user.username);
             $('#level').html("Level "+res.scores[0].level);
             $('#highscore').html(res.scores[0].highscore);
+            $('#lastScore').html(res.scores[0].timescore);
+            $('#timesPlayed').html(res.user.timesPlayed);
         })
     });
 </script>

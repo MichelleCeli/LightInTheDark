@@ -315,7 +315,7 @@ export default class GameScene extends Phaser.Scene{
         timer = this.time.addEvent({ delay: 999999 });
         timerText.setScrollFactor(0);
 
-
+        loadGame();
     }
 
     //
@@ -326,7 +326,7 @@ export default class GameScene extends Phaser.Scene{
         if(gameLoaded){
             this.player.sprite.x = newPlayerPosX;
             this.player.sprite.y = newPlayerPosY;
-            updateHealthBar();
+            //updateHealthBar();
             gameLoaded = false;
         }
 
@@ -484,37 +484,44 @@ function updatePlayerPos(x, y){
     newPlayerPosY = y;
 }
 
-/*$.ajax({
-    url: '/getSavedGame',
-    method: 'GET'
-})
-    .done(function (res) {
-        if(res){
-            gameLoaded = true;
-            setPlayerHealth(res.lifepoints);
-            setTimer(res.score);
-            updatePlayerPos(res.position[0], res.position[1]);
-           // updateLightBar(res.lightpoints);
-        }
-    }) */
+/* function loadGame(){
+    $.ajax({
+        url: '/getSavedGame',
+        method: 'GET'
+    })
+        .done(function (res) {
+            if(res){
+                gameLoaded = true;
+                setPlayerHealth(res.lifepoints);
+                setTimer(res.score);
+                updatePlayerPos(res.position[0], res.position[1]);
+                updateLightBar(res.lightpoints);
+            }
+        }) 
+} */
+
 
 function setPlayerHealth(health){
     playerHealth = health;
+    console.log(playerHealth);
+    updateHealthBar();
 }
 
 function updateHealthBar(){
     if(playerHealth == 100){
         switchScene.healthMask.x = 150;
+        console.log("falsch");
     }else if(playerHealth == 50){
         switchScene.healthMask.x = 51;
+        console.log("richtig");
     }else if(playerHealth == 0){
         switchScene.healthMask.x = -50;
     }
 } 
 
-/* function updateLightBar(light){
+function updateLightBar(light){
     switchScene.lightMask.x = light;
-} */
+} 
 
 function setNewHighscore(){
     let time = Math.round(timer.getElapsedSeconds());
