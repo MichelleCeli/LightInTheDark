@@ -25,6 +25,7 @@ let gameoverModal = document.getElementById("gameover-modal");
 //Save Game
 let saveModal = document.getElementById("save-modal");
 let saveGame2 = document.getElementById("save-game2");
+let saveMessage = document.getElementById("saveMessage");
 
 
 // Arrow Variablen
@@ -159,10 +160,11 @@ export default class GameScene extends Phaser.Scene{
         this.physics.world.setBoundsCollision(true, true, false, false);
 
         // cover
-        cover = this.add.graphics();
-        coverfill = 0.8;
-        cover.fillStyle(0x000000, coverfill);
-        cover.fillRect(0,0, width, height);
+        cover = this.add.rectangle(0,0, width*2, height*2, 0x000000);
+        coverfill = 0.5;
+        cover.setAlpha(coverfill);
+        //cover.fillStyle(0x000000, coverfill);
+        //cover.fillRect(0,0, width, height);
         cover.setScrollFactor(0);
 
         //healthbar, lightbar
@@ -409,7 +411,8 @@ export default class GameScene extends Phaser.Scene{
         } 
 
 
-        cover.fillStyle(0x000000, this.coverfill);
+        //cover.fillStyle(0x000000, coverfill);
+        cover.setAlpha(coverfill);
 
         this.spotlight.setPosition(this.player.sprite.x, this.player.sprite.y);
         if(this.spotlight.scale > 0.4){
@@ -469,14 +472,18 @@ function clickPause() {
       let level = 1;
       let title = document.getElementById("saveTitle").value;
       let light = switchScene.lightMask.x;
-      /*$.ajax({
+      $.ajax({
         url: '/saveGame',
         method: 'POST',
         data: {level, score, position, title, playerHealth, light}
     })
     .done(function(res){
-        location.assign('/loadGame');
-    })   */
+        if(res === 'success'){
+            location.assign('/loadGame');
+        }else if(res.type === 'error'){
+            saveMessage.innerHTML(res.res);
+        }
+    })  
   });
 
   //resume
@@ -520,7 +527,7 @@ function updatePlayerPos(x, y){
     newPlayerPosY = y;
 }
 
-/* function loadGame(){
+function loadGame(){
     $.ajax({
         url: '/getSavedGame',
         method: 'GET'
@@ -534,7 +541,7 @@ function updatePlayerPos(x, y){
                 updateLightBar(res.lightpoints);
             }
         }) 
-} */
+} 
 
 
 function setPlayerHealth(health){
