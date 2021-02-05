@@ -4,6 +4,12 @@ html, body {
     font-size: 100%;
     overflow: hidden;
 }
+
+a{
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
 /*Screen, background of menu */
 .screen {
     display: flex;
@@ -358,38 +364,13 @@ height: 80%;
     align-items: center;
 
 }
-a{
-    display: inline-block;
- /*   height: 40px;
-    width: 175px;*/
-    height: 40px;
-    width: 175px;
-    margin: 0;
-    padding: 0;
-
-}
-
-/*#listMenu{
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    text-align: center;
-
-}
-#listMenu li a{
-    display: inline-block;
-    height: 40px;
-    width: 175px;
-    margin: 20px 0px;
-}*/
 
 /** 
 Pause Modal
-Alina - 17.12.2020
 **/
 #pause-btn {
     position: absolute;
-    right: 0;
+    right: 30px;
     top: 30px;
 }
 
