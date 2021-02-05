@@ -123,8 +123,6 @@ export default class SecondLevel extends Phaser.Scene{
         camera.setBounds(0, 0, map2.widthInPixels, map2.heightInPixels );
 
 
-
-
      //   this.textA = this.add.text(10, 10, 'Game Over', { font: '32px Arial', fill: '#FFFFFF' });
     }
 

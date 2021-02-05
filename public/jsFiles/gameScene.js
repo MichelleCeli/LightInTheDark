@@ -46,17 +46,12 @@ let newPlayerPosY;
 let newHealth;
 
 //TODO: Licht anpassen
-// TODO Pfeile Hitbox
 // TODO: Maps überarbeiten
 // TODO: MovementEnemies
-// TODO: Arrow auslegen?                           FINISHED   -> counter?
-// TODO: Monster auslegen                          FINISHED
-// TODO: Startbildschirm überarbeiten                         -> Exportieren????
-// TODO: Player AI Datei Schatten auswechseln      FINISHED
+
 // TODO: Dokumentation                             GELSESEN -> Texte hinzufügen
 // TODO: Menu responsive
 // TODO: Door
-// Punkte hinzufügen wenn Monster erschossen?
 
 // TODO: weiteres Monster???
 
@@ -135,6 +130,31 @@ export default class GameScene extends Phaser.Scene{
         const thorns = map.createLayer("thorns", tileset, 0, 0);
         const movementEnemies = map.createLayer("movementEnemies", tileset, 0, 0);
 
+        ground.setCollisionByProperty({collides : true});
+        thorns.setCollisionByProperty({collides : true});
+        movementEnemies.setCollisionByProperty({collides : true});
+
+        //For Tests
+        const debugGraphics = this.add.graphics().setAlpha(0.75);
+        ground.renderDebug(debugGraphics, {
+            tileColor: null, // Color of non-colliding tiles
+            collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
+            faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
+        });
+
+        thorns.renderDebug(debugGraphics, {
+            tileColor: null, // Color of non-colliding tiles
+            collidingTileColor: new Phaser.Display.Color(120, 23, 100, 255), // Color of colliding tiles
+            faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
+        });
+
+        movementEnemies.renderDebug(debugGraphics, {
+            tileColor: null, // Color of non-colliding tiles
+            collidingTileColor: new Phaser.Display.Color(38, 180, 70, 255), // Color of colliding tiles
+            faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
+        });
+
+
         this.physics.world.setBounds(0, 0, map.width*10, height);
         this.physics.world.setBoundsCollision(true, true, false, false);
 
@@ -194,6 +214,7 @@ export default class GameScene extends Phaser.Scene{
             setXY: { x: 250, y: 0, stepX: Phaser.Math.FloatBetween(600, 800) }
         });
         crystal.children.iterate(function (child) {
+            child.setSize(20, 60, true);
             child.setBounceY(Phaser.Math.FloatBetween(0.1, 0.2));
         });
 
@@ -235,9 +256,9 @@ export default class GameScene extends Phaser.Scene{
 
 
         // set collision
-        ground.setCollisionByProperty({collides : true});
+       /* ground.setCollisionByProperty({collides : true});
         thorns.setCollisionByProperty({collides : true});
-        movementEnemies.setCollisionByProperty({collides : true});
+        movementEnemies.setCollisionByProperty({collides : true});*/
 
         this.physics.add.collider(this.player.sprite, ground);
         this.physics.add.collider(this.player.sprite, thorns, function(sprite, thorns){
@@ -324,7 +345,7 @@ export default class GameScene extends Phaser.Scene{
         timer = this.time.addEvent({ delay: 999999 });
         timerText.setScrollFactor(0);
 
-        // loadGame();
+      //  loadGame();
     }
 
     //

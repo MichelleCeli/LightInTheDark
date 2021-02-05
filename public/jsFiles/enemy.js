@@ -23,6 +23,7 @@ export default class Enemy {
         this.group.children.iterate(function (child) {
             child.setBounce(0.2); //0.2
             child.body.setVelocityX(-150);
+            child.body.setCircle(20);
             child.setGravityY(130);
             child.setScrollFactor(1);
             child.anims.play('enemy-blink', true);

@@ -19,6 +19,9 @@ export default class Arrow {
         arrowOldX = this.sprite.x;
         arrowOldY = this.sprite.y;
 
+
+        this.sprite.body.setSize(10, 1, true);
+
         scene.physics.add.collider(this.sprite, ground, function (arrow) {
 
             arrow.body.moves = false;

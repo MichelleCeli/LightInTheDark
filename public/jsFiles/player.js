@@ -39,6 +39,7 @@ export default class Player {
             .sprite(x, y, "player", 0)
             .setBounce(0.2)
             .setCollideWorldBounds(true);
+        this.sprite.body.setSize(50, 75, true);
 
         // Keys
         const {LEFT, RIGHT, UP, W, A, D, SPACE} = Phaser.Input.Keyboard.KeyCodes;
