@@ -195,7 +195,7 @@ export default class GameScene extends Phaser.Scene{
 
         crystal = new Crystal(this, 4, 250, 600, 800);
         enemy = new Enemy(this, ground);
-        firefly = new Firefly(this, 20, 250, 300, 500);
+        firefly = new Firefly(this, 20, 200, 300, 500);
 
         // Door for Game End
         let door = this.physics.add.sprite(doorSpawnPoint.x, doorSpawnPoint.y, 'door');
@@ -204,10 +204,10 @@ export default class GameScene extends Phaser.Scene{
 
         // Player
         isPlayerDead = false;
-        this.player = new Player(this, 200, 700);
+     //   this.player = new Player(this, 200, 700);
 
         //Testing Map 2
-       // this.player = new Player(this, 3500, 300);
+        this.player = new Player(this, 3500, 300);
         playerHealth = 100;
 
 

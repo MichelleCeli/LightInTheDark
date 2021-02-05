@@ -1,5 +1,7 @@
 import Player from "./player.js";
 import Enemy from "./enemy.js";
+import Crystal from "./crystal.js";
+import Firefly from "./firefly.js";
 
 let lightbar;
 let map2;
@@ -8,6 +10,8 @@ let isPlayerDead;
 let playerHealth;
 let direction;
 let enemy;
+let firefly;
+let crystal;
 
 export default class SecondLevel extends Phaser.Scene{
 
@@ -41,7 +45,7 @@ export default class SecondLevel extends Phaser.Scene{
         const height = this.scale.height;
         
         //background
-      /*  const bg1 = this.add.image(width*0.5, height*0.5, 'bgBackSpriteGreen')
+        const bg1 = this.add.image(width*0.5, height*0.5, 'bgBackSpriteGreen')
         .setScrollFactor(0);
 
         const bg2 = createAligned(this, 3, 'bgBackTreeSpriteGreen', 0.15);
@@ -52,7 +56,7 @@ export default class SecondLevel extends Phaser.Scene{
 
         // tilemap
         map2 = this.make.tilemap({ key: "map2" });
-        const tileset = map2.addTilesetImage("basement", "basement"); //.png???
+        const tileset = map2.addTilesetImage("basement", "basement");
 
         ground = map2.createLayer("ground", tileset, 0, 0);
         const thorns = map2.createLayer("thorns", tileset, 0, 0);
@@ -60,7 +64,6 @@ export default class SecondLevel extends Phaser.Scene{
         const doorSpawnPoint = map2.findObject("Objects", obj => obj.name === "Door Position");
 
         let door2 = this.physics.add.sprite(doorSpawnPoint.x, doorSpawnPoint.y, 'door2');
-        console.log("hallo?");
         door2.setSize(30, 90, true);
         door2.setScrollFactor(1);
 
@@ -71,6 +74,7 @@ export default class SecondLevel extends Phaser.Scene{
         this.physics.world.setBounds(0, 0, map2.width*10, height);
         this.physics.world.setBoundsCollision(true, true, false, false);
 
+        // cover
         const cover = this.add.graphics();
         cover.fillStyle(0x000000, 0.8);
         cover.fillRect(0,0, width, height);
@@ -92,7 +96,6 @@ export default class SecondLevel extends Phaser.Scene{
         healthMask.setScrollFactor(0);
         healthMask.setDepth(2);
         healthMask.visible = false;
-
 
         let lightbarContainer = this.add.sprite(150, 100, 'barBg');
         lightbarContainer.setScale(0.2);
@@ -119,21 +122,11 @@ export default class SecondLevel extends Phaser.Scene{
         this.player = new Player(this, 200, 500);
         playerHealth = 100;
 
-        // Kristalle einfügen
-     /*   let crystal = this.add.sprite('crystal');
-        crystal.setScrollFactor(1);
-        crystal = this.physics.add.group({
-            key: 'crystal',
-            repeat: 3,
-            setXY: { x: 250, y: 0, stepX: Phaser.Math.FloatBetween(600, 800) }
-        });
-        crystal.children.iterate(function (child) {
-            child.setSize(20, 60, true);
-            child.setBounceY(Phaser.Math.FloatBetween(0.1, 0.2));
-        });*/
+
 
         enemy = new Enemy(this, ground);
-
+        crystal = new Crystal(this, 4, 250, 600, 800);
+        firefly = new Firefly(this, 20, 200, 300, 500);
 
 
 
