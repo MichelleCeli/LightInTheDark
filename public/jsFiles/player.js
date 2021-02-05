@@ -22,7 +22,7 @@ export default class Player {
         });
         anims.create({
             key: 'turnFromLeft',
-            frames: [{key: 'player', frame: 4}],
+            frames: [{key: 'player', frame: 0}],
             frameRate: 20
         });
 

@@ -2,6 +2,7 @@
 import Player from "./player.js";
 import Enemy from "./enemy.js";
 import SecondLevel from "./secondLevel.js";
+import Arrow from "./Arrow.js";
 
 let isPlayerDead;
 let playerHealth;
@@ -26,13 +27,9 @@ let saveGame2 = document.getElementById("save-game2");
 
 // Arrow Variablen
 let arrow;
-var velArX;
-var velArY;
 let leftButtonPressed = false;
 let arrowRot;
 let shooting = false;
-let arrowOldX;
-let arrowOldY;
 var justCreated;
 let direction;
 
@@ -46,15 +43,18 @@ let newPlayerPosX;
 let newPlayerPosY;
 let newHealth;
 
-
+//TODO: Licht anpassen
+// TODO Pfeile Hitbox
+// TODO: Maps überarbeiten
 // TODO: MovementEnemies
-// TODO: World Bounds                              FINISHED
-// TODO: Arrow auslegen?
+// TODO: Arrow auslegen?                           FINISHED   -> counter?
 // TODO: Monster auslegen                          FINISHED
-// TODO: Starbildschirm überarbeiten
-// TODO: Player AI Datei Schatten auswechseln
-// TODO: Dokumentation
+// TODO: Startbildschirm überarbeiten                         -> Exportieren????
+// TODO: Player AI Datei Schatten auswechseln      FINISHED
+// TODO: Dokumentation                             GELSESEN -> Texte hinzufügen
 // TODO: Menu responsive
+// TODO: Door
+// Punkte hinzufügen wenn Monster erschossen?
 
 // TODO: weiteres Monster???
 
@@ -76,7 +76,7 @@ export default class GameScene extends Phaser.Scene{
         this.load.image('bgFrontSprite', './img/assets/background/front_1960x1080.png');
 
         //Player Spritesheet
-        this.load.spritesheet('player', './img/assets/player.png',  { frameWidth: 80, frameHeight: 75 });
+        this.load.spritesheet('player', './img/assets/Player_Spritesheet.png',  { frameWidth: 80, frameHeight: 75 });
 
         //Health and Lightbar
         this.load.image('barBg', './img/healthbar.png');
@@ -168,22 +168,17 @@ export default class GameScene extends Phaser.Scene{
         this.lightMask.setDepth(2);
         this.lightMask.visible = false;
 
-
         healthbar.mask = new Phaser.Display.Masks.BitmapMask(this, this.healthMask);
         lightbar.mask = new Phaser.Display.Masks.BitmapMask(this, this.lightMask);
 
-
         // Kristalle einfügen
-
         let crystal = this.add.sprite('crystal');
         crystal.setScrollFactor(1);
-
         crystal = this.physics.add.group({
             key: 'crystal',
             repeat: 3,
             setXY: { x: 750, y: 0, stepX: Phaser.Math.FloatBetween(300, 800) }
         });
-
         crystal.children.iterate(function (child) {
             child.setBounceY(Phaser.Math.FloatBetween(0.1, 0.4));
         });
@@ -192,7 +187,6 @@ export default class GameScene extends Phaser.Scene{
 
         // Firefly 
         //let firefly = this.add.sprite('firefly');
-
         this.anims.create({
             key: 'fly',
             frames: this.anims.generateFrameNumbers('firefly', { start: 0, end: 12 }),
@@ -213,7 +207,6 @@ export default class GameScene extends Phaser.Scene{
 
 
         // Door for Game End
-
         let door = this.physics.add.staticSprite(3900, 415, 'door');
       //  let door = this.physics.add.staticSprite(5900, 600, 'door');
         door.setScrollFactor(1);
@@ -235,7 +228,6 @@ export default class GameScene extends Phaser.Scene{
         mask.setInvertAlpha(true);
         cover.setMask(mask);
         cover.setDepth(1);
-
 
         // set collision
         ground.setCollisionByProperty({collides : true});
@@ -326,12 +318,9 @@ export default class GameScene extends Phaser.Scene{
 
     }
 
-
-
     //
     // Update Methode
     //
-
     update(){
 
         if(gameLoaded){
@@ -341,39 +330,22 @@ export default class GameScene extends Phaser.Scene{
             gameLoaded = false;
         }
 
-
-
         if(counterAfterSwitchScene > 0){
             counterAfterSwitchScene -= 1;
             leftButtonPressed = false;
         }
-
-
         direction = this.player.update();
 
         // checking if arrow is still shooting & calculates new angle for sprite
-        if (shooting && !justCreated && arrow.body.moves){
-
-            arrowRot = Math.atan2((arrow.y - arrowOldY), (arrow.x - arrowOldX))*(180/Math.PI);
-
-            arrow.angle = arrowRot;
-
-            arrowOldX = arrow.x;
-            arrowOldY = arrow.y;
-
-            if(arrow.y > 1000){
-                shooting = false;
-            }
-
+        if(!justCreated && shooting){
+            shooting = arrow.update(shooting);
         }
-
         // arrow has to be updated first before new angle can be calculated
         justCreated = false;
-        // checks if left Button is clicked and no other arrow is still shooting
+        // checks if left Button is clicked and no other arrow is still shooting, player has to be on Ground
         if (this.input.activePointer.leftButtonDown() && !shooting && this.player.sprite.body.blocked.down && (counterAfterSwitchScene == 0)) {
             leftButtonPressed = true;
         }
-
         // only shoots arrow after left Button is also released
             if(this.input.activePointer.leftButtonReleased() && leftButtonPressed && (counterAfterSwitchScene == 0)) {
 
@@ -383,17 +355,13 @@ export default class GameScene extends Phaser.Scene{
                 // checks if player is looking in the right direction for the shot
               if((direction === 'right' && (arrowRot >= -90 && arrowRot <= 90)) || direction === 'left' && (arrowRot <= -90 || arrowRot >= 90 )){
 
-                arrow = createArrow(this, arrowRot, ground , enemy);
+                  arrow = new Arrow(this, this.player, arrowRot, ground, enemy);
 
-                arrowOldX = arrow.x;
-                arrowOldY = arrow.y;
-
+                shooting = true;
                 justCreated = true;
             }
                 leftButtonPressed = false;
             }
-
-
 
       /*  console.log(playerHealth);*/
 /*         if(playerHealth <= 0 ){
@@ -430,48 +398,6 @@ export default class GameScene extends Phaser.Scene{
     }
 }
 
-
-function createArrow(scene, arrowRot, ground, enemy){
-    shooting = true;
-
-    arrow = scene.physics.add
-        .sprite(scene.player.sprite.x, scene.player.sprite.y, "arrow")
-        .setAngle(arrowRot);
-
-    // calculates and sets Velocity of the arrow (gravity is working automatically through Arcade.Physics)
-    velArX = (scene.input.activePointer.worldX - arrow.x);
-    velArY = (scene.input.activePointer.worldY - arrow.y);
-    arrow.setVelocityX(velArX);
-    arrow.setVelocityY(velArY);
-
-    // collider with the ground and the enemies
-    scene.physics.add.collider(arrow, ground, function(arrow){
-        arrow.body.moves = false;
-        shooting = false;
-        let timedEvent = scene.time.delayedCall(8000, onEvent, [arrow], this);
-    });
-
-    scene.physics.add.overlap(arrow, enemy.group, killEnemy, null, this);
-
-    return arrow;
-}
-
-// happens when arrow collides with enemy
-function killEnemy(arrow, enemy) {
-    if(arrow.body.moves) {
-        shooting = false;
-        arrow.disableBody(true, true);
-        enemy.disableBody(true, true);
-    }
-}
-
-// after some time, the arrow gets disabled
-function onEvent (arrow)
-{
-    arrow.disableBody(true, true);
-}
-
-
 const createAligned = (scene, count, texture, scrollFactor) => {
     let x = scene.scale.width*0.5;
     for(let i = 0; i < count; ++i){
@@ -507,20 +433,21 @@ function clickPause() {
       let level = 1;
       let title = document.getElementById("saveTitle").value;
       let light = switchScene.lightMask.x;
-      $.ajax({
+      /*$.ajax({
         url: '/saveGame',
         method: 'POST',
         data: {level, score, position, title, playerHealth, light}
-    })  
+    })
     .done(function(res){
         location.assign('/loadGame');
-    })   
+    })   */
   });
 
   //resume
   resumeGame.addEventListener("click", () => {
     toggleModal();
     pauseBtn.style.display = "block";
+    counterAfterSwitchScene = 100;
     switchScene.scene.resume('GameScene');
   });
 
@@ -557,7 +484,7 @@ function updatePlayerPos(x, y){
     newPlayerPosY = y;
 }
 
-$.ajax({
+/*$.ajax({
     url: '/getSavedGame',
     method: 'GET'
 })
@@ -569,7 +496,7 @@ $.ajax({
             updatePlayerPos(res.position[0], res.position[1]);
            // updateLightBar(res.lightpoints);
         }
-    }) 
+    }) */
 
 function setPlayerHealth(health){
     playerHealth = health;
