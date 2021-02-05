@@ -268,7 +268,7 @@ h2{
 .back-btn a img{
     width: 35px;
 }
-
+/* 
 .back-btn a::before{
     content: '';
     background-image: url("img/buttons_background_neuSkaliert.svg");
@@ -292,7 +292,7 @@ h2{
     transition:all ease-in-out 0.4s;
     transform: scale(1);
 
-}
+} */
 
 
 
