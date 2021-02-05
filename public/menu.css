@@ -9,8 +9,10 @@ html, body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-image: url("img/Start_Background.png");
+    background-image: url("img/Background_Start.png");
+ /*   background-image: url("img/Start_klein.png");*/
     background-size: cover;
+    background-position: bottom;
     border: none;
     height: 100%;
 }
