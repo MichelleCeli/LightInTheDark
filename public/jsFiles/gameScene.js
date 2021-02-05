@@ -3,10 +3,14 @@ import Player from "./player.js";
 import Enemy from "./enemy.js";
 import SecondLevel from "./secondLevel.js";
 import Arrow from "./Arrow.js";
+import Crystal from "./crystal.js";
+import Firefly from "./firefly.js";
 
 let isPlayerDead;
 let playerHealth;
 let timer, timerText;
+let crystal;
+let firefly;
 let enemy;
 let cover;
 let coverfill;
@@ -46,12 +50,12 @@ let newPlayerPosX;
 let newPlayerPosY;
 let newHealth;
 
-//TODO: Licht anpassen
-// TODO: MovementEnemies
 
 // TODO: Dokumentation                             GELSESEN -> Texte hinzufügen
+//TODO: healthbar/lightbar auslagern?
+// TODO: CHrome API mit Firefox vergleichen und Bug lösen
 // TODO: Menu responsive
-// TODO: Door
+// TODO: 2. Level Elemente hinzufügen
 
 // TODO: weiteres Monster???
 
@@ -134,26 +138,7 @@ export default class GameScene extends Phaser.Scene{
         thorns.setCollisionByProperty({collides : true});
         movementEnemies.setCollisionByProperty({collides : true});
 
-        //For Tests
-        const debugGraphics = this.add.graphics().setAlpha(0.75);
-        ground.renderDebug(debugGraphics, {
-            tileColor: null, // Color of non-colliding tiles
-            collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
-            faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
-        });
-
-        thorns.renderDebug(debugGraphics, {
-            tileColor: null, // Color of non-colliding tiles
-            collidingTileColor: new Phaser.Display.Color(120, 23, 100, 255), // Color of colliding tiles
-            faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
-        });
-
-        movementEnemies.renderDebug(debugGraphics, {
-            tileColor: null, // Color of non-colliding tiles
-            collidingTileColor: new Phaser.Display.Color(38, 180, 70, 255), // Color of colliding tiles
-            faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
-        });
-
+        const doorSpawnPoint = map.findObject("Objects", obj => obj.name === "Door Position");
 
         this.physics.world.setBounds(0, 0, map.width*10, height);
         this.physics.world.setBoundsCollision(true, true, false, false);
@@ -206,45 +191,15 @@ export default class GameScene extends Phaser.Scene{
         cover.setDepth(1);
 
 
-        // Kristalle einfügen
-        let crystal = this.add.sprite('crystal');
-        crystal.setScrollFactor(1);
-        crystal = this.physics.add.group({
-            key: 'crystal',
-            repeat: 3,
-            setXY: { x: 250, y: 0, stepX: Phaser.Math.FloatBetween(600, 800) }
-        });
-        crystal.children.iterate(function (child) {
-            child.setSize(20, 60, true);
-            child.setBounceY(Phaser.Math.FloatBetween(0.1, 0.2));
-        });
+        // Level Elemente einfügen
 
+        crystal = new Crystal(this, 4, 250, 600, 800);
         enemy = new Enemy(this, ground);
-
-        // Firefly 
-        //let firefly = this.add.sprite('firefly');
-        this.anims.create({
-            key: 'fly',
-            frames: this.anims.generateFrameNumbers('firefly', { start: 0, end: 12 }),
-            frameRate: 12,
-            repeat: -1
-        });
-
-        let firefly = this.physics.add.group({
-            key: 'firefly',
-            repeat: 20,
-            setXY: { x: 250, y: 0, stepX: Phaser.Math.FloatBetween(300, 500) }
-        });
-
-        firefly.children.iterate(function (child) {
-            child.setBounce(0.1);
-            child.anims.play('fly', true);
-        });
-
+        firefly = new Firefly(this, 20, 250, 300, 500);
 
         // Door for Game End
-        let door = this.physics.add.staticSprite(3900, 415, 'door');
-      //  let door = this.physics.add.staticSprite(5900, 600, 'door');
+        let door = this.physics.add.sprite(doorSpawnPoint.x, doorSpawnPoint.y, 'door');
+        door.setSize(30, 90, true);
         door.setScrollFactor(1);
 
         // Player
@@ -252,15 +207,13 @@ export default class GameScene extends Phaser.Scene{
         this.player = new Player(this, 200, 700);
 
         //Testing Map 2
-        //this.player = new Player(this, 3500, 300);
+       // this.player = new Player(this, 3500, 300);
         playerHealth = 100;
 
 
-        // set collision
-       /* ground.setCollisionByProperty({collides : true});
-        thorns.setCollisionByProperty({collides : true});
-        movementEnemies.setCollisionByProperty({collides : true});*/
+        // set collisions
 
+        this.physics.add.collider(door, ground);
         this.physics.add.collider(this.player.sprite, ground);
         this.physics.add.collider(this.player.sprite, thorns, function(sprite, thorns){
             sprite.setVelocityY(-380);
@@ -268,9 +221,9 @@ export default class GameScene extends Phaser.Scene{
             updateHealthBar();
         });
 
-        this.physics.add.collider(crystal, ground);
-        this.physics.add.collider(firefly, ground);
-        this.physics.add.collider(crystal, firefly, function(crystal, firefly){
+        this.physics.add.collider(crystal.group, ground);
+        this.physics.add.collider(firefly.group, ground);
+        this.physics.add.collider(crystal.group, firefly, function(crystal, firefly){
             crystal.x += 120;
             firefly.y -= -80;
         });
@@ -298,8 +251,8 @@ export default class GameScene extends Phaser.Scene{
         
 
         // Check overlap between Crystal, Enemy and Player
-        this.physics.add.overlap(this.player.sprite, crystal, collectCrystal, null, this);
-        this.physics.add.overlap(this.player.sprite, firefly, collectFirefly, null, this);
+        this.physics.add.overlap(this.player.sprite, crystal.group, collectCrystal, null, this);
+        this.physics.add.overlap(this.player.sprite, firefly.group, collectFirefly, null, this);
         
         
         function collectCrystal (player, crystal) {
@@ -414,6 +367,7 @@ export default class GameScene extends Phaser.Scene{
             switchScene.scene.pause();
         } 
 
+
         cover.setAlpha(coverfill);
 
         this.spotlight.setPosition(this.player.sprite.x, this.player.sprite.y);
@@ -430,8 +384,6 @@ export default class GameScene extends Phaser.Scene{
         } else {
             coverfill += 0.0003;
         }
-
-        console.log(coverfill);
 
         timerText.setText(formatTime(score + timer.getElapsedSeconds()));
         //console.log(timerText);

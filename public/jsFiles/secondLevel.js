@@ -1,4 +1,5 @@
 import Player from "./player.js";
+import Enemy from "./enemy.js";
 
 let lightbar;
 let map2;
@@ -6,6 +7,7 @@ let ground;
 let isPlayerDead;
 let playerHealth;
 let direction;
+let enemy;
 
 export default class SecondLevel extends Phaser.Scene{
 
@@ -28,6 +30,9 @@ export default class SecondLevel extends Phaser.Scene{
         this.load.image('barBg', './img/healthbar.png');
         this.load.image('healthbar', './img/healthbar_red.png');
         this.load.image('lightbar', './img/lightbar_yellow.png');
+
+        // door
+        this.load.image("door2", "./img/assets/door.png");
     }
 
     create() {
@@ -36,7 +41,7 @@ export default class SecondLevel extends Phaser.Scene{
         const height = this.scale.height;
         
         //background
-        const bg1 = this.add.image(width*0.5, height*0.5, 'bgBackSpriteGreen')
+      /*  const bg1 = this.add.image(width*0.5, height*0.5, 'bgBackSpriteGreen')
         .setScrollFactor(0);
 
         const bg2 = createAligned(this, 3, 'bgBackTreeSpriteGreen', 0.15);
@@ -52,30 +57,16 @@ export default class SecondLevel extends Phaser.Scene{
         ground = map2.createLayer("ground", tileset, 0, 0);
         const thorns = map2.createLayer("thorns", tileset, 0, 0);
         const movementEnemies = map2.createLayer("movementEnemies", tileset, 0, 0);
+        const doorSpawnPoint = map2.findObject("Objects", obj => obj.name === "Door Position");
+
+        let door2 = this.physics.add.sprite(doorSpawnPoint.x, doorSpawnPoint.y, 'door2');
+        console.log("hallo?");
+        door2.setSize(30, 90, true);
+        door2.setScrollFactor(1);
 
         ground.setCollisionByProperty({collides : true});
         thorns.setCollisionByProperty({collides : true});
         movementEnemies.setCollisionByProperty({collides : true});
-
-        //For Tests
-        const debugGraphics = this.add.graphics().setAlpha(0.75);
-        ground.renderDebug(debugGraphics, {
-            tileColor: null, // Color of non-colliding tiles
-            collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
-            faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
-        });
-
-        thorns.renderDebug(debugGraphics, {
-            tileColor: null, // Color of non-colliding tiles
-            collidingTileColor: new Phaser.Display.Color(120, 23, 100, 255), // Color of colliding tiles
-            faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
-        });
-
-        movementEnemies.renderDebug(debugGraphics, {
-            tileColor: null, // Color of non-colliding tiles
-            collidingTileColor: new Phaser.Display.Color(38, 180, 70, 255), // Color of colliding tiles
-            faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
-        });
 
         this.physics.world.setBounds(0, 0, map2.width*10, height);
         this.physics.world.setBoundsCollision(true, true, false, false);
@@ -124,22 +115,47 @@ export default class SecondLevel extends Phaser.Scene{
 
         // Player
         isPlayerDead = false;
+  // Testing     this.player = new Player(this, 40000, 500);
         this.player = new Player(this, 200, 500);
         playerHealth = 100;
+
+        // Kristalle einfügen
+     /*   let crystal = this.add.sprite('crystal');
+        crystal.setScrollFactor(1);
+        crystal = this.physics.add.group({
+            key: 'crystal',
+            repeat: 3,
+            setXY: { x: 250, y: 0, stepX: Phaser.Math.FloatBetween(600, 800) }
+        });
+        crystal.children.iterate(function (child) {
+            child.setSize(20, 60, true);
+            child.setBounceY(Phaser.Math.FloatBetween(0.1, 0.2));
+        });*/
+
+        enemy = new Enemy(this, ground);
+
+
+
+
+
 
         // set collision
         ground.setCollisionByProperty({collides : true});
         thorns.setCollisionByProperty({collides : true});
         movementEnemies.setCollisionByProperty({collides : true});
 
+        this.physics.add.collider(door2, ground);
+        this.physics.add.collider(this.player.sprite, door2);
         this.physics.add.collider(this.player.sprite, ground);
         this.physics.add.collider(this.player.sprite, thorns, function(sprite, thorns){
             sprite.setVelocityY(-380);
             healthMask.x -= 99;
             playerHealth -= 50;
         });
-
-
+        this.physics.add.collider(enemy.group, ground);
+        this.physics.add.collider(enemy.group, movementEnemies, function(){
+            enemy.checkDirection();
+        });
 
         // camera
         const camera = this.cameras.main;
