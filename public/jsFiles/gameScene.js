@@ -8,6 +8,8 @@ let isPlayerDead;
 let playerHealth;
 let timer, timerText;
 let enemy;
+let cover;
+let coverfill;
 
 // Pause Button Variablen
 let pauseBtn = document.getElementById("pause-btn");
@@ -137,8 +139,9 @@ export default class GameScene extends Phaser.Scene{
         this.physics.world.setBoundsCollision(true, true, false, false);
 
         // cover
-        const cover = this.add.graphics();
-        cover.fillStyle(0x000000, 0.85);
+        cover = this.add.graphics();
+        coverfill = 0.8;
+        cover.fillStyle(0x000000, coverfill);
         cover.fillRect(0,0, width, height);
         cover.setScrollFactor(0);
 
@@ -171,16 +174,27 @@ export default class GameScene extends Phaser.Scene{
         healthbar.mask = new Phaser.Display.Masks.BitmapMask(this, this.healthMask);
         lightbar.mask = new Phaser.Display.Masks.BitmapMask(this, this.lightMask);
 
+        //Spotlight
+        this.spotlight = this.make.graphics();
+        this.spotlight.fillStyle(0xfffffff);
+        this.spotlight.fillCircle(0, 0, 128);
+
+        const mask = this.spotlight.createGeometryMask();
+        mask.setInvertAlpha(true);
+        cover.setMask(mask);
+        cover.setDepth(1);
+
+
         // Kristalle einfügen
         let crystal = this.add.sprite('crystal');
         crystal.setScrollFactor(1);
         crystal = this.physics.add.group({
             key: 'crystal',
             repeat: 3,
-            setXY: { x: 750, y: 0, stepX: Phaser.Math.FloatBetween(300, 800) }
+            setXY: { x: 250, y: 0, stepX: Phaser.Math.FloatBetween(600, 800) }
         });
         crystal.children.iterate(function (child) {
-            child.setBounceY(Phaser.Math.FloatBetween(0.1, 0.4));
+            child.setBounceY(Phaser.Math.FloatBetween(0.1, 0.2));
         });
 
         enemy = new Enemy(this, ground);
@@ -219,15 +233,6 @@ export default class GameScene extends Phaser.Scene{
        // this.player = new Player(this, 200, 300);
         playerHealth = 100;
 
-        //Spotlight
-        this.spotlight = this.make.graphics();
-        this.spotlight.fillStyle(0xfffffff);
-        this.spotlight.fillCircle(0, 0, 128);
-
-        const mask = this.spotlight.createGeometryMask();
-        mask.setInvertAlpha(true);
-        cover.setMask(mask);
-        cover.setDepth(1);
 
         // set collision
         ground.setCollisionByProperty({collides : true});
@@ -243,6 +248,10 @@ export default class GameScene extends Phaser.Scene{
 
         this.physics.add.collider(crystal, ground);
         this.physics.add.collider(firefly, ground);
+        this.physics.add.collider(crystal, firefly, function(crystal, firefly){
+            crystal.x += 120;
+            firefly.y -= -80;
+        });
         this.physics.add.collider(enemy.group, ground);
         this.physics.add.collider(enemy.group, movementEnemies, function(){
           enemy.checkDirection();
@@ -315,7 +324,7 @@ export default class GameScene extends Phaser.Scene{
         timer = this.time.addEvent({ delay: 999999 });
         timerText.setScrollFactor(0);
 
-        loadGame();
+        // loadGame();
     }
 
     //
@@ -379,18 +388,24 @@ export default class GameScene extends Phaser.Scene{
         } 
 
 
+        cover.fillStyle(0x000000, this.coverfill);
+
         this.spotlight.setPosition(this.player.sprite.x, this.player.sprite.y);
         if(this.spotlight.scale > 0.4){
              this.spotlight.scale -= 0.0004;
+             coverfill += 0.0005;
         }
-        if(this.spotlight.scale >= 0.4) {
+        if(this.spotlight.scale >= 0.4 && this.lightMask.x <= -41 && coverfill >= 1) {
             this.lightMask.x <= -41;
-        }
-        if(this.lightMask.x <= -41) {
-            this.lightMask.x <= -41;
+            coverfill = 1;
         } else {
             this.lightMask.x -= 0.10;
+            coverfill += 0.0005;
         }
+
+        
+
+        console.log(coverfill);
 
         timerText.setText(formatTime(score + timer.getElapsedSeconds()));
         //console.log(timerText);

@@ -247,11 +247,16 @@ h2{
 
 }
 
+.back-btn {
+    text-align: left;
+}
+
 .back-btn a {
     display: inline-block;
     margin-left: 40px;
     position: relative;
     top: -10px;
+    cursor: pointer;
     transition: all ease-in-out .25s;
 }
 
@@ -261,8 +266,37 @@ h2{
 }
 
 .back-btn a img{
-    width: 50px;
+    width: 35px;
 }
+
+.back-btn a::before{
+    content: '';
+    background-image: url("img/buttons_background_neuSkaliert.svg");
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    display: block;
+
+    opacity: 1;
+    background-size: 100px 40px;
+    position: absolute;
+    transform: scale(0);
+    transition:all ease-in-out 0.2s;
+    z-index: -1;
+}
+
+.back-btn a:hover::before{
+    background-position: center;
+    background-size: 100px 40px;
+    transition:all ease-in-out 0.4s;
+    transform: scale(1);
+
+}
+
+
+
+
 
 #logIn{
     display: inline-block;
