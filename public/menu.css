@@ -118,7 +118,7 @@ a{
     font-family: catseye, sans-serif;
     font-weight: 700;
     font-style: normal;
-    font-size: 2em;
+    font-size: 25px;
 }
 
 h1{
@@ -328,10 +328,10 @@ h2{
     padding: 15px 40px;
 }
 
-#changePasswordDiv .label,
+/* #changePasswordDiv .label,
 #changePasswordRepeat .label {
     font-size: 25px;
-}
+} */
 
 
 #logIn{
