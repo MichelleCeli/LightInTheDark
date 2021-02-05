@@ -13,6 +13,7 @@ let direction;
 let enemy;
 let firefly;
 let crystal;
+let switchScene;
 
 let shooting;
 let justCreated;
@@ -24,6 +25,8 @@ export default class SecondLevel extends Phaser.Scene{
 
     constructor() {
         super({key: 'SecondLevel'});
+
+        this.level = 2;
     }
 
     preload () {
@@ -47,6 +50,8 @@ export default class SecondLevel extends Phaser.Scene{
     }
 
     create() {
+
+        switchScene = this;
 
         const width = this.scale.width;
         const height = this.scale.height;

@@ -388,6 +388,10 @@ Alina - 17.12.2020
     padding: 15px 0;
 }
 
+#saveMessage{
+    font-size: 15px;
+}
+
 /** Highscore **/
 
 #score-container {

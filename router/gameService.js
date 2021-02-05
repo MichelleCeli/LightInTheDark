@@ -17,21 +17,37 @@ router.get('/game', authMiddleware, (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'Game.html'));
 }) 
 
-router.post('/saveGame', async (req, res) => {
+router.post('/saveGame', (req, res) => {
     const userID = req.session.user._id;
     let {level, score, position, title, playerHealth, light} = req.body;
-    const savepoint = new Savepoint({
-        userID: userID,
-        title: title,
-        level: level,
-        score: score,
-        position: position,
-        lifepoints: playerHealth,
-        lightpoints: light
+    if(!title){
+        return res.json({type: 'error', res: 'no title'});;
+    }
+    Savepoint.find({userID})
+    .then(savepoint =>{
+        if(savepoint.length > 2){
+            res.json({type: 'error', res: 'too many savepoints'});
+            return;
+        }else{
+            const savepoint = new Savepoint({
+                userID: userID,
+                title: title,
+                level: level,
+                score: score,
+                position: position,
+                lifepoints: playerHealth,
+                lightpoints: light
+            })
+            savepoint.save();
+            return res.json('success'); 
+        }
     })
-    await savepoint.save();
-    return res.json({type: 'success'});
+    
 }) 
+
+router.post('/deleteSavepoint', async(req,res) =>{
+
+})
 
 router.get('/loadGame', authMiddleware, (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'loadGame.html'));
