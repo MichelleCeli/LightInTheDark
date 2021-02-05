@@ -37,7 +37,7 @@ export default class Player {
         // Create Sprite
         this.sprite = scene.physics.add
             .sprite(x, y, "player", 0)
-            .setBounce(0.2)
+            .setBounce(0.1)
             .setCollideWorldBounds(true);
         this.sprite.body.setSize(50, 75, true);
 

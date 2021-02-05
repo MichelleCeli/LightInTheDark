@@ -161,7 +161,7 @@ export default class GameScene extends Phaser.Scene{
 
         // cover
         cover = this.add.rectangle(0,0, width*2, height*2, 0x000000);
-        coverfill = 0.5;
+        coverfill = 0.85;
         cover.setAlpha(coverfill);
         //cover.fillStyle(0x000000, coverfill);
         //cover.fillRect(0,0, width, height);
@@ -323,6 +323,11 @@ export default class GameScene extends Phaser.Scene{
                 this.lightMask.x += 55;
                 this.spotlight.scale += 0.4;
             }
+            if(coverfill - 0.1 <= 0.85) {
+                coverfill = 0.85;
+            } else {
+                coverfill -= 0.3;
+            }
         }
 
 
@@ -410,24 +415,22 @@ export default class GameScene extends Phaser.Scene{
             switchScene.scene.pause();
         } 
 
-
-        //cover.fillStyle(0x000000, coverfill);
         cover.setAlpha(coverfill);
 
         this.spotlight.setPosition(this.player.sprite.x, this.player.sprite.y);
         if(this.spotlight.scale > 0.4){
              this.spotlight.scale -= 0.0004;
-             coverfill += 0.0005;
         }
-        if(this.spotlight.scale >= 0.4 && this.lightMask.x <= -41 && coverfill >= 1) {
+        if(this.spotlight.scale >= 0.4 && this.lightMask.x <= -41) {
             this.lightMask.x <= -41;
-            coverfill = 1;
         } else {
             this.lightMask.x -= 0.10;
-            coverfill += 0.0005;
         }
-
-        
+        if(coverfill >= 0.95) {
+            coverfill = 0.95;
+        } else {
+            coverfill += 0.0003;
+        }
 
         console.log(coverfill);
 
