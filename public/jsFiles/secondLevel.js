@@ -18,7 +18,7 @@ export default class SecondLevel extends Phaser.Scene{
         this.load.image('bgBackSpriteGreen', './img/assets/background/background_green_1960x1080.png');
         this.load.image('bgBackTreeSpriteGreen', './img/assets/background/trees_bg_green_1960x1080.png');
         this.load.image('bgMiddleTreeSpriteGreen', './img/assets/background/trees_fg_green_1960x1080.png');
-        this.load.image('bgFrontSprite', './img/assets/background/front_1960x1080.png');
+        this.load.image('bgFrontSpriteGreen', './img/assets/background/front_green_1960x1080.png');
 
         // tilemap
         this.load.image("basement", "./img/assets/maps/basement.png");
@@ -41,7 +41,7 @@ export default class SecondLevel extends Phaser.Scene{
 
         const bg2 = createAligned(this, 3, 'bgBackTreeSpriteGreen', 0.15);
         const bg3 = createAligned(this, 3, 'bgMiddleTreeSpriteGreen', 0.3);
-        const bg4 = createAligned(this, 3, 'bgFrontSprite', 0.5);
+        const bg4 = createAligned(this, 3, 'bgFrontSpriteGreen', 0.5);
 
         let gameOptions = 60;
 
