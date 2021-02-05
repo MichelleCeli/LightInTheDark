@@ -66,6 +66,8 @@ export default class GameScene extends Phaser.Scene{
 
     constructor() {
         super({key: 'GameScene'});
+
+        this.level = 1;
     }
 
     preload ()
@@ -145,7 +147,7 @@ export default class GameScene extends Phaser.Scene{
 
         // cover
         cover = this.add.rectangle(0,0, width*2, height*2, 0x000000);
-        coverfill = 0.85;
+        coverfill = 0.8;
         cover.setAlpha(coverfill);
         //cover.fillStyle(0x000000, coverfill);
         //cover.fillRect(0,0, width, height);
@@ -195,7 +197,7 @@ export default class GameScene extends Phaser.Scene{
 
         crystal = new Crystal(this, 4, 250, 600, 800);
         enemy = new Enemy(this, ground);
-        firefly = new Firefly(this, 20, 250, 300, 500);
+        firefly = new Firefly(this, 20, 200, 300, 500);
 
         // Door for Game End
         let door = this.physics.add.sprite(doorSpawnPoint.x, doorSpawnPoint.y, 'door');
@@ -204,10 +206,10 @@ export default class GameScene extends Phaser.Scene{
 
         // Player
         isPlayerDead = false;
-        this.player = new Player(this, 200, 700);
+     //   this.player = new Player(this, 200, 700);
 
         //Testing Map 2
-       // this.player = new Player(this, 3500, 300);
+        this.player = new Player(this, 3500, 300);
         playerHealth = 100;
 
 
@@ -266,19 +268,19 @@ export default class GameScene extends Phaser.Scene{
         }
 
         function collectFirefly (player, firefly) {
-            if (this.spotlight.scale + 0.4 >= 1 || this.lightMask.x + 45 >= 150) {
+            if (this.spotlight.scale + 0.3 >= 1 || this.lightMask.x + 45 >= 150) {
                 firefly.disableBody(true, true);
                 this.lightMask.x = 150;
                 this.spotlight.scale = 1;
             } else {
                 firefly.disableBody(true, true);
-                this.lightMask.x += 55;
-                this.spotlight.scale += 0.4;
+                this.lightMask.x += 45;
+                this.spotlight.scale += 0.3;
             }
-            if(coverfill - 0.1 <= 0.85) {
-                coverfill = 0.85;
+            if(coverfill - 0.05 <= 0.8) {
+                coverfill = 0.8;
             } else {
-                coverfill -= 0.3;
+                coverfill -= 0.05;
             }
         }
 
@@ -288,6 +290,7 @@ export default class GameScene extends Phaser.Scene{
         function endLevel(player, door) {
             setNewHighscore();
             switchScene.scene.start("SecondLevel");
+            this.scene.stop();
         }
 
 
@@ -382,7 +385,7 @@ export default class GameScene extends Phaser.Scene{
         if(coverfill >= 0.95) {
             coverfill = 0.95;
         } else {
-            coverfill += 0.0003;
+            coverfill += 0.00009;
         }
 
         timerText.setText(formatTime(score + timer.getElapsedSeconds()));
@@ -423,7 +426,8 @@ function clickPause() {
   saveGame2.addEventListener("click", () => {
       let score = Math.round(timer.getElapsedSeconds());
       let position = [switchScene.player.sprite.x, switchScene.player.sprite.y];
-      let level = 1;
+      let level = switchScene.level;
+      console.log(level);
       let title = document.getElementById("saveTitle").value;
       let light = switchScene.lightMask.x;
       $.ajax({
@@ -435,9 +439,10 @@ function clickPause() {
         if(res === 'success'){
             location.assign('/loadGame');
         }else if(res.type === 'error'){
-            saveMessage.innerHTML(res.res);
+            console.log(res.res);
+            $("#saveMessage").html(res.res);
         }
-    })  
+    })   
   });
 
   //resume
@@ -449,7 +454,11 @@ function clickPause() {
   });
 
   restartGame.addEventListener("click", () => {
-    location.reload();
+    toggleModal();
+    console.log(switchScene.level);
+    pauseBtn.style.display = "block";
+    switchScene.scene.restart();
+    counterAfterSwitchScene = 100;
   });
 }
 
@@ -522,7 +531,7 @@ function updateLightBar(light){
 
 function setNewHighscore(){
     let time = Math.round(timer.getElapsedSeconds());
-    let level = 1;
+    let level = switchScene.level;
     $.ajax({
         url: '/saveScore',
         method: 'POST',
