@@ -2,6 +2,7 @@ import Player from "./player.js";
 import Enemy from "./enemy.js";
 import Crystal from "./crystal.js";
 import Firefly from "./firefly.js";
+import Arrow from "./Arrow.js";
 
 let lightbar;
 let map2;
@@ -12,6 +13,12 @@ let direction;
 let enemy;
 let firefly;
 let crystal;
+
+let shooting;
+let justCreated;
+let leftButtonPressed;
+let arrowRot;
+let arrow;
 
 export default class SecondLevel extends Phaser.Scene{
 
@@ -121,6 +128,7 @@ export default class SecondLevel extends Phaser.Scene{
   // Testing     this.player = new Player(this, 40000, 500);
         this.player = new Player(this, 200, 500);
         playerHealth = 100;
+        leftButtonPressed = false;
 
 
 
@@ -149,6 +157,12 @@ export default class SecondLevel extends Phaser.Scene{
         this.physics.add.collider(enemy.group, movementEnemies, function(){
             enemy.checkDirection();
         });
+        this.physics.add.collider(crystal.group, ground);
+        this.physics.add.collider(firefly.group, ground);
+        this.physics.add.collider(crystal.group, firefly, function(crystal, firefly){
+            crystal.x += 120;
+            firefly.y -= -80;
+        });
 
         // camera
         const camera = this.cameras.main;
@@ -162,6 +176,33 @@ export default class SecondLevel extends Phaser.Scene{
     update() {
 
         direction = this.player.update();
+
+        // checking if arrow is still shooting & calculates new angle for sprite
+        if(!justCreated && shooting){
+            shooting = arrow.update(shooting);
+        }
+        // arrow has to be updated first before new angle can be calculated
+        justCreated = false;
+        // checks if left Button is clicked and no other arrow is still shooting, player has to be on Ground
+        if (this.input.activePointer.leftButtonDown() && !shooting && this.player.sprite.body.blocked.down /*&&  (counterAfterSwitchScene == 0) */) {
+            leftButtonPressed = true;
+        }
+        // only shoots arrow after left Button is also released
+        if(this.input.activePointer.leftButtonReleased() && leftButtonPressed /* &&  (counterAfterSwitchScene == 0) */) {
+
+            // calculates the angle of the shot with the position of the input in wordcoordinates and position of the player
+            arrowRot = Math.atan2((this.input.activePointer.worldY - this.player.sprite.y), (this.input.activePointer.worldX - this.player.sprite.x)) * (180 / Math.PI);
+
+            // checks if player is looking in the right direction for the shot
+            if((direction === 'right' && (arrowRot >= -90 && arrowRot <= 90)) || direction === 'left' && (arrowRot <= -90 || arrowRot >= 90 )){
+
+                arrow = new Arrow(this, this.player, arrowRot, ground, enemy);
+
+                shooting = true;
+                justCreated = true;
+            }
+            leftButtonPressed = false;
+        }
 
     }
 
