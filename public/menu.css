@@ -24,7 +24,7 @@ a{
 
 /* container for menus */
 .container{
-    width: 45%;
+    width: 50%;
     height: 75%;
     padding: 10px;
     box-sizing: border-box;
@@ -123,6 +123,10 @@ a{
 #containerMenu{
     margin: 0 auto;
     display: block;
+}
+
+.hide-small {
+    display: inline-block;
 }
 
 .label{
@@ -413,22 +417,33 @@ Pause Modal
 }
 
 
-@media only screen and (max-width: 600px) {
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (max-width: 768px) {
+    .container{
+        width: 100%;
+        height: 100%;
+    }
+    h1,
+    h2 {
+        font-size: 2.5em;
+    }
 
-}
+    #headline-flex h1 {
+        margin-right: 37%;
+    }
+    .back-btn {
+        padding-top: 36px;
+        margin-right: 52px;
+    }
 
-@media only screen and (min-width: 600px) {
+    .button {
+        font-size: 1.3em;
+    }
 
-}
+    .hide-small {
+        display: none;
+    }
 
-@media only screen and (min-width: 768px) {
 
-}
-
-@media only screen and (min-width: 992px) {
-
-}
-
-@media only screen and (min-width: 1200px) {
 
 }
