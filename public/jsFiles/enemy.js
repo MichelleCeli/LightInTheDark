@@ -17,7 +17,7 @@ export default class Enemy {
         this.group = scene.physics.add.group({
             key: 'enemy',
             repeat: 12,
-            setXY: { x: 600, y: 300, stepX: Phaser.Math.FloatBetween(300, 400) },
+            setXY: { x: 650, y: 300, stepX: Phaser.Math.FloatBetween(300, 400) },
         });
 
         this.group.children.iterate(function (child) {
