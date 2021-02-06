@@ -37,6 +37,7 @@ export default class SecondLevel extends Phaser.Scene{
 
         this.level = 2;
     }
+    
 
     preload () {
         //Hintergrund Bilder

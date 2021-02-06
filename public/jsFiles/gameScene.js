@@ -68,8 +68,10 @@ export default class GameScene extends Phaser.Scene{
 
     constructor() {
         super({key: 'GameScene'});
+    }
 
-        this.level = 1;
+    init(data){
+        this.level = data.level;
     }
 
     preload ()
@@ -266,8 +268,7 @@ export default class GameScene extends Phaser.Scene{
         this.physics.add.overlap(this.player.sprite, door, endLevel, null, this);
         function endLevel(player, door) {
             setNewHighscore();
-            switchScene.scene.start("SecondLevel");
-            this.scene.stop();
+            this.scene.start("SecondLevel");
         }
 
         // camera
@@ -375,10 +376,19 @@ const createAligned = (scene, count, texture, scrollFactor) => {
     }
 }
 
+let activeScene = '';
+
 function clickPause() {
+    
   pauseBtn.addEventListener("click", () => {
     toggleModal();
-    switchScene.scene.pause();
+    if(switchScene.scene.isVisible('SecondLevel')){
+        activeScene = 'SecondLevel';
+    }
+    if(switchScene.scene.isVisible('GameScene')){
+        activeScene = 'GameScene';
+    }
+    switchScene.scene.pause(activeScene);
   });
 
   function toggleModal() {
@@ -397,8 +407,13 @@ function clickPause() {
   saveGame2.addEventListener("click", () => {
       let score = Math.round(timer.getElapsedSeconds());
       let position = [switchScene.player.sprite.x, switchScene.player.sprite.y];
-      let level = switchScene.level;
-      console.log(level);
+      let level;
+      if(switchScene.scene.isVisible('SecondLevel')){
+        level = 2;
+    }
+    if(switchScene.scene.isVisible('GameScene')){
+        level = 1;
+    }
       let title = document.getElementById("saveTitle").value;
    //   let light = switchScene.lightMask.x;
       $.ajax({
@@ -421,23 +436,40 @@ function clickPause() {
     toggleModal();
     pauseBtn.style.display = "block";
     counterAfterSwitchScene = 100;
-    switchScene.scene.resume('GameScene');
+    switchScene.scene.resume(activeScene);
   });
 
   restartGame.addEventListener("click", () => {
     toggleModal();
-    console.log(switchScene.level);
     pauseBtn.style.display = "block";
-    switchScene.scene.restart();
+    restartScene();
+    /* let thisScene = switchScene.scene.get('SecondLevel');
+    if(activeScene === 'SecondLevel'){
+        thisScene.scene.restart();
+    }
+    if(activeScene === 'GameScene'){
+        switchScene.scene.restart();
+    } */
     counterAfterSwitchScene = 100;
+    
   });
-}
+} 
 
+function restartScene(){
+    let thisScene = switchScene.scene.get('SecondLevel');
+    if(activeScene === 'SecondLevel'){
+        thisScene.scene.restart();
+    }
+    if(activeScene === 'GameScene'){
+        switchScene.scene.restart();
+    }
+}
 
 
 //Pause Button
 pauseModal.style.display = "none";
 clickPause();
+
 
 
 function formatTime(seconds){

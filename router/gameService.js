@@ -17,6 +17,8 @@ router.get('/game', authMiddleware, (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'Game.html'));
 }) 
 
+//router.post('/countPlaytimes')
+
 router.post('/saveGame', (req, res) => {
     const userID = req.session.user._id;
     let {level, score, position, title, playerHealth, light} = req.body;
