@@ -5,6 +5,8 @@ import SecondLevel from "./secondLevel.js";
 import Arrow from "./Arrow.js";
 import Crystal from "./crystal.js";
 import Firefly from "./firefly.js";
+import Healthbar from "./Healthbar.js";
+import Lightbar from "./Lightbar.js";
 
 let isPlayerDead;
 let playerHealth;
@@ -14,6 +16,8 @@ let firefly;
 let enemy;
 let cover;
 let coverfill;
+let healthbar;
+let lightbar;
 
 // Pause Button Variablen
 let pauseBtn = document.getElementById("pause-btn");
@@ -52,12 +56,10 @@ let newHealth;
 
 
 // TODO: Dokumentation                             GELSESEN -> Texte hinzufügen
-//TODO: healthbar/lightbar auslagern?
 // TODO: CHrome API mit Firefox vergleichen und Bug lösen
+// TODO: Arrow horizontal
 // TODO: Menu responsive
 // TODO: 2. Level Elemente hinzufügen
-
-// TODO: weiteres Monster???
 
 
 
@@ -156,31 +158,8 @@ export default class GameScene extends Phaser.Scene{
         //healthbar, lightbar
         this.timeLeft = gameOptions.initialTime;
 
-        let healthbarContainer = this.add.sprite(150, 50, 'barBg');
-        healthbarContainer.setScrollFactor(0);
-        healthbarContainer.setDepth(2);
-        let healthbar = this.add.sprite(healthbarContainer.x, healthbarContainer.y, 'healthbar');
-        healthbar.setScrollFactor(0);
-        healthbar.setDepth(2);
-        this.healthMask = this.add.sprite(healthbar.x, healthbar.y, 'healthbar');
-        this.healthMask.setScrollFactor(0);
-        this.healthMask.setDepth(2);
-        this.healthMask.visible = false;
-
-
-        let lightbarContainer = this.add.sprite(150, 100, 'barBg');
-        lightbarContainer.setScrollFactor(0);
-        lightbarContainer.setDepth(2);
-        let lightbar = this.add.sprite(lightbarContainer.x, lightbarContainer.y, 'lightbar');
-        lightbar.setScrollFactor(0);
-        lightbar.setDepth(2);
-        this.lightMask = this.add.sprite(lightbar.x, lightbar.y, 'lightbar');
-        this.lightMask.setScrollFactor(0);
-        this.lightMask.setDepth(2);
-        this.lightMask.visible = false;
-
-        healthbar.mask = new Phaser.Display.Masks.BitmapMask(this, this.healthMask);
-        lightbar.mask = new Phaser.Display.Masks.BitmapMask(this, this.lightMask);
+        healthbar = new Healthbar(this, 150, 50);
+        lightbar = new Lightbar(this, 150, 100);
 
         //Spotlight
         this.spotlight = this.make.graphics();
@@ -195,7 +174,7 @@ export default class GameScene extends Phaser.Scene{
 
         // Level Elemente einfügen
 
-        crystal = new Crystal(this, 4, 250, 600, 800);
+        crystal = new Crystal(this, 4, 250, 600, 800, this.player, playerHealth, healthbar);
         enemy = new Enemy(this, ground);
         firefly = new Firefly(this, 20, 200, 300, 500);
 
@@ -206,10 +185,10 @@ export default class GameScene extends Phaser.Scene{
 
         // Player
         isPlayerDead = false;
-        this.player = new Player(this, 200, 700);
+       // this.player = new Player(this, 200, 700);
 
         //Testing Map 2
-        //this.player = new Player(this, 3500, 300);
+        this.player = new Player(this, 3500, 300);
         playerHealth = 100;
 
 
@@ -220,7 +199,7 @@ export default class GameScene extends Phaser.Scene{
         this.physics.add.collider(this.player.sprite, thorns, function(sprite, thorns){
             sprite.setVelocityY(-380);
             playerHealth -= 50;
-            updateHealthBar();
+            healthbar.updateHealthbar(playerHealth);
         });
 
         this.physics.add.collider(crystal.group, ground);
@@ -239,11 +218,12 @@ export default class GameScene extends Phaser.Scene{
             if(!sprite.immune){
                 playerHealth -= 50;
                 //healthMask.x -= 99;
-                updateHealthBar();
+                healthbar.updateHealthbar(playerHealth);
             }
             sprite.immune = true;
             immune(sprite);
         })
+
 
         
         const immune = (sprite) => this.time.delayedCall(1000, function() {
@@ -258,23 +238,21 @@ export default class GameScene extends Phaser.Scene{
         
         
         function collectCrystal (player, crystal) {
-            if(playerHealth >= 100) {
-                crystal.disableBody(true, true);
-            } else {
+            if(playerHealth < 100){
                 playerHealth += 50;
-                updateHealthBar();
-                crystal.disableBody(true, true);
             }
+            healthbar.updateHealthbar(playerHealth);
+            crystal.disableBody(true, true);
         }
 
         function collectFirefly (player, firefly) {
-            if (this.spotlight.scale + 0.3 >= 1 || this.lightMask.x + 45 >= 150) {
+            if (this.spotlight.scale + 0.3 >= 1 || lightbar.mask.x + 45 >= 150) {
                 firefly.disableBody(true, true);
-                this.lightMask.x = 150;
+                lightbar.mask.x = 150;
                 this.spotlight.scale = 1;
             } else {
                 firefly.disableBody(true, true);
-                this.lightMask.x += 45;
+                lightbar.mask.x += 45;
                 this.spotlight.scale += 0.3;
             }
             if(coverfill - 0.05 <= 0.8) {
@@ -284,7 +262,6 @@ export default class GameScene extends Phaser.Scene{
             }
         }
 
-
         // Check overlap between Player and door
         this.physics.add.overlap(this.player.sprite, door, endLevel, null, this);
         function endLevel(player, door) {
@@ -293,8 +270,6 @@ export default class GameScene extends Phaser.Scene{
             this.scene.stop();
         }
 
-
-        // Kamera Einstellungen
         // camera
         const camera = this.cameras.main;
         camera.startFollow(this.player.sprite);
@@ -318,7 +293,7 @@ export default class GameScene extends Phaser.Scene{
         if(gameLoaded){
             this.player.sprite.x = newPlayerPosX;
             this.player.sprite.y = newPlayerPosY;
-            //updateHealthBar();
+            //healthbar.updateHealthbar(playerHealth);
             gameLoaded = false;
         }
 
@@ -375,13 +350,9 @@ export default class GameScene extends Phaser.Scene{
 
         this.spotlight.setPosition(this.player.sprite.x, this.player.sprite.y);
         if(this.spotlight.scale > 0.4){
-             this.spotlight.scale -= 0.0004;
+            this.spotlight.scale -= 0.0004;
         }
-        if(this.spotlight.scale >= 0.4 && this.lightMask.x <= -41) {
-            this.lightMask.x <= -41;
-        } else {
-            this.lightMask.x -= 0.10;
-        }
+        lightbar.updateLightbar(this.spotlight);
         if(coverfill >= 0.95) {
             coverfill = 0.95;
         } else {
@@ -429,7 +400,7 @@ function clickPause() {
       let level = switchScene.level;
       console.log(level);
       let title = document.getElementById("saveTitle").value;
-      let light = switchScene.lightMask.x;
+   //   let light = switchScene.lightMask.x;
       $.ajax({
         url: '/saveGame',
         method: 'POST',
@@ -509,24 +480,11 @@ function loadGame(){
 
 function setPlayerHealth(health){
     playerHealth = health;
-    console.log(playerHealth);
-    updateHealthBar();
+    healthbar.updateHealthbar(playerHealth);
 }
 
-function updateHealthBar(){
-    if(playerHealth == 100){
-        switchScene.healthMask.x = 150;
-        console.log("falsch");
-    }else if(playerHealth == 50){
-        switchScene.healthMask.x = 51;
-        console.log("richtig");
-    }else if(playerHealth == 0){
-        switchScene.healthMask.x = -50;
-    }
-} 
-
 function updateLightBar(light){
-    switchScene.lightMask.x = light;
+  //  switchScene.lightMask.x = light;
 } 
 
 function setNewHighscore(){
