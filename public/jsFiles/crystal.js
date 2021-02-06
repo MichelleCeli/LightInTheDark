@@ -1,6 +1,8 @@
+
+
 export default class Crystal {
 
-    constructor(scene, repeat, x, stepX1, stepX2) {
+    constructor(scene, repeat, x, stepX1, stepX2, player, playerHealth, healthbar) {
         this.scene = scene;
 
         this.group = scene.physics.add.group({
@@ -14,6 +16,7 @@ export default class Crystal {
             child.setScrollFactor(1);
             child.setBounceY(Phaser.Math.FloatBetween(0.1, 0.2));
         });
+
 
     }
 

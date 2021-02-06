@@ -26,15 +26,4 @@ export default class Firefly {
 
     }
 
-    checkDirection(){
-        this.group.getChildren().forEach(function (child){
-            if (child.body.blocked.left){
-                child.setVelocity(100, 0);
-            }
-            if (child.body.blocked.right){
-                child.setVelocity(-100, 0);
-            }
-        });
-    }
-
 }

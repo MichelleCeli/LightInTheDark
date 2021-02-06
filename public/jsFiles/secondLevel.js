@@ -3,7 +3,10 @@ import Enemy from "./enemy.js";
 import Crystal from "./crystal.js";
 import Firefly from "./firefly.js";
 import Arrow from "./Arrow.js";
+import Healthbar from "./Healthbar.js";
+import Lightbar from "./Lightbar.js";
 
+let healthbar;
 let lightbar;
 let map2;
 let ground;
@@ -14,6 +17,12 @@ let enemy;
 let firefly;
 let crystal;
 let switchScene;
+
+let cover;
+let coverfill;
+
+let timer, timerText;
+
 
 let shooting;
 let justCreated;
@@ -87,45 +96,30 @@ export default class SecondLevel extends Phaser.Scene{
         this.physics.world.setBoundsCollision(true, true, false, false);
 
         // cover
-        const cover = this.add.graphics();
-        cover.fillStyle(0x000000, 0.8);
-        cover.fillRect(0,0, width, height);
+        cover = this.add.rectangle(0,0, width*2, height*2, 0x000000);
+        coverfill = 0.8;
+        cover.setAlpha(coverfill);
+        //cover.fillStyle(0x000000, coverfill);
+        //cover.fillRect(0,0, width, height);
         cover.setScrollFactor(0);
+
+        //Spotlight
+        this.spotlight = this.make.graphics();
+        this.spotlight.fillStyle(0xfffffff);
+        this.spotlight.fillCircle(0, 0, 128);
+
+        const mask = this.spotlight.createGeometryMask();
+        mask.setInvertAlpha(true);
+        cover.setMask(mask);
+        cover.setDepth(1);
+
 
         //healthbar, lightbar
         this.timeLeft = gameOptions.initialTime;
 
-        let healthbarContainer = this.add.sprite(150, 50, 'barBg');
-        healthbarContainer.setScale(0.2);
-        healthbarContainer.setScrollFactor(0);
-        healthbarContainer.setDepth(2);
-        let healthbar = this.add.sprite(healthbarContainer.x, healthbarContainer.y, 'healthbar');
-        healthbar.setScale(0.2);
-        healthbar.setScrollFactor(0);
-        healthbar.setDepth(2);
-        let healthMask = this.add.sprite(healthbar.x, healthbar.y, 'healthbar');
-        healthMask.setScale(0.2);
-        healthMask.setScrollFactor(0);
-        healthMask.setDepth(2);
-        healthMask.visible = false;
+        healthbar = new Healthbar(this, 150, 50, );
+        lightbar = new Lightbar(this, 150, 100);
 
-        let lightbarContainer = this.add.sprite(150, 100, 'barBg');
-        lightbarContainer.setScale(0.2);
-        lightbarContainer.setScrollFactor(0);
-        lightbarContainer.setDepth(2);
-        lightbar = this.add.sprite(lightbarContainer.x, lightbarContainer.y, 'lightbar');
-        lightbar.setScale(0.2);
-        lightbar.setScrollFactor(0);
-        lightbar.setDepth(2);
-        this.lightMask = this.add.sprite(lightbar.x, lightbar.y, 'lightbar');
-        this.lightMask.setScale(0.2);
-        this.lightMask.setScrollFactor(0);
-        this.lightMask.setDepth(2);
-        this.lightMask.visible = false;
-
-
-        healthbar.mask = new Phaser.Display.Masks.BitmapMask(this, healthMask);
-        lightbar.mask = new Phaser.Display.Masks.BitmapMask(this, this.lightMask);
 
 
         // Player
@@ -138,12 +132,8 @@ export default class SecondLevel extends Phaser.Scene{
 
 
         enemy = new Enemy(this, ground);
-        crystal = new Crystal(this, 4, 250, 600, 800);
+        crystal = new Crystal(this, 8, 250, 600, 800);
         firefly = new Firefly(this, 20, 200, 300, 500);
-
-
-
-
 
         // set collision
         ground.setCollisionByProperty({collides : true});
@@ -155,9 +145,24 @@ export default class SecondLevel extends Phaser.Scene{
         this.physics.add.collider(this.player.sprite, ground);
         this.physics.add.collider(this.player.sprite, thorns, function(sprite, thorns){
             sprite.setVelocityY(-380);
-            healthMask.x -= 99;
             playerHealth -= 50;
+            healthbar.updateHealthbar(playerHealth);
         });
+        this.physics.add.collider(this.player.sprite, enemy.group, function(sprite) {
+            sprite.setTint(0xff0000);
+            if(!sprite.immune){
+                playerHealth -= 50;
+                healthbar.updateHealthbar(playerHealth);
+            }
+            sprite.immune = true;
+            immune(sprite);
+        })
+
+        const immune = (sprite) => this.time.delayedCall(1000, function() {
+            sprite.setTint(0xffffff);
+            sprite.immune = false;
+        }, this);
+
         this.physics.add.collider(enemy.group, ground);
         this.physics.add.collider(enemy.group, movementEnemies, function(){
             enemy.checkDirection();
@@ -169,12 +174,47 @@ export default class SecondLevel extends Phaser.Scene{
             firefly.y -= -80;
         });
 
+        // Check overlap between Crystal, Enemy and Player
+        this.physics.add.overlap(this.player.sprite, crystal.group, collectCrystal, null, this);
+        this.physics.add.overlap(this.player.sprite, firefly.group, collectFirefly, null, this);
+
+
+        function collectCrystal (player, crystal) {
+            if(playerHealth < 100){
+                playerHealth += 50;
+            }
+            healthbar.updateHealthbar(playerHealth);
+            crystal.disableBody(true, true);
+        }
+
+        function collectFirefly (player, firefly) {
+            if (this.spotlight.scale + 0.3 >= 1 || lightbar.mask.x + 45 >= 150) {
+                firefly.disableBody(true, true);
+                lightbar.mask.x = 150;
+                this.spotlight.scale = 1;
+            } else {
+                firefly.disableBody(true, true);
+                lightbar.mask.x += 45;
+                this.spotlight.scale += 0.3;
+            }
+            if(coverfill - 0.05 <= 0.8) {
+                coverfill = 0.8;
+            } else {
+                coverfill -= 0.05;
+            }
+        }
+
         // camera
         const camera = this.cameras.main;
         camera.startFollow(this.player.sprite);
         camera.setBounds(0, 0, map2.widthInPixels, map2.heightInPixels );
 
-
+        //timer
+     /*   timerText = this.add.text(width / 2, 50, '', { font: '40px catseye' }).setOrigin(0.5);
+        timerText.setDepth(2);
+        timerText.setFill('#88ADEB');
+        timer = this.time.addEvent({ delay: 999999 });
+        timerText.setScrollFactor(0);*/
      //   this.textA = this.add.text(10, 10, 'Game Over', { font: '32px Arial', fill: '#FFFFFF' });
     }
 
@@ -209,7 +249,29 @@ export default class SecondLevel extends Phaser.Scene{
             leftButtonPressed = false;
         }
 
+        if(playerHealth <= 0) {
+           // gameoverModal.style.display = "block";
+            pauseBtn.style.display = "none";
+            this.player.sprite.setTint(0xff0000);
+         //   switchScene.scene.pause();
+        }
+
+
+        cover.setAlpha(coverfill);
+
+        this.spotlight.setPosition(this.player.sprite.x, this.player.sprite.y);
+        if(this.spotlight.scale > 0.4){
+            this.spotlight.scale -= 0.0004;
+        }
+        lightbar.updateLightbar(this.spotlight);
+        if(coverfill >= 0.95) {
+            coverfill = 0.95;
+        } else {
+            coverfill += 0.00009;
+        }
+
     }
+
 
 
 }
