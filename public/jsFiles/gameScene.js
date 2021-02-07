@@ -1,14 +1,12 @@
 /* import { start } from "repl"; */
 import Player from "./player.js";
 import Enemy from "./enemy.js";
-import SecondLevel from "./secondLevel.js";
 import Arrow from "./Arrow.js";
 import Crystal from "./crystal.js";
 import Firefly from "./firefly.js";
 import Healthbar from "./Healthbar.js";
 import Lightbar from "./Lightbar.js";
 
-let isPlayerDead;
 let playerHealth;
 let timerText;
 let crystal;
@@ -34,7 +32,6 @@ let restartGameOver = document.getElementById("restart-game-over");
 //Save Game
 let saveModal = document.getElementById("save-modal");
 let saveGame2 = document.getElementById("save-game2");
-let saveMessage = document.getElementById("saveMessage");
 
 
 // Arrow Variablen
@@ -53,7 +50,8 @@ let score = 0;
 let gameLoaded = false;
 let newPlayerPosX;
 let newPlayerPosY;
-let newHealth;
+
+let activeScene = '';
 
 
 export default class GameScene extends Phaser.Scene{
@@ -148,8 +146,6 @@ export default class GameScene extends Phaser.Scene{
         cover = this.add.rectangle(0,0, width*2, height*2, 0x000000);
         coverfill = 0.8;
         cover.setAlpha(coverfill);
-        //cover.fillStyle(0x000000, coverfill);
-        //cover.fillRect(0,0, width, height);
         cover.setScrollFactor(0);
 
         //healthbar, lightbar
@@ -181,7 +177,6 @@ export default class GameScene extends Phaser.Scene{
         door.setScrollFactor(1);
 
         // Player
-        isPlayerDead = false;
         this.player = new Player(this, 200, 700);
         playerHealth = 100;
 
@@ -211,15 +206,12 @@ export default class GameScene extends Phaser.Scene{
             sprite.setTint(0xff0000);
             if(!sprite.immune){
                 playerHealth -= 50;
-                //healthMask.x -= 99;
                 healthbar.updateHealthbar(playerHealth);
             }
             sprite.immune = true;
             immune(sprite);
         })
 
-
-        
         const immune = (sprite) => this.time.delayedCall(1000, function() {
                 sprite.setTint(0xffffff);
                sprite.immune = false;
@@ -275,6 +267,7 @@ export default class GameScene extends Phaser.Scene{
         timerText.setFill('#88ADEB');
         this.timer = this.time.addEvent({ delay: 999999 });
         timerText.setScrollFactor(0);
+
         loadGame();
         this.countPlaytimes();
     }
@@ -284,6 +277,7 @@ export default class GameScene extends Phaser.Scene{
     //
     update(){
 
+        //if savepoint loaded
         if(gameLoaded){
             this.player.sprite.x = newPlayerPosX;
             this.player.sprite.y = newPlayerPosY;
@@ -326,7 +320,9 @@ export default class GameScene extends Phaser.Scene{
                 leftButtonPressed = false;
             }
 
+        //gameover
         if(playerHealth <= 0) {
+            shooting = false;
             gameoverModal.style.display = "block";
             pauseBtn.style.display = "none";
             this.player.sprite.setTint(0xff0000);
@@ -337,7 +333,7 @@ export default class GameScene extends Phaser.Scene{
               });
         } 
 
-
+        //update cover and spotlight
         cover.setAlpha(coverfill);
 
         this.spotlight.setPosition(this.player.sprite.x, this.player.sprite.y);
@@ -351,11 +347,12 @@ export default class GameScene extends Phaser.Scene{
             coverfill += 0.00009;
         }
 
+        //update timer
         timerText.setText(this.formatTime(score + this.timer.getElapsedSeconds()));
     }
 
+    //restarts visivle scene
     restartScene(){
-        //let thisScene = switchScene.scene.get('SecondLevel');
         this.checkVisibility();
         if(activeScene === 'SecondLevel'){
             switchScene.secondScene.scene.restart();
@@ -367,6 +364,7 @@ export default class GameScene extends Phaser.Scene{
         pauseBtn.style.display = "block";
     }
 
+    //checks which scene is visible
     checkVisibility(){
         if(switchScene.scene.isVisible('SecondLevel')){
             activeScene = 'SecondLevel';
@@ -376,18 +374,17 @@ export default class GameScene extends Phaser.Scene{
         }
     }
 
+    //formats time for timertext
     formatTime(seconds){
-        // Minutes
         var minutes = Math.floor(seconds/60);
-        // Seconds
         var partInSeconds = seconds%60;
         partInSeconds = Math.round(partInSeconds);
-        // Adds left zeros to seconds
+        // adds left zero to seconds
         partInSeconds = partInSeconds.toString().padStart(2,'0');
-        // Returns formated time
         return `${minutes}:${partInSeconds}`;
     }
 
+    //updates played games counter
     countPlaytimes(){
         $.ajax({
             url: '/countPlaytimes',
@@ -398,6 +395,7 @@ export default class GameScene extends Phaser.Scene{
             }) 
     }
 
+    //sets score/highscore
     setNewHighscore(){
         let time;
         let level;
@@ -424,6 +422,7 @@ export default class GameScene extends Phaser.Scene{
     }
 }
 
+//for background
 const createAligned = (scene, count, texture, scrollFactor) => {
     let x = scene.scale.width*0.5;
     for(let i = 0; i < count; ++i){
@@ -434,10 +433,9 @@ const createAligned = (scene, count, texture, scrollFactor) => {
     }
 }
 
-let activeScene = '';
-
+//pause options
 function clickPause() {
-    
+    //pause
   pauseBtn.addEventListener("click", () => {
     toggleModal();
     switchScene.checkVisibility();
@@ -455,39 +453,40 @@ function clickPause() {
 
   saveGame.addEventListener("click", () =>{
       toggleModal();
+      switchScene.input.keyboard.clearCaptures();
     saveModal.style.display = "block";
   })
+  //save
   saveGame2.addEventListener("click", () => {
-      //switchScene.input.keyboard.disableGlobalCapture();
-      //switchScene.keys.enabled = true;
-      //let thisScene = switchScene.scene.get('SecondLevel');
       let score;
       let position;
       let level;
-      if(switchScene.scene.isVisible('SecondLevel')){
-        level = 2;
-        position = [switchScene.secondScene.player.sprite.x, switchScene.secondScene.player.sprite.y];
-        score = Math.round(switchScene.secondScene.timer.getElapsedSeconds());
-      }
       if(switchScene.scene.isVisible('GameScene')){
         level = 1;
         position = [switchScene.player.sprite.x, switchScene.player.sprite.y];
         score = Math.round(switchScene.timer.getElapsedSeconds());
+      }
+      else if(switchScene.scene.isVisible('SecondLevel')){
+        level = 2;
+        position = [switchScene.secondScene.player.sprite.x, switchScene.secondScene.player.sprite.y];
+        score = Math.round(switchScene.secondScene.timer.getElapsedSeconds());
       }
       let title = document.getElementById("saveTitle").value;
       let light = lightbar.mask.x;
       $.ajax({
         url: '/saveGame',
         method: 'POST',
-        data: {level, score, position, title, playerHealth, light}
+        data: {level, score, position, title, playerHealth, light},
+        dataType: 'json'
     })
     .done(function(res){
         if(res === 'success'){
             location.assign('/loadGame');
-        }else if(res.type === 'error'){
-            $("#saveMessage").html(res.res);
         }
     })   
+    .fail(function(res){
+        $("#saveMessage").html(res.responseJSON.res);
+    })
   });
 
   //resume
@@ -497,9 +496,9 @@ function clickPause() {
     counterAfterSwitchScene = 100;
     switchScene.scene.resume(activeScene);
   });
-
+  //restart
   restartGame.addEventListener("click", () => {
-
+    shooting = false;
     toggleModal();
     pauseBtn.style.display = "block";
     switchScene.restartScene();
@@ -512,15 +511,7 @@ function clickPause() {
 pauseModal.style.display = "none";
 clickPause();
 
-function setTimer(timescore){
-    score = timescore;
-}
-
-function updatePlayerPos(x, y){
-    newPlayerPosX = x;
-    newPlayerPosY = y;
-}
-
+//functions for loaded savepoint
 function loadGame(){
     $.ajax({
         url: '/getSavedGame',
@@ -559,3 +550,13 @@ function setPlayerHealth(health){
 function updateLightBar(light){
     lightbar.mask.x = light;
 } 
+
+function setTimer(timescore){
+    score = timescore;
+}
+
+function updatePlayerPos(x, y){
+    newPlayerPosX = x;
+    newPlayerPosY = y;
+}
+

@@ -55,29 +55,28 @@
                     dataType: 'json'
                 })
                     .done(function (response) {
-                        $('#messageMail').html('');
-                        $('#messageUser').html('');
-                        $('#messagePassword').html('');
-                        $('#messagePasswordRepeat').html('');
-                        if(response.type === 'error'){
-                            if(response.div === 'messageMail'){
-                                $('#messageMail').html(response.res);
-                            }
-                            else if(response.div === 'messageUser'){
-                                $('#messageUser').html(response.res);
-                            }
-                            else if(response.div === 'messagePassword'){
-                                $('#messagePassword').html(response.res);
-                            }
-                            else if(response.div === 'messagePasswordRepeat'){
-                                $('#messagePasswordRepeat').html(response.res);
-                            }
-                        }else if(response.type === 'success'){
+                        if(response.type === 'success'){
                             location.assign('/menu');
                         }
                     }) 
                     .fail(function (response){
-                        console.log('fail: ', arguments);
+                        $('#messageMail').html('');
+                        $('#messageUser').html('');
+                        $('#messagePassword').html('');
+                        $('#messagePasswordRepeat').html('');
+                        if(response.responseJSON.div === 'messageMail'){
+                            console.log("test");
+                                $('#messageMail').html(response.responseJSON.res);
+                            }
+                            else if(response.responseJSON.div === 'messageUser'){
+                                $('#messageUser').html(response.responseJSON.res);
+                            }
+                            else if(response.responseJSON.div === 'messagePassword'){
+                                $('#messagePassword').html(response.responseJSON.res);
+                            }
+                            else if(response.responseJSON.div === 'messagePasswordRepeat'){
+                                $('#messagePasswordRepeat').html(response.responseJSON.res);
+                            }
                     })
             });
         }); 
