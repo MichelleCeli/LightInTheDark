@@ -39,6 +39,10 @@ app.use('/', score);
 var gameService = require('./router/gameService');
 app.use('/', gameService);
 
+app.all('*', (req, res) => {
+  res.status(404).send({message : "This resource was not found"})
+}) 
+
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)

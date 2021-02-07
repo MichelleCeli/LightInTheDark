@@ -1,7 +1,6 @@
 const express = require("express");
 var router = express.Router();
 const Score = require("../model/ScoreModel");
-const {authMiddleware} = require("../middleware/auth");
 
 module.exports = router;
 
@@ -27,12 +26,12 @@ router.post("/saveScore", async function(req, res){
             newScore.save();
         }
     })
-    res.json({type: 'success'});
+    res.status(201).json({type: 'success'});
 })
 
 router.get("/getScore", async function(req, res){
     let level = req.query.level;
     const scores = await Score.find({level, highscore: { $gte: 1 }}, 'username highscore -_id').sort({ highscore: 1}).limit(3);
-    res.json(scores)
+    res.status(200).json(scores);
 })
 

@@ -37,9 +37,9 @@
             console.log(res);
             $('#username').html(res.user.username);
             $('#level').html("Level "+res.scores[0].level);
-            $('#highscore').html(res.scores[0].highscore);
-            $('#lastScore').html(res.scores[0].timescore);
-            $('#timesPlayed').html(res.user.timesPlayed);
+            $('#highscore').html("Highscore: "+res.scores[0].highscore);
+            $('#lastScore').html("Last Score: "+res.scores[0].timescore);
+            $('#timesPlayed').html("Times Played: "+res.user.timesPlayed);
         })
     });
 </script>

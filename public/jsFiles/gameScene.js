@@ -10,7 +10,7 @@ import Lightbar from "./Lightbar.js";
 
 let isPlayerDead;
 let playerHealth;
-let timer, timerText;
+let timerText;
 let crystal;
 let firefly;
 let enemy;
@@ -29,6 +29,7 @@ let counterAfterSwitchScene;
 
 // Gameover Modal
 let gameoverModal = document.getElementById("gameover-modal");
+let restartGameOver = document.getElementById("restart-game-over");
 
 //Save Game
 let saveModal = document.getElementById("save-modal");
@@ -118,6 +119,9 @@ export default class GameScene extends Phaser.Scene{
         switchScene = this;
         const width = this.scale.width;
         const height = this.scale.height;
+        this.secondScene = switchScene.scene.get('SecondLevel');
+
+        this.timer = 0;
 
         counterAfterSwitchScene = 0;
 
@@ -267,7 +271,7 @@ export default class GameScene extends Phaser.Scene{
         // Check overlap between Player and door
         this.physics.add.overlap(this.player.sprite, door, endLevel, null, this);
         function endLevel(player, door) {
-            setNewHighscore();
+            this.setNewHighscore();
             this.scene.start("SecondLevel");
         }
 
@@ -280,10 +284,10 @@ export default class GameScene extends Phaser.Scene{
         timerText = this.add.text(width / 2, 50, '', { font: '40px catseye' }).setOrigin(0.5);
         timerText.setDepth(2);
         timerText.setFill('#88ADEB');
-        timer = this.time.addEvent({ delay: 999999 });
+        this.timer = this.time.addEvent({ delay: 999999 });
         timerText.setScrollFactor(0);
-
-      //  loadGame();
+        loadGame();
+        this.countPlaytimes();
     }
 
     //
@@ -294,7 +298,7 @@ export default class GameScene extends Phaser.Scene{
         if(gameLoaded){
             this.player.sprite.x = newPlayerPosX;
             this.player.sprite.y = newPlayerPosY;
-            //healthbar.updateHealthbar(playerHealth);
+            healthbar.updateHealthbar(playerHealth);
             gameLoaded = false;
         }
 
@@ -343,7 +347,11 @@ export default class GameScene extends Phaser.Scene{
             gameoverModal.style.display = "block";
             pauseBtn.style.display = "none";
             this.player.sprite.setTint(0xff0000);
-            switchScene.scene.pause();
+            this.scene.pause();
+            restartGameOver.addEventListener("click", () => {
+                this.restartScene();
+                counterAfterSwitchScene = 100;
+              });
         } 
 
 
@@ -360,9 +368,76 @@ export default class GameScene extends Phaser.Scene{
             coverfill += 0.00009;
         }
 
-        timerText.setText(formatTime(score + timer.getElapsedSeconds()));
-        //console.log(timerText);
+        timerText.setText(this.formatTime(score + this.timer.getElapsedSeconds()));
+    }
 
+    restartScene(){
+        //let thisScene = switchScene.scene.get('SecondLevel');
+        this.checkVisibility();
+        if(activeScene === 'SecondLevel'){
+            switchScene.secondScene.scene.restart();
+        }
+        if(activeScene === 'GameScene'){
+            switchScene.scene.restart();
+        }
+        gameoverModal.style.display = "none";
+        pauseBtn.style.display = "block";
+    }
+
+    checkVisibility(){
+        if(switchScene.scene.isVisible('SecondLevel')){
+            activeScene = 'SecondLevel';
+        }
+        if(switchScene.scene.isVisible('GameScene')){
+            activeScene = 'GameScene';
+        }
+    }
+
+    formatTime(seconds){
+        // Minutes
+        var minutes = Math.floor(seconds/60);
+        // Seconds
+        var partInSeconds = seconds%60;
+        partInSeconds = Math.round(partInSeconds);
+        // Adds left zeros to seconds
+        partInSeconds = partInSeconds.toString().padStart(2,'0');
+        // Returns formated time
+        return `${minutes}:${partInSeconds}`;
+    }
+
+    countPlaytimes(){
+        $.ajax({
+            url: '/countPlaytimes',
+            method: 'POST'
+        })
+            .done(function (res) {
+                console.log("done");
+            }) 
+    }
+
+    setNewHighscore(){
+        let time;
+        let level;
+        if(switchScene.scene.isVisible('GameScene')){
+            level = 1;
+            time = Math.round(switchScene.timer.getElapsedSeconds());
+        }
+         else if(switchScene.scene.isVisible('SecondLevel')){
+            level = 2;
+            time = Math.round(switchScene.secondScene.timer.getElapsedSeconds());
+          }
+          
+        $.ajax({
+            url: '/saveScore',
+            method: 'POST',
+            data: {level, time}
+        })  
+        .done(function(res){
+            if(level == 2){
+                location.assign('/endscreen');
+            }
+            console.log("saved Highscore");
+        })   
     }
 }
 
@@ -382,12 +457,7 @@ function clickPause() {
     
   pauseBtn.addEventListener("click", () => {
     toggleModal();
-    if(switchScene.scene.isVisible('SecondLevel')){
-        activeScene = 'SecondLevel';
-    }
-    if(switchScene.scene.isVisible('GameScene')){
-        activeScene = 'GameScene';
-    }
+    switchScene.checkVisibility();
     switchScene.scene.pause(activeScene);
   });
 
@@ -405,17 +475,24 @@ function clickPause() {
     saveModal.style.display = "block";
   })
   saveGame2.addEventListener("click", () => {
-      let score = Math.round(timer.getElapsedSeconds());
-      let position = [switchScene.player.sprite.x, switchScene.player.sprite.y];
+      //switchScene.input.keyboard.disableGlobalCapture();
+      //switchScene.keys.enabled = true;
+      //let thisScene = switchScene.scene.get('SecondLevel');
+      let score;
+      let position;
       let level;
       if(switchScene.scene.isVisible('SecondLevel')){
         level = 2;
-    }
-    if(switchScene.scene.isVisible('GameScene')){
+        position = [switchScene.secondScene.player.sprite.x, switchScene.secondScene.player.sprite.y];
+        score = Math.round(switchScene.secondScene.timer.getElapsedSeconds());
+      }
+      if(switchScene.scene.isVisible('GameScene')){
         level = 1;
-    }
+        position = [switchScene.player.sprite.x, switchScene.player.sprite.y];
+        score = Math.round(switchScene.timer.getElapsedSeconds());
+      }
       let title = document.getElementById("saveTitle").value;
-   //   let light = switchScene.lightMask.x;
+      let light = lightbar.mask.x;
       $.ajax({
         url: '/saveGame',
         method: 'POST',
@@ -425,7 +502,6 @@ function clickPause() {
         if(res === 'success'){
             location.assign('/loadGame');
         }else if(res.type === 'error'){
-            console.log(res.res);
             $("#saveMessage").html(res.res);
         }
     })   
@@ -442,47 +518,15 @@ function clickPause() {
   restartGame.addEventListener("click", () => {
     toggleModal();
     pauseBtn.style.display = "block";
-    restartScene();
-    /* let thisScene = switchScene.scene.get('SecondLevel');
-    if(activeScene === 'SecondLevel'){
-        thisScene.scene.restart();
-    }
-    if(activeScene === 'GameScene'){
-        switchScene.scene.restart();
-    } */
+    switchScene.restartScene();
     counterAfterSwitchScene = 100;
     
   });
 } 
 
-function restartScene(){
-    let thisScene = switchScene.scene.get('SecondLevel');
-    if(activeScene === 'SecondLevel'){
-        thisScene.scene.restart();
-    }
-    if(activeScene === 'GameScene'){
-        switchScene.scene.restart();
-    }
-}
-
-
 //Pause Button
 pauseModal.style.display = "none";
 clickPause();
-
-
-
-function formatTime(seconds){
-    // Minutes
-    var minutes = Math.floor(seconds/60);
-    // Seconds
-    var partInSeconds = seconds%60;
-    partInSeconds = Math.round(partInSeconds);
-    // Adds left zeros to seconds
-    partInSeconds = partInSeconds.toString().padStart(2,'0');
-    // Returns formated time
-    return `${minutes}:${partInSeconds}`;
-}
 
 function setTimer(timescore){
     score = timescore;
@@ -501,10 +545,23 @@ function loadGame(){
         .done(function (res) {
             if(res){
                 gameLoaded = true;
-                setPlayerHealth(res.lifepoints);
-                setTimer(res.score);
-                updatePlayerPos(res.position[0], res.position[1]);
-                updateLightBar(res.lightpoints);
+                if (res.level == 1) {
+                    setPlayerHealth(res.lifepoints);
+                    setTimer(res.score);
+                    updatePlayerPos(res.position[0], res.position[1]);
+                    updateLightBar(res.lightpoints);
+                }
+                if(res.level == 2){
+                    //let thisScene = switchScene.scene.get('SecondLevel');
+                    switchScene.scene.start('SecondLevel');
+                    switchScene.secondScene.time.delayedCall(150, function() {
+                        switchScene.secondScene.setPlayerHealth(res.lifepoints);
+                        switchScene.secondScene.setTimer(res.score);
+                        switchScene.secondScene.updatePlayerPos(res.position[0], res.position[1]);
+                        switchScene.secondScene.updateLightBar(res.lightpoints);
+                   }, switchScene.secondScene);
+                    
+                }
             }
         }) 
 } 
@@ -516,18 +573,5 @@ function setPlayerHealth(health){
 }
 
 function updateLightBar(light){
-  //  switchScene.lightMask.x = light;
+    lightbar.mask.x = light;
 } 
-
-function setNewHighscore(){
-    let time = Math.round(timer.getElapsedSeconds());
-    let level = switchScene.level;
-    $.ajax({
-        url: '/saveScore',
-        method: 'POST',
-        data: {level, time}
-    })  
-    .done(function(res){
-        console.log("saved Highscore");
-    })   
-}

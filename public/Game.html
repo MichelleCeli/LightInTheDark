@@ -26,7 +26,7 @@
     <div id="gameover-modal">
         <h2>Game Over</h2>
         <div id="modal-gameover">
-            <button onclick="window.location.assign('/game')" class="button">Restart</button>
+            <button id="restart-game-over" class="button">Restart</button>
             <button onclick="window.location.assign('/menu')" class="button">Exit Game</button>
         </div>
     </div>
@@ -34,7 +34,7 @@
     <div id="save-modal">
         <h2>Save Game</h2>
         <div id="modal-save">
-            <input type="title" class="input2" size="50" id="saveTitle" required><br>
+            <input type="text" class="input2" size="50" id="saveTitle" pattern="[A-Za-z]{3}" required><br>
             <label class="label" id="saveMessage"></label><br>
             <button id="save-game2" class="button">Save</button>
         </div>

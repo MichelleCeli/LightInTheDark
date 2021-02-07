@@ -8,6 +8,8 @@ const SavepointSchema = mongoose.Schema({
     position: [Number],
     lifepoints: Number,
     lightpoints: Number
+},{
+  timestamps: true
 },
 {collection: 'savepoints'}
 );

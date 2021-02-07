@@ -18,11 +18,24 @@ let firefly;
 let crystal;
 let switchScene;
 
+let score = 0;
+let gameLoaded = false;
+let newPlayerPosX;
+let newPlayerPosY;
+
+// Pause Button Variablen
+let pauseBtn = document.getElementById("pause-btn");
+let counterAfterSwitchScene;
+
+// Gameover Modal
+let gameoverModal = document.getElementById("gameover-modal");
+let restartGameOver = document.getElementById("restart-game-over");
+
 let cover;
 let coverfill;
 
-let timer, timerText;
-
+let timerText;
+let gamescene;
 
 let shooting;
 let justCreated;
@@ -62,6 +75,8 @@ export default class SecondLevel extends Phaser.Scene{
     create() {
 
         switchScene = this;
+        gamescene = this.scene.get('GameScene');
+        this.timer = 0;
 
         const width = this.scale.width;
         const height = this.scale.height;
@@ -125,8 +140,8 @@ export default class SecondLevel extends Phaser.Scene{
 
         // Player
         isPlayerDead = false;
-  // Testing     this.player = new Player(this, 40000, 500);
-        this.player = new Player(this, 200, 500);
+        this.player = new Player(this, 40000, 500);
+      //  this.player = new Player(this, 200, 500);
         playerHealth = 100;
         leftButtonPressed = false;
 
@@ -142,7 +157,12 @@ export default class SecondLevel extends Phaser.Scene{
         movementEnemies.setCollisionByProperty({collides : true});
 
         this.physics.add.collider(door2, ground);
-        this.physics.add.collider(this.player.sprite, door2);
+        //this.physics.add.collider(this.player.sprite, door2);//Ende
+        this.physics.add.overlap(this.player.sprite, door2, endLevel, null, this);
+        function endLevel() {
+            gamescene.setNewHighscore();
+            this.scene.stop();
+        }
         this.physics.add.collider(this.player.sprite, ground);
         this.physics.add.collider(this.player.sprite, thorns, function(sprite, thorns){
             sprite.setVelocityY(-380);
@@ -211,15 +231,21 @@ export default class SecondLevel extends Phaser.Scene{
         camera.setBounds(0, 0, map2.widthInPixels, map2.heightInPixels );
 
         //timer
-     /*   timerText = this.add.text(width / 2, 50, '', { font: '40px catseye' }).setOrigin(0.5);
+        timerText = this.add.text(width / 2, 50, '', { font: '40px catseye' }).setOrigin(0.5);
         timerText.setDepth(2);
         timerText.setFill('#88ADEB');
-        timer = this.time.addEvent({ delay: 999999 });
-        timerText.setScrollFactor(0);*/
-     //   this.textA = this.add.text(10, 10, 'Game Over', { font: '32px Arial', fill: '#FFFFFF' });
+        this.timer = this.time.addEvent({ delay: 999999 });
+        timerText.setScrollFactor(0);
     }
 
     update() {
+
+        if(gameLoaded){
+            this.player.sprite.x = newPlayerPosX;
+            this.player.sprite.y = newPlayerPosY;
+            healthbar.updateHealthbar(playerHealth);
+            gameLoaded = false;
+        }
 
         direction = this.player.update();
 
@@ -251,10 +277,14 @@ export default class SecondLevel extends Phaser.Scene{
         }
 
         if(playerHealth <= 0) {
-           // gameoverModal.style.display = "block";
+            gameoverModal.style.display = "block";
             pauseBtn.style.display = "none";
             this.player.sprite.setTint(0xff0000);
-         //   switchScene.scene.pause();
+            this.scene.pause();
+            restartGameOver.addEventListener("click", () => {
+            gamescene.restartScene();
+            counterAfterSwitchScene = 100;
+          });
         }
 
 
@@ -271,10 +301,30 @@ export default class SecondLevel extends Phaser.Scene{
             coverfill += 0.00009;
         }
 
+       // timerText.setText(formatTime(score + timer.getElapsedSeconds()));
+        timerText.setText(gamescene.formatTime(score + this.timer.getElapsedSeconds()));
+
+
     }
 
+    setPlayerHealth(health){
+        playerHealth = health;
+        healthbar.updateHealthbar(playerHealth);
+    }
 
+    updateLightBar(light){
+        lightbar.mask.x = light;
+    } 
 
+    setTimer(timescore){
+        score = timescore;
+        gameLoaded = true;
+    }
+
+    updatePlayerPos(x, y){
+        newPlayerPosX = x;
+        newPlayerPosY = y;
+    }
 }
 
 const createAligned = (scene, count, texture, scrollFactor) => {

@@ -1,6 +1,5 @@
 import GameScene from "./gameScene.js";
 import SecondLevel from "./secondLevel.js";
-import LevelMenu from "./levelMenu.js";
 
 var config = {
     type: Phaser.AUTO,
