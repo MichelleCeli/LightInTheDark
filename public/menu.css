@@ -308,8 +308,9 @@ h2{
 }
 
 #change-pw {
-    display: grid;
-    padding-top: 4em;
+    display: flex;
+    padding-top: 2.5em;
+    justify-content: center;
 }
 
 
@@ -428,9 +429,14 @@ Pause Modal
         font-size: 2.5em;
     }
 
-    #headline-flex h1 {
-        margin-right: 37%;
+    #headline-flex {
+        justify-content: space-around;
     }
+
+    #headline-flex h1 {
+        margin-right: 34%;
+    }
+
     .back-btn {
         padding-top: 36px;
         margin-right: 52px;
