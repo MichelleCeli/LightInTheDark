@@ -14,12 +14,14 @@ export default class Enemy {
             repeat: -1,
         })
 
+        // adding group to Arcade.Physics
         this.group = scene.physics.add.group({
             key: 'enemy',
             repeat: 12,
             setXY: { x: 650, y: 300, stepX: Phaser.Math.FloatBetween(300, 400) },
         });
 
+        // Setting properties for every child of the group
         this.group.children.iterate(function (child) {
             child.setBounce(0.2); //0.2
             child.body.setVelocityX(-150);
@@ -31,6 +33,7 @@ export default class Enemy {
 
     }
 
+    // method for checking in which direction enemies are blocked by layer "movementEnemies" to set new direction
     checkDirection(){
         this.group.getChildren().forEach(function (child){
             if (child.body.blocked.left){

@@ -19,7 +19,7 @@ export default class Arrow {
         arrowOldX = this.sprite.x;
         arrowOldY = this.sprite.y;
 
-
+        // hitbox of arrow
         this.sprite.body.setSize(10, 1, true);
 
         scene.physics.add.collider(this.sprite, ground, function (arrow) {
@@ -40,16 +40,18 @@ export default class Arrow {
         arrow.sprite.setVelocityY(velArY);
     }
 
+    // updates the angle of the arrow while shooting
     update(shooting) {
         if (shooting && this.sprite.body.moves) {
 
             arrowRot = Math.atan2((this.sprite.y - arrowOldY), (this.sprite.x - arrowOldX)) * (180 / Math.PI);
             this.sprite.setAngle(arrowRot);
 
+            // values are overwritten for next calculation
             arrowOldX = this.sprite.x;
             arrowOldY = this.sprite.y;
-
         }
+        // when sprite is collided with ground or is outside of the window
         if(this.sprite.y > 1000 || !this.sprite.body.moves){
             shooting = false;
         }
@@ -58,10 +60,14 @@ export default class Arrow {
     }
 
 }
+
+// after timer ends from collision with layer ground
 function onEvent (arrow)
 {
     arrow.disableBody(true, true);
 }
+
+// if arrow hits an enemy
 function killEnemy(arrow, enemy) {
     if(arrow.body.moves) {
         arrow.body.moves = false;

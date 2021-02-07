@@ -56,15 +56,6 @@ let newPlayerPosY;
 let newHealth;
 
 
-// TODO: Dokumentation                             GELSESEN -> Texte hinzufügen
-// TODO: CHrome API mit Firefox vergleichen und Bug lösen
-// TODO: Arrow horizontal
-// TODO: Menu responsive
-// TODO: 2. Level Elemente hinzufügen
-
-
-
-
 export default class GameScene extends Phaser.Scene{
 
     constructor() {
@@ -138,7 +129,7 @@ export default class GameScene extends Phaser.Scene{
         // tilemap
 
         map = this.make.tilemap({ key: "map" });
-        const tileset = map.addTilesetImage("basement", "basement"); //.png???
+        const tileset = map.addTilesetImage("basement", "basement");
 
         ground = map.createLayer("ground", tileset, 0, 0);
         const thorns = map.createLayer("thorns", tileset, 0, 0);
@@ -191,10 +182,7 @@ export default class GameScene extends Phaser.Scene{
 
         // Player
         isPlayerDead = false;
-       // this.player = new Player(this, 200, 700);
-
-        //Testing Map 2
-        this.player = new Player(this, 3500, 300);
+        this.player = new Player(this, 200, 700);
         playerHealth = 100;
 
 
@@ -242,7 +230,7 @@ export default class GameScene extends Phaser.Scene{
         this.physics.add.overlap(this.player.sprite, crystal.group, collectCrystal, null, this);
         this.physics.add.overlap(this.player.sprite, firefly.group, collectFirefly, null, this);
         
-        
+        // method for collecting a crystal
         function collectCrystal (player, crystal) {
             if(playerHealth < 100){
                 playerHealth += 50;
@@ -251,6 +239,7 @@ export default class GameScene extends Phaser.Scene{
             crystal.disableBody(true, true);
         }
 
+        // method for collecting a firefly
         function collectFirefly (player, firefly) {
             if (this.spotlight.scale + 0.3 >= 1 || lightbar.mask.x + 45 >= 150) {
                 firefly.disableBody(true, true);
@@ -302,10 +291,12 @@ export default class GameScene extends Phaser.Scene{
             gameLoaded = false;
         }
 
+        // counter to prevent shooting arrow after resuming the game
         if(counterAfterSwitchScene > 0){
             counterAfterSwitchScene -= 1;
             leftButtonPressed = false;
         }
+        // update-method of the player, returns direction of the player (left or right)
         direction = this.player.update();
 
         // checking if arrow is still shooting & calculates new angle for sprite
@@ -325,7 +316,7 @@ export default class GameScene extends Phaser.Scene{
                 arrowRot = Math.atan2((this.input.activePointer.worldY - this.player.sprite.y), (this.input.activePointer.worldX - this.player.sprite.x)) * (180 / Math.PI);
 
                 // checks if player is looking in the right direction for the shot
-              if((direction === 'right' && (arrowRot >= -90 && arrowRot <= 90)) || direction === 'left' && (arrowRot <= -90 || arrowRot >= 90 )){
+                if((direction === 'right' && (arrowRot >= -90 && arrowRot <= 90)) || direction === 'left' && (arrowRot <= -90 || arrowRot >= 90 )){
 
                   arrow = new Arrow(this, this.player, arrowRot, ground, enemy);
 
@@ -334,14 +325,6 @@ export default class GameScene extends Phaser.Scene{
             }
                 leftButtonPressed = false;
             }
-
-      /*  console.log(playerHealth);*/
-/*         if(playerHealth <= 0 ){
-            isPlayerDead = true;
-            this.player.destroy();
-            timerText.setText('- : -');
-        }
-        if (isPlayerDead){return} */
 
         if(playerHealth <= 0) {
             gameoverModal.style.display = "block";
@@ -516,6 +499,7 @@ function clickPause() {
   });
 
   restartGame.addEventListener("click", () => {
+
     toggleModal();
     pauseBtn.style.display = "block";
     switchScene.restartScene();

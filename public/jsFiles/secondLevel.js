@@ -100,10 +100,12 @@ export default class SecondLevel extends Phaser.Scene{
         const movementEnemies = map2.createLayer("movementEnemies", tileset, 0, 0);
         const doorSpawnPoint = map2.findObject("Objects", obj => obj.name === "Door Position");
 
+        // places door in scene
         let door2 = this.physics.add.sprite(doorSpawnPoint.x, doorSpawnPoint.y, 'door2');
         door2.setSize(30, 90, true);
         door2.setScrollFactor(1);
 
+        // sets collisionproperty to tiles
         ground.setCollisionByProperty({collides : true});
         thorns.setCollisionByProperty({collides : true});
         movementEnemies.setCollisionByProperty({collides : true});
@@ -140,13 +142,13 @@ export default class SecondLevel extends Phaser.Scene{
 
         // Player
         isPlayerDead = false;
-        this.player = new Player(this, 40000, 500);
-      //  this.player = new Player(this, 200, 500);
+        this.player = new Player(this, 200, 500);
         playerHealth = 100;
+
         leftButtonPressed = false;
 
 
-
+        // adding objects to Scene
         enemy = new Enemy(this, ground);
         crystal = new Crystal(this, 8, 250, 600, 800);
         firefly = new Firefly(this, 20, 200, 300, 500);
@@ -199,7 +201,7 @@ export default class SecondLevel extends Phaser.Scene{
         this.physics.add.overlap(this.player.sprite, crystal.group, collectCrystal, null, this);
         this.physics.add.overlap(this.player.sprite, firefly.group, collectFirefly, null, this);
 
-
+        // player collects crystals
         function collectCrystal (player, crystal) {
             if(playerHealth < 100){
                 playerHealth += 50;
@@ -208,6 +210,7 @@ export default class SecondLevel extends Phaser.Scene{
             crystal.disableBody(true, true);
         }
 
+        // player collects fireflies
         function collectFirefly (player, firefly) {
             if (this.spotlight.scale + 0.3 >= 1 || lightbar.mask.x + 45 >= 150) {
                 firefly.disableBody(true, true);
@@ -247,6 +250,7 @@ export default class SecondLevel extends Phaser.Scene{
             gameLoaded = false;
         }
 
+        // update-method of the player, returns direction of the player (left or right)
         direction = this.player.update();
 
         // checking if arrow is still shooting & calculates new angle for sprite
