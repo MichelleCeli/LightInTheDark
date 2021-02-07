@@ -5,20 +5,28 @@ var router = express.Router();
 var path = require("path");
 const ScoreModel = require("../model/ScoreModel");
 const {authMiddleware} = require("../middleware/auth");
+const {asyncMiddleware} = require("../middleware/asyncMiddleware");
 
 module.exports = router;
 
-router.get('/', async function(req, res){
+//default route
+router.get('/', (req, res) => {
     res.status(200).redirect('/login');
 }) 
 
-router.get('/login', async function(req, res){
+
+//login page
+router.get('/login', (req, res) => {
     res.status(200).sendFile(path.join(__dirname, '../public', 'LogIn.html'));
 }) 
 
-router.post("/login", async function(req, res){
+//login
+router.post("/login", asyncMiddleware(async (req, res) => {
     let {username, password} = req.body;
-    User.findOne({username})
+    if(!username){
+        return res.status(401).json({type: 'error', res: 'Enter an username'});
+    }
+    await User.findOne({username})
     .then(user => {
         if(user){
             bcrypt.compare(password, user.password, function(error, result){
@@ -36,35 +44,42 @@ router.post("/login", async function(req, res){
             res.status(401).json({type: 'error', res: 'User not existing'});
         }
     })
- })
+ }))
 
-router.get('/register', async function(req, res){
+ //register page
+router.get('/register', (req, res) => {
     res.status(200).sendFile(path.join(__dirname, '../public', 'SignIn.html'));
 }) 
 
-router.post("/register", async function(req, res){
-    try {
+//register
+router.post("/register", asyncMiddleware(async(req, res) => {
         let {username, email, password, passwordAgain } = req.body;
         if(await User.findOne({email})){
-            return res.status(400).json({type: 'error', div: 'messageMail', res: "This email already exists"});
+            return res.status(401).json({type: 'error', div: 'messageMail', res: "This email already exists"});
         }
         if(!email){
-            return res.status(400).json({type: 'error', div: 'messageMail', res: 'Enter an email'})
+            return res.status(401).json({type: 'error', div: 'messageMail', res: 'Enter an email'})
         }
         if(await User.findOne({username})){
-            return res.status(400).json({type: 'error', div: 'messageUser', res: "This username already exists"});
+            return res.status(401).json({type: 'error', div: 'messageUser', res: "This username already exists"});
         }
         if(!username){
-            return res.status(400).json({type: 'error', div: 'messageUser', res: 'Enter an username'});
+            return res.status(401).json({type: 'error', div: 'messageUser', res: 'Enter an username'});
+        }
+        if(username.length < 3){
+            return res.status(401).json({type: 'error', div: 'messageUser', res: 'Username too short'});
+        }
+        if(username.length > 20){
+            return res.status(401).json({type: 'error', div: 'messageUser', res: 'Username too long'});
         }
         if(!password){
-            return res.status(400).json({type: 'error', div: 'messagePassword', res: 'Enter a password'});
+            return res.status(401).json({type: 'error', div: 'messagePassword', res: 'Enter a password'});
         }
         if(password.length < 5){
-            return res.status(400).json({type: 'error', div: 'messagePassword', res: 'Password min 5 characters'});
+            return res.status(401).json({type: 'error', div: 'messagePassword', res: 'Password min 5 characters'});
         }
         if(password !== passwordAgain){
-            return res.status(400).json({type: 'error', div: 'messagePasswordRepeat', res: 'Passwords not the same'});
+            return res.status(401).json({type: 'error', div: 'messagePasswordRepeat', res: 'Passwords not the same'});
         }
         var hashedPassword = bcrypt.hashSync(req.body.password, 5);
         const user = new User({
@@ -87,56 +102,56 @@ router.post("/register", async function(req, res){
         await score.save();
 
         return res.status(201).json({type: 'success'});
-        
-    } catch (error) {
-        return res.status(500).send({ message: 'Error' });
-    }
+}))
 
-})
-
-router.get('/logout', async function(req, res){
+//logout
+router.get('/logout', (req, res) => {
     if(req.session.user) {
         req.session.destroy();
         res.status(201).json("logout");
     }      
-}); 
+})
 
+//menu page
 router.get('/menu', authMiddleware, (req, res) => {
     res.status(200).sendFile(path.join(__dirname, '../public', 'Menu.html'));
 }) 
  
-
+//profile page
 router.get('/profile', authMiddleware, (req, res) => {
     res.status(200).sendFile(path.join(__dirname, '../public', 'Profile.html'));
 }) 
 
+//change password page
 router.get('/changePassword', authMiddleware, (req, res) => {
     res.status(200).sendFile(path.join(__dirname, '../public', 'changePassword.html'));
 }) 
 
-router.post('/changePassword', (req, res) => {
+//change password
+router.post('/changePassword', asyncMiddleware(async(req, res) => {
     let userID = req.session.user._id;
     let newPassword = req.body.password;
     let repeatNewPassword = req.body.passwordRepeat;
-    if(newPassword !== repeatNewPassword){
-        return res.json('error');
-    }
     if(newPassword.length < 5){
-        return res.json('too short');
+        return res.status(400).json('too short');
     }
-    User.findById(userID)
+    if(newPassword !== repeatNewPassword){
+        return res.status(400).json('error');
+    }
+    await User.findById(userID)
     .then(user =>{
         var hashedPassword = bcrypt.hashSync(newPassword, 5);
         user.password = hashedPassword;
         user.save();
     })
     res.status(201).json('success');
-})
+}))
 
-router.get('/getProfileData', async (req, res) => {
+//profile data
+router.get('/getProfileData', asyncMiddleware(async (req, res) => {
     const userID = req.session.user._id;
     const username = req.session.user.username;
     const user = await User.findById(userID, 'username timesPlayed -_id');
     const scores = await ScoreModel.find({username}, 'level timescore highscore -_id');
     res.status(200).json({user, scores});
-})
+}))

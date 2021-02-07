@@ -394,6 +394,9 @@ Pause Modal
 
 /** Highscore **/
 
+#titleLevel{
+    text-align: center;
+}
 #score-container {
     display: block;
 }
@@ -403,14 +406,24 @@ Pause Modal
     font-size: 45px;
 }
 
-#highscore {
+#highscoreDiv {
     color: #DDDDC3;
     font-family: p22-muschamp-pro, sans-serif;
     font-size: 35px;
+    text-align: center;
 }
 
-#highscore th {
+table.center {
+    margin-left:auto; 
+    margin-right:auto;
+  }
+
+#highscoreDiv th {
     padding: 0 40px;
+}
+
+#highscoreDiv td {
+    padding: 0 50px;
 }
 
 /** Profile **/
